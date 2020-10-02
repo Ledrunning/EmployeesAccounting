@@ -54,25 +54,20 @@
     <ApplicationIcon>camera128x128.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Emgu.CV, Version=2.4.2.1777, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\EmguLib\Emgu.CV.dll</HintPath>
+    <Reference Include="Emgu.CV">
+      <HintPath>..\EmguExternalLibs\EmguCVlibs\Emgu.CV.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.GPU, Version=2.4.2.1777, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\EmguLib\Emgu.CV.GPU.dll</HintPath>
+    <Reference Include="Emgu.CV.GPU">
+      <HintPath>..\EmguExternalLibs\EmguCVlibs\Emgu.CV.GPU.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.ML, Version=2.4.2.1777, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\EmguLib\Emgu.CV.ML.dll</HintPath>
+    <Reference Include="Emgu.CV.ML">
+      <HintPath>..\EmguExternalLibs\EmguCVlibs\Emgu.CV.ML.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.UI, Version=2.4.2.1777, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\EmguLib\Emgu.CV.UI.dll</HintPath>
+    <Reference Include="Emgu.CV.UI">
+      <HintPath>..\EmguExternalLibs\EmguCVlibs\Emgu.CV.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.Util, Version=2.4.2.1777, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\EmguLib\Emgu.Util.dll</HintPath>
+    <Reference Include="Emgu.Util">
+      <HintPath>..\EmguExternalLibs\EmguCVlibs\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -338,6 +333,98 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\EmguExternalLibs\cublas32_42_9.dll">
+      <Link>cublas32_42_9.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\cudart32_42_9.dll">
+      <Link>cudart32_42_9.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\cufft32_42_9.dll">
+      <Link>cufft32_42_9.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\cvextern.dll">
+      <Link>cvextern.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\npp32_42_9.dll">
+      <Link>npp32_42_9.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\nvcuda.dll">
+      <Link>nvcuda.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_calib3d242.dll">
+      <Link>opencv_calib3d242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_contrib242.dll">
+      <Link>opencv_contrib242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_core242.dll">
+      <Link>opencv_core242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_features2d242.dll">
+      <Link>opencv_features2d242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_ffmpeg242.dll">
+      <Link>opencv_ffmpeg242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_flann242.dll">
+      <Link>opencv_flann242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_gpu242.dll">
+      <Link>opencv_gpu242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_highgui242.dll">
+      <Link>opencv_highgui242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_imgproc242.dll">
+      <Link>opencv_imgproc242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_legacy242.dll">
+      <Link>opencv_legacy242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_ml242.dll">
+      <Link>opencv_ml242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_nonfree242.dll">
+      <Link>opencv_nonfree242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_objdetect242.dll">
+      <Link>opencv_objdetect242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_photo242.dll">
+      <Link>opencv_photo242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_stitching242.dll">
+      <Link>opencv_stitching242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_video242.dll">
+      <Link>opencv_video242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\EmguExternalLibs\opencv_videostab242.dll">
+      <Link>opencv_videostab242.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="haarcascade_frontalface_default.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

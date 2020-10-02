@@ -272,16 +272,24 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="image"></param>
         private void FaceDetectionServiceImageChanged(object sender, Image<Bgr, byte> image)
         {
-            if (rec.IsTrained)
+            try
             {
-                var img = image.Convert<Gray, byte>();
-                var result = rec.eigenFaceRecognizer.Predict(img.Resize(100, 100, INTER.CV_INTER_CUBIC));
-                if (result.Label != -1)
+                if (rec.IsTrained)
                 {
-                    _faceDetectionService.EmployeeData = rec.eigenlabels[result.Label];
+                    var img = image.Convert<Gray, byte>();
+                    var result = rec.eigenFaceRecognizer.Predict(img.Resize(100, 100, INTER.CV_INTER_CUBIC));
+                    if (result.Label != -1)
+                    {
+                        _faceDetectionService.EmployeeData = rec.eigenlabels[result.Label];
+                    }
                 }
+                Frame = image.Bitmap;
             }
-            Frame = image.Bitmap;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private void LoadImages()
