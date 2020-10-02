@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.DesktopApp", "EmployeeAccountingDesktop\EA.DesktopApp.csproj", "{46EC73FE-4583-4089-A6D6-EBDC6E76FCA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.DesktopApp", "EA.DesktopApp\EA.DesktopApp.csproj", "{46EC73FE-4583-4089-A6D6-EBDC6E76FCA0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.WebApiServerSide", "EA.WebApiServerSide\EA.WebApiServerSide.csproj", "{2BD4F77E-08C6-4A4C-81C3-F4A18FC1E310}"
 EndProject
