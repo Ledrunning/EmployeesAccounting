@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Engine;
@@ -15,8 +15,7 @@ using EA.DesktopApp.View;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Application = System.Windows.Application;
-using MessageBox = System.Windows.MessageBox;
+using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
@@ -28,11 +27,12 @@ namespace EA.DesktopApp.ViewModels
         private const string GetPhotoTooltipMessage = "Нажмите, что бы сделать фотографию";
         private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
         private const string HelpTooltipMessage = "Нажмите для справки";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly string _trainerDataPath = Path.GetDirectoryName(
-                                                       Assembly.GetExecutingAssembly().Location) + "\\Traineddata";
+            Assembly.GetExecutingAssembly().Location) + "\\Traineddata";
 
-        RecognizerEngine rec = new RecognizerEngine(_trainerDataPath);
+        private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private string _currentTaimeDate;
         private FaceDetectionService _faceDetectionService;
         private Bitmap _frame;
@@ -43,7 +43,6 @@ namespace EA.DesktopApp.ViewModels
         private PhotoShootService _photoShootService;
         private RecognizerEngine _recognizer;
         private RegistrationForm _registrationFormPage;
-        private PasswordWindow loginForm;
         private SoundPlayerHelper _soundPlayerHelper;
 
         /// <summary>
@@ -52,7 +51,9 @@ namespace EA.DesktopApp.ViewModels
         public DispatcherTimer _timer;
 
         private WebApiHelper dataStorage;
-        private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+        private PasswordWindow loginForm;
+
+        private readonly RecognizerEngine rec = new RecognizerEngine(_trainerDataPath);
 
         /// <summary>
         ///     .ctor
@@ -133,6 +134,7 @@ namespace EA.DesktopApp.ViewModels
 
         private void InitializeServices()
         {
+            Logger.Info("Initialize of all services.....");
             _faceDetectionService = new FaceDetectionService();
             _photoShootService = new PhotoShootService();
             _faceDetectionService.ImageWithDetectionChanged -= FaceDetectionServiceImageChanged;
@@ -172,24 +174,12 @@ namespace EA.DesktopApp.ViewModels
 
             // True - button is pushed - Working!
             IsRunning = false;
-            //if (_registrationFormPage == null || _registrationFormPage.IsClosed)
-            //{
-            //    var registrationFormViewModel = new RegistrationFormViewModel();
 
-            //    _registrationFormPage = new RegistrationForm(IsRunning);
-            //    _registrationFormPage.DataContext = registrationFormViewModel;
-            //    _registrationFormPage.Owner = Application.Current.MainWindow;
-
-            //    //_registrationFormPage.Show();
-            //    IsStreaming = false;
-            //    _faceDetectionService.CancelServiceAsync();
-            //    _registrationFormPage.ShowDialog();
-            //}
             if (loginForm == null || loginForm.IsClosed)
             {
                 loginForm = new PasswordWindow();
                 var loginFormVievModel = new LoginFormViewModel(loginForm);
-                
+
                 loginForm.DataContext = loginFormVievModel;
                 loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
@@ -283,12 +273,12 @@ namespace EA.DesktopApp.ViewModels
                         _faceDetectionService.EmployeeData = rec.eigenlabels[result.Label];
                     }
                 }
+
                 Frame = image.Bitmap;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Error(e, "\nFace recognizer error:");
             }
         }
 
@@ -300,7 +290,8 @@ namespace EA.DesktopApp.ViewModels
                 bgWorker.WorkerReportsProgress = true;
                 bgWorker.WorkerSupportsCancellation = false;
                 bgWorker.DoWork += BgWorkerDoWork;
-                bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted; ;
+                bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
+                ;
                 bgWorker.RunWorkerAsync();
             }
             catch (Exception ex)
@@ -317,7 +308,7 @@ namespace EA.DesktopApp.ViewModels
             //}
             //else
             //{
-               // Eigenfaces.IsTrained = Eigenfaces.TrainFromFolder();
+            // Eigenfaces.IsTrained = Eigenfaces.TrainFromFolder();
             //}
         }
 
