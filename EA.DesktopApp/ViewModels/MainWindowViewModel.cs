@@ -105,7 +105,7 @@ namespace EA.DesktopApp.ViewModels
             set
             {
                 _isStreaming = value;
-                OnPropertyChanged();
+                SetField(ref _isStreaming, value);
             }
         }
 
@@ -118,7 +118,7 @@ namespace EA.DesktopApp.ViewModels
             set
             {
                 _isRunning = value;
-                OnPropertyChanged();
+                SetField(ref _isRunning, value);
             }
         }
 
