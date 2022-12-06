@@ -1,22 +1,21 @@
 ﻿using System.ComponentModel;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-/// <summary>
-/// Class for camera call and async background works
-/// EMGU version 2.4.2.1777
-/// Libs:
-/// 1.Emgu.CV
-/// 2.Emgu.CV.GPU
-/// 3.Emgu.CV.ML
-/// 4.Emgu.CV.UI
-/// 5.Emgu.Util
-/// 6.nvcuda.dll needed if have not Nvidia GPU on computer
-/// All libs must to be copied into the bin folder
-/// </summary>
 namespace EA.DesktopApp.Services
 {
+    /// <summary>
+    ///     Class for camera call and async background works
+    ///     EMGU version 2.4.2.1777
+    ///     Libs:
+    ///     1.Emgu.CV
+    ///     2.Emgu.CV.GPU
+    ///     3.Emgu.CV.ML
+    ///     4.Emgu.CV.UI
+    ///     5.Emgu.Util
+    ///     6.nvcuda.dll needed if have not Nvidia GPU on computer
+    ///     All libs must to be copied into the bin folder
+    /// </summary>
     public class WebCamService
     {
         public delegate void ImageChangedEventHndler(object sender, Image<Bgr, byte> image);
@@ -51,7 +50,10 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void CancelServiceAsync()
         {
-            if (_webCamWorker != null) _webCamWorker.CancelAsync();
+            if (_webCamWorker != null)
+            {
+                _webCamWorker.CancelAsync();
+            }
         }
 
         /// <summary>
@@ -81,7 +83,10 @@ namespace EA.DesktopApp.Services
         /// <param name="e"></param>
         private void _webCamWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (!_webCamWorker.CancellationPending) RaiseImageChangedEvent(_capture.QueryFrame().Copy());
+            while (!_webCamWorker.CancellationPending)
+            {
+                RaiseImageChangedEvent(_capture.QueryFrame().Copy());
+            }
         }
 
         private void _webCamWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
