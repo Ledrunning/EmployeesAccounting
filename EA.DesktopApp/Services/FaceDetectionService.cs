@@ -19,7 +19,7 @@ namespace EA.DesktopApp.Services
 
         private readonly int _eyeRectangleThickness = 2;
 
-        public string EmployeeData { get; set; }
+        public string EmployeeData { get; set; } = "Osman Mazinov";
 
         /// <summary>
         ///     Detecting algorithm for Open CV using xml files
