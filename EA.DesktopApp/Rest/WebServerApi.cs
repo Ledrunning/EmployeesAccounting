@@ -6,23 +6,23 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using EA.DesktopApp.Models;
 
-namespace EA.DesktopApp.Helpers
+namespace EA.DesktopApp.Rest
 {
     /// <summary>
     ///     Client class for REST Web API
     ///     HTTP Client Nuget needed
     /// </summary>
-    public class WebApiHelper
+    public class WebServerApi
     {
-        private readonly string _baseAddress;
+        private readonly string baseAddress;
         private const string ApiName = "api/employee/";
         /// <summary>
         ///     .ctor
         /// </summary>
         /// <param name="baseAddress"></param>
-        public WebApiHelper(string baseAddress)
+        public WebServerApi(string baseAddress)
         {
-            _baseAddress = baseAddress;
+            this.baseAddress = baseAddress;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace EA.DesktopApp.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_baseAddress);
+                client.BaseAddress = new Uri(baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -66,7 +66,7 @@ namespace EA.DesktopApp.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_baseAddress);
+                client.BaseAddress = new Uri(baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -99,7 +99,7 @@ namespace EA.DesktopApp.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_baseAddress);
+                client.BaseAddress = new Uri(baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response;
@@ -120,7 +120,7 @@ namespace EA.DesktopApp.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_baseAddress);
+                client.BaseAddress = new Uri(baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

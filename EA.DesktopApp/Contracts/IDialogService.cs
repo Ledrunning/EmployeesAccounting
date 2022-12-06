@@ -1,4 +1,4 @@
-﻿namespace EA.DesktopApp.Helpers
+﻿namespace EA.DesktopApp.Contracts
 {
     /// <summary>
     ///     Interface for Open file Dialog and Save file Dialog classes

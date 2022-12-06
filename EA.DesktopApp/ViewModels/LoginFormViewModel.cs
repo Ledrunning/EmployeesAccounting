@@ -2,18 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
-using EA.DesktopApp.Helpers;
+using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
+using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     public class LoginFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private readonly PasswordWindow _passwordWindow;
-        private bool _isReady;
-        private bool _isRunning;
-        private RegistrationForm _registrationFormPage;
-        private SoundPlayerHelper _soundPlayerHelper = new SoundPlayerHelper();
+        private readonly PasswordWindow passwordWindow;
+        private bool isReady;
+        private bool isRunning;
+        private RegistrationForm registrationFormPage;
+        private SoundPlayerService soundPlayerHelper = new SoundPlayerService();
 
         private string loginValue;
 
@@ -27,7 +28,7 @@ namespace EA.DesktopApp.ViewModels
 
         public LoginFormViewModel(PasswordWindow passwordWindow)
         {
-            _passwordWindow = passwordWindow;
+            this.passwordWindow = passwordWindow;
             InitializeCommands();
         }
 
@@ -43,10 +44,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsRunning
         {
-            get => _isRunning;
+            get => isRunning;
             set
             {
-                _isRunning = value;
+                isRunning = value;
                 OnPropertyChanged();
             }
         }
@@ -56,10 +57,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsReady
         {
-            get => _isReady;
+            get => isReady;
             set
             {
-                _isReady = value;
+                isReady = value;
                 OnPropertyChanged();
             }
         }
@@ -145,23 +146,23 @@ namespace EA.DesktopApp.ViewModels
         private void ToogleLoginExecute()
         {
             // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
+            soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
 
             // True - button is pushed - Working!
             IsRunning = false;
-            if (_registrationFormPage == null || _registrationFormPage.IsClosed)
+            if (registrationFormPage == null || registrationFormPage.IsClosed)
             {
                 var registrationFormViewModel = new RegistrationFormViewModel();
 
-                _registrationFormPage = new RegistrationForm(IsRunning);
-                _registrationFormPage.DataContext = registrationFormViewModel;
-                _registrationFormPage.Owner = Application.Current.MainWindow;
+                registrationFormPage = new RegistrationForm(IsRunning);
+                registrationFormPage.DataContext = registrationFormViewModel;
+                registrationFormPage.Owner = Application.Current.MainWindow;
 
                 //_registrationFormPage.Show();
                 //IsStreaming = false;
                 //_faceDetectionService.CancelServiceAsync();
-                _registrationFormPage.ShowDialog();
+                registrationFormPage.ShowDialog();
             }
 
             //if (!_faceDetectionService.IsRunning)
@@ -173,8 +174,8 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToogleCancelExecute()
         {
-            _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
+            soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
 
             LoginField = string.Empty;
             PasswordField = string.Empty;
@@ -182,8 +183,8 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToogleAdminWindowShowExecute()
         {
-            _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
+            soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
             var adminForm = new AdminForm();
             adminForm.Owner = Application.Current.MainWindow;
             adminForm.ShowDialog();
@@ -191,7 +192,7 @@ namespace EA.DesktopApp.ViewModels
 
         public void ShowWindow()
         {
-            _passwordWindow.ShowDialog();
+            passwordWindow.ShowDialog();
         }
     }
 }

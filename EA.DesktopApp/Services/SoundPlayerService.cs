@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Media;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Properties;
 
-namespace EA.DesktopApp.Helpers
+namespace EA.DesktopApp.Services
 {
     /// <summary>
     ///     Class for sound effects playing extends ISoundPlayer
     /// </summary>
-    public class SoundPlayerHelper : ISoundPlayer
+    public class SoundPlayerService : ISoundPlayer
     {
         private readonly Dictionary<string, UnmanagedMemoryStream> sounds =
             new Dictionary<string, UnmanagedMemoryStream>();
@@ -17,7 +17,7 @@ namespace EA.DesktopApp.Helpers
         /// <summary>
         ///     .ctor
         /// </summary>
-        public SoundPlayerHelper()
+        public SoundPlayerService()
         {
             sounds.Add("button", Resources.button);
             sounds.Add("camera", Resources.camera);

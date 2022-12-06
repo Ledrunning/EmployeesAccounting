@@ -137,15 +137,12 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
-    <Compile Include="Engine\EigenObjectRecognizer.cs" />
-    <Compile Include="Engine\RecognizerEngine.cs" />
-    <Compile Include="Helpers\DialogCloser.cs" />
-    <Compile Include="Helpers\DialogService.cs" />
-    <Compile Include="Helpers\IDialogService.cs" />
-    <Compile Include="Helpers\ISoundPlayer.cs" />
-    <Compile Include="Helpers\RelayCommand.cs" />
-    <Compile Include="Helpers\SoundPlayerHelper.cs" />
-    <Compile Include="Helpers\WebApiHelper.cs" />
+    <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Contracts\IDialogService.cs" />
+    <Compile Include="Contracts\ISoundPlayer.cs" />
+    <Compile Include="ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Services\SoundPlayerService.cs" />
+    <Compile Include="Rest\WebServerApi.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\FaceModel.cs" />
     <Compile Include="Models\Person.cs" />
@@ -287,8 +284,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helpers\DelegateCommand.cs" />
-    <Compile Include="Helpers\NotificationObject.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

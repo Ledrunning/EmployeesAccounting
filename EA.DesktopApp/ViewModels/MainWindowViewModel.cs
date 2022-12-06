@@ -3,17 +3,15 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using EA.DesktopApp.Engine;
-using EA.DesktopApp.Helpers;
+using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
+using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using NLog;
 
@@ -27,33 +25,28 @@ namespace EA.DesktopApp.ViewModels
         private const string GetPhotoTooltipMessage = "Нажмите, что бы сделать фотографию";
         private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
         private const string HelpTooltipMessage = "Нажмите для справки";
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private static readonly string _trainerDataPath = Path.GetDirectoryName(
-            Assembly.GetExecutingAssembly().Location) + "\\Traineddata";
+        private const int OneSecond = 1;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-        private string _currentTaimeDate;
-        private FaceDetectionService _faceDetectionService;
-        private Bitmap _frame;
+        private string currentTaimeDate;
 
-        private bool _isRunning;
+        private WebServerApi dataStorage;
+        private FaceDetectionService faceDetectionService;
+        private Bitmap frame;
 
-        private bool _isStreaming;
-        private PhotoShootService _photoShootService;
-        private RecognizerEngine _recognizer;
-        private RegistrationForm _registrationFormPage;
-        private SoundPlayerHelper _soundPlayerHelper;
+        private bool isRunning;
+
+        private bool isStreaming;
+        private PasswordWindow loginForm;
+        private PhotoShootService photoShootService;
+        private RegistrationForm registrationFormPage;
+        private SoundPlayerService soundPlayerHelper;
 
         /// <summary>
         ///     Timer
         /// </summary>
-        public DispatcherTimer _timer;
-
-        private WebApiHelper dataStorage;
-        private PasswordWindow loginForm;
-
-        private readonly RecognizerEngine rec = new RecognizerEngine(_trainerDataPath);
+        public DispatcherTimer Timer;
 
         /// <summary>
         ///     .ctor
@@ -63,9 +56,7 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            dataStorage = new WebApiHelper(urlAddress);
-            //Изображение для тренировки
-            LoadImages();
+            dataStorage = new WebServerApi(urlAddress);
         }
 
         /// <summary>
@@ -88,10 +79,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string CurrentTimeDate
         {
-            get => _currentTaimeDate;
+            get => currentTaimeDate;
             set
             {
-                _currentTaimeDate = value;
+                currentTaimeDate = value;
                 OnPropertyChanged();
             }
         }
@@ -101,11 +92,11 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsStreaming
         {
-            get => _isStreaming;
+            get => isStreaming;
             set
             {
-                _isStreaming = value;
-                SetField(ref _isStreaming, value);
+                isStreaming = value;
+                SetField(ref isStreaming, value);
             }
         }
 
@@ -114,11 +105,11 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsRunning
         {
-            get => _isRunning;
+            get => isRunning;
             set
             {
-                _isRunning = value;
-                SetField(ref _isRunning, value);
+                isRunning = value;
+                SetField(ref isRunning, value);
             }
         }
 
@@ -127,18 +118,33 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public Bitmap Frame
         {
-            get => _frame;
+            get => frame;
 
-            set => SetField(ref _frame, value);
+            set => SetField(ref frame, value);
         }
+
+        /// <summary>
+        ///     Property for webCam service
+        /// </summary>
+        public ICommand ToggleWebServiceCommand { get; private set; }
+
+        /// <summary>
+        ///     Property for RegForm view
+        /// </summary>
+        public ICommand TogglePhotoShootServiceCommand { get; private set; }
+
+        /// <summary>
+        ///     Button for help
+        /// </summary>
+        public ICommand ToggleHelpCallCommand { get; private set; }
 
         private void InitializeServices()
         {
-            Logger.Info("Initialize of all services.....");
-            _faceDetectionService = new FaceDetectionService();
-            _photoShootService = new PhotoShootService();
-            _faceDetectionService.ImageWithDetectionChanged -= FaceDetectionServiceImageChanged;
-            _faceDetectionService.ImageWithDetectionChanged += FaceDetectionServiceImageChanged;
+            logger.Info("Initialize of all services.....");
+            faceDetectionService = new FaceDetectionService();
+            photoShootService = new PhotoShootService();
+            faceDetectionService.ImageWithDetectionChanged -= FaceDetectionServiceImageChanged;
+            faceDetectionService.ImageWithDetectionChanged += FaceDetectionServiceImageChanged;
         }
 
         /// <summary>
@@ -147,19 +153,18 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleWebServiceExecute()
         {
             // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
+            soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
 
-            if (!_faceDetectionService.IsRunning)
+            if (!faceDetectionService.IsRunning)
             {
                 IsStreaming = true;
-                _faceDetectionService.RunServiceAsync();
-                LoadImages();
+                faceDetectionService.RunServiceAsync();
             }
             else
             {
                 IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
+                faceDetectionService.CancelServiceAsync();
             }
         }
 
@@ -169,8 +174,8 @@ namespace EA.DesktopApp.ViewModels
         private void TogglePhotoShootServiceExecute()
         {
             // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
+            soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
 
             // True - button is pushed - Working!
             IsRunning = false;
@@ -178,21 +183,23 @@ namespace EA.DesktopApp.ViewModels
             if (loginForm == null || loginForm.IsClosed)
             {
                 loginForm = new PasswordWindow();
-                var loginFormVievModel = new LoginFormViewModel(loginForm);
+                var loginFormViewModel = new LoginFormViewModel(loginForm);
 
-                loginForm.DataContext = loginFormVievModel;
+                loginForm.DataContext = loginFormViewModel;
                 loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
-                loginFormVievModel.ShowWindow();
+                faceDetectionService.CancelServiceAsync();
+                loginFormViewModel.ShowWindow();
             }
 
 
-            if (!_faceDetectionService.IsRunning)
+            if (faceDetectionService.IsRunning)
             {
-                IsStreaming = true;
-                _faceDetectionService.RunServiceAsync();
+                return;
             }
+
+            IsStreaming = true;
+            faceDetectionService.RunServiceAsync();
         }
 
         /// <summary>
@@ -208,40 +215,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            _toggleWebServiceCommand = new RelayCommand(ToggleWebServiceExecute);
-            _togglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
-            _toogleHelpCallCommand = new RelayCommand(ToogleHelpServiceExecute);
-        }
-
-        private void Recognize()
-        {
-            try
-            {
-                //var predictedUserId = _recognizer.RecognizeUser(new Image<Gray, byte>(picCapturedUser.Image.Bitmap));
-                //if (predictedUserId == -1)
-                //{
-
-                //}
-
-                //else
-                //{
-                //    //proceed to documents library
-                //    var username = dataStorage.GetAllAsync();
-
-                //    if (username != String.Empty)
-                //    {
-
-                //    }
-                //    else
-                //    {
-
-                //    }
-
-                //}
-            }
-            catch (Exception ex)
-            {
-            }
+            ToggleWebServiceCommand = new RelayCommand(ToggleWebServiceExecute);
+            TogglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
+            ToggleHelpCallCommand = new RelayCommand(ToogleHelpServiceExecute);
         }
 
         /// <summary>
@@ -249,10 +225,12 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void TimeTicker()
         {
-            _timer = new DispatcherTimer(DispatcherPriority.Render);
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick += (sender, args) => { CurrentTimeDate = DateTime.Now.ToString(); };
-            _timer.Start();
+            Timer = new DispatcherTimer(DispatcherPriority.Render)
+            {
+                Interval = TimeSpan.FromSeconds(OneSecond)
+            };
+            Timer.Tick += (sender, args) => { CurrentTimeDate = DateTime.Now.ToString(CultureInfo.CurrentCulture); };
+            Timer.Start();
         }
 
         /// <summary>
@@ -262,100 +240,7 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="image"></param>
         private void FaceDetectionServiceImageChanged(object sender, Image<Bgr, byte> image)
         {
-            try
-            {
-                if (rec.IsTrained)
-                {
-                    var img = image.Convert<Gray, byte>();
-                    var result = rec.eigenFaceRecognizer.Predict(img.Resize(100, 100, INTER.CV_INTER_CUBIC));
-                    if (result.Label != -1)
-                    {
-                        _faceDetectionService.EmployeeData = rec.eigenlabels[result.Label];
-                    }
-                }
-
-                Frame = image.Bitmap;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "\nFace recognizer error:");
-            }
+            Frame = image.Bitmap;
         }
-
-        private void LoadImages()
-        {
-            try
-            {
-                var bgWorker = new BackgroundWorker();
-                bgWorker.WorkerReportsProgress = true;
-                bgWorker.WorkerSupportsCancellation = false;
-                bgWorker.DoWork += BgWorkerDoWork;
-                bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
-                ;
-                bgWorker.RunWorkerAsync();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
-        }
-
-        private void BgWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //if (FaceDAL.bancoDados)
-            //{
-            //    Eigenfaces.IsTrained = Eigenfaces.TrainFromDataBase();
-            //}
-            //else
-            //{
-            // Eigenfaces.IsTrained = Eigenfaces.TrainFromFolder();
-            //}
-        }
-
-        private async void BgWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            //rec.TrainFromFolder();
-            await rec.TrainFromDataBase(urlAddress);
-        }
-
-        #region Action commands for buttons
-
-        private ICommand _toggleWebServiceCommand;
-
-        /// <summary>
-        ///     Property for webCam service
-        /// </summary>
-        public ICommand ToggleWebServiceCommand
-        {
-            get => _toggleWebServiceCommand;
-
-            private set { }
-        }
-
-        private ICommand _togglePhotoShootServiceCommand;
-
-        /// <summary>
-        ///     Property for RegForm view
-        /// </summary>
-        public ICommand TogglePhotoShootServiceCommand
-        {
-            get => _togglePhotoShootServiceCommand;
-
-            private set { }
-        }
-
-        private ICommand _toogleHelpCallCommand;
-
-        /// <summary>
-        ///     Button for help
-        /// </summary>
-        public ICommand ToggleHelpCallCommand
-        {
-            get => _toogleHelpCallCommand;
-
-            private set { }
-        }
-
-        #endregion Action commands for buttons
     }
 }

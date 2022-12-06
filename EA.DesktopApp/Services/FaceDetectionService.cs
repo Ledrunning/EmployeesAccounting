@@ -10,35 +10,30 @@ using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Services
 {
-    
     public class FaceDetectionService : WebCamService
     {
         public delegate void ImageWithDetectionChangedEventHandler(object sender, Image<Bgr, byte> image);
 
-        private readonly string _eyeFileName = "haarcascade_eye.xml";
+        private const string EyeFileName = "haarcascade_eye.xml";
 
-        private readonly int _eyeRectangleThickness = 2;
-
-        public string EmployeeData { get; set; } = "Osman Mazinov";
+        private readonly int EyeRectangleThickness = 2;
 
         /// <summary>
         ///     Detecting algorithm for Open CV using xml files
         /// </summary>
-        private readonly string _faceFileName = "haarcascade_frontalface_default.xml";
+        private const string FaceFileName = "haarcascade_frontalface_default.xml";
+        private readonly int FaceRectanglethickness = 2;
 
-        //private FaceModel faceModel = new FaceModel();
-        private readonly int _faceRectanglethickness = 2;
-        //private FaceModel _faceAndEyes = new FaceModel();
 
-        private Tuple<List<Rectangle>, List<Rectangle>> _faceAndEyes =
+        private Tuple<List<Rectangle>, List<Rectangle>> faceAndEyes =
             new Tuple<List<Rectangle>, List<Rectangle>>(new List<Rectangle>(), new List<Rectangle>());
 
-        private List<Rectangle> _faces = new List<Rectangle>();
-        private HaarCascade eye;
+        private List<Rectangle> faces = new List<Rectangle>();
+        private CascadeClassifier eye;
 
-        private HaarCascade face;
+        private CascadeClassifier face;
         private MCvFont font = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
-        
+
         /// <summary>
         ///     For haarcascade algorithm
         /// </summary>
@@ -56,6 +51,8 @@ namespace EA.DesktopApp.Services
         {
             InitializeServices();
         }
+
+        public string EmployeeData { get; set; }
 
         public event ImageWithDetectionChangedEventHandler ImageWithDetectionChanged;
 
@@ -93,11 +90,12 @@ namespace EA.DesktopApp.Services
                 var result = await FacesAndEyesAsync(image);
 
                 isDelayed = true;
-                _faceAndEyes = result;
+                faceAndEyes = result;
                 isDetecting = false;
             }
 
             if (!isDelayed) // to prevent displaing delayed image
+            {
                 try
                 {
                     DrawRectangles(image);
@@ -107,79 +105,8 @@ namespace EA.DesktopApp.Services
                 {
                     Debug.WriteLine(e.Message);
                 }
-
-            // Used with deprecated Haarcascade method
-            //await Task.Run(() => DetectFaceAndEyes(image));
-            //RaiseImageWithDetectionChangedEvent(image);
-        }
-
-        /// <summary>
-        ///     Detect face and eyes using Haarcascade
-        /// </summary>
-        /// <param name="image"></param>
-
-        #region Face detection using HaarCascade
-        
-        [Obsolete]
-        private void DetectFaceAndEyes(Image<Bgr, byte> image)
-        {
-            //Convert it to Grayscale
-            gray = image.Convert<Gray, byte>();
-
-            //Face Detector
-            var facesDetected = gray.DetectHaarCascade(
-                face,
-                1.2,
-                10,
-                HAAR_DETECTION_TYPE.DO_CANNY_PRUNING,
-                new Size(20, 20));
-
-            //Action for each element detected
-            foreach (var f in facesDetected[0])
-            {
-                //result = image.Copy(f.rect).Convert<Gray, byte>().Resize(100, 100, Emgu.CV.CvEnum.INTER.CV_INTER_CUBIC);
-                //draw the face detected in the 0th (gray) channel with blue color
-                image.Draw(f.rect, new Bgr(Color.Red), 2);
-                image.Draw("Osman", ref font, new Point(f.rect.X - 2, f.rect.Y - 2), new Bgr(Color.LightGreen));
-
-                gray.ROI = f.rect;
-                var eyesDetected = gray.DetectHaarCascade(
-                    eye,
-                    1.1,
-                    10,
-                    HAAR_DETECTION_TYPE.DO_CANNY_PRUNING,
-                    new Size(20, 20));
-                gray.ROI = Rectangle.Empty;
-
-                foreach (var ey in eyesDetected[0])
-                {
-                    var eyeRect = ey.rect;
-                    eyeRect.Offset(f.rect.X, f.rect.Y);
-                    image.Draw(eyeRect, new Bgr(Color.Blue), 2);
-                }
             }
         }
-
-        #endregion Face detection using HaarCascade
-
-        /// <summary>
-        ///     Method for async faces detection
-        /// </summary>
-        /// <param name="image"></param>
-        /// <returns></returns>
-        private Task<List<Rectangle>> DetectFacesAsync(Image<Bgr, byte> image)
-        {
-            return Task.Run(() =>
-            {
-                var faces = new List<Rectangle>();
-
-                DetectFace(image, faces);
-
-                return faces;
-            });
-        }
-
-        #region using Tuple
 
         /// <summary>
         ///     Method for draw rectangle around face and eyes with
@@ -188,14 +115,14 @@ namespace EA.DesktopApp.Services
         /// <param name="image"></param>
         private void DrawRectangles(Image<Bgr, byte> image)
         {
-            foreach (var f in _faceAndEyes.Item1)
+            foreach (var f in faceAndEyes.Item1)
             {
-                image.Draw(f, new Bgr(Color.Red), _faceRectanglethickness);
+                image.Draw(f, new Bgr(Color.Red), FaceRectanglethickness);
                 image.Draw(EmployeeData, ref font, new Point(f.X - 2, f.Y - 5), new Bgr(Color.Red));
 
-                foreach (var e in _faceAndEyes.Item2)
+                foreach (var e in faceAndEyes.Item2)
                 {
-                    image.Draw(e, new Bgr(Color.Blue), _eyeRectangleThickness);
+                    image.Draw(e, new Bgr(Color.Blue), EyeRectangleThickness);
                 }
             }
         }
@@ -217,15 +144,14 @@ namespace EA.DesktopApp.Services
             });
         }
 
-        #endregion using Tuple
-
         #region EMGU face detection methods
 
         private void DetectFace(Image<Bgr, byte> image, List<Rectangle> faces)
         {
 #if !IOS
             if (GpuInvoke.HasCuda)
-                using (var face = new GpuCascadeClassifier(_faceFileName))
+            {
+                using (var face = new GpuCascadeClassifier(FaceFileName))
                 {
                     using (var gpuImage = new GpuImage<Bgr, byte>(image))
                     using (var gpuGray = gpuImage.Convert<Gray, byte>())
@@ -234,9 +160,11 @@ namespace EA.DesktopApp.Services
                         faces.AddRange(faceRegion);
                     }
                 }
+            }
             else
 #endif
-                using (var face = new CascadeClassifier(_faceFileName))
+            {
+                using (var face = new CascadeClassifier(FaceFileName))
                 {
                     using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
                     {
@@ -255,14 +183,16 @@ namespace EA.DesktopApp.Services
                         faces.AddRange(facesDetected);
                     }
                 }
+            }
         }
 
         private void DetectFaceAndEyes(Image<Bgr, byte> image, List<Rectangle> faces, List<Rectangle> eyes)
         {
 #if !IOS
             if (GpuInvoke.HasCuda)
-                using (var face = new GpuCascadeClassifier(_faceFileName))
-                using (var eye = new GpuCascadeClassifier(_eyeFileName))
+            {
+                using (var face = new GpuCascadeClassifier(FaceFileName))
+                using (var eye = new GpuCascadeClassifier(EyeFileName))
                 {
                     using (var gpuImage = new GpuImage<Bgr, byte>(image))
                     using (var gpuGray = gpuImage.Convert<Gray, byte>())
@@ -270,6 +200,7 @@ namespace EA.DesktopApp.Services
                         var faceRegion = face.DetectMultiScale(gpuGray, 1.1, 10, Size.Empty);
                         faces.AddRange(faceRegion);
                         foreach (var f in faceRegion)
+                        {
                             using (var faceImg = gpuGray.GetSubRect(f))
                             {
                                 //For some reason a clone is required.
@@ -286,12 +217,15 @@ namespace EA.DesktopApp.Services
                                     }
                                 }
                             }
+                        }
                     }
                 }
+            }
             else
 #endif
-                using (var face = new CascadeClassifier(_faceFileName))
-                using (var eye = new CascadeClassifier(_eyeFileName))
+            {
+                using (var face = new CascadeClassifier(FaceFileName))
+                using (var eye = new CascadeClassifier(EyeFileName))
                 {
                     using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
                     {
@@ -330,6 +264,7 @@ namespace EA.DesktopApp.Services
                         }
                     }
                 }
+            }
         }
 
         #endregion EMGU face detection methods

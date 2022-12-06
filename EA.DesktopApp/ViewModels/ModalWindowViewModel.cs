@@ -1,18 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using EA.DesktopApp.Helpers;
+using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
+using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     internal class ModalWindowViewModel : BaseViewModel
     {
-        private readonly ModalWindow _modalWindow;
-        private RegistrationForm regForm;
+        private readonly ModalWindow modalWindow;
+        private RegistrationForm registrationForm;
 
-        private ICommand _toogleOkButtonCommand;
+        private ICommand toggleOkButtonCommand;
 
-        private string _warningText;
+        private string warningText;
 
         //private ModalWindow _modelWindow;
 
@@ -30,7 +31,7 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="modalWindow"></param>
         public ModalWindowViewModel(ModalWindow modalWindow)
         {
-            _modalWindow = modalWindow;
+            this.modalWindow = modalWindow;
             InitializeCommands();
         }
 
@@ -40,12 +41,12 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string WarningText
         {
-            get => _warningText;
+            get => warningText;
             set
             {
-                _warningText = value;
+                warningText = value;
                 // From INotifyPropertyChanged
-                SetField(ref _warningText, value);
+                SetField(ref warningText, value);
             }
         }
 
@@ -54,7 +55,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public ICommand ToggleOkButtonCommand
         {
-            get => _toogleOkButtonCommand;
+            get => toggleOkButtonCommand;
             set { }
         }
 
@@ -63,7 +64,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            _toogleOkButtonCommand = new RelayCommand(CloseWindowExecute);
+            toggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
         }
 
         /// <summary>
@@ -71,9 +72,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void CloseWindowExecute()
         {
-            var _soundPlayerHelper = new SoundPlayerHelper();
-            _soundPlayerHelper.PlaySound("button");
-            _modalWindow.Close();
+            var soundPlayerHelper = new SoundPlayerService();
+            soundPlayerHelper.PlaySound("button");
+            modalWindow.Close();
         }
 
         /// <summary>
@@ -81,9 +82,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public void ShowWindow()
         {
-            _modalWindow.DataContext = this;
-            _modalWindow.Owner = Application.Current.MainWindow;
-            _modalWindow.ShowDialog();
+            modalWindow.DataContext = this;
+            modalWindow.Owner = Application.Current.MainWindow;
+            modalWindow.ShowDialog();
         }
 
         /// <summary>

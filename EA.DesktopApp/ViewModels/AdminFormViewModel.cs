@@ -6,15 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using EA.DesktopApp.Helpers;
+using EA.DesktopApp.Services;
+using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     class AdminFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private bool _isReady;
-        private bool _isRunning;
-        private string _userMessage;
+        private bool isReady;
+        private bool isRunning;
+        private string userMessage;
 
         private string loginValue;
 
@@ -32,10 +33,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsRunning
         {
-            get => _isRunning;
+            get => isRunning;
             set
             {
-                _isRunning = value;
+                isRunning = value;
                 OnPropertyChanged();
             }
         }
@@ -45,20 +46,20 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsReady
         {
-            get => _isReady;
+            get => isReady;
             set
             {
-                _isReady = value;
+                isReady = value;
                 OnPropertyChanged();
             }
         }
 
         public string UserMessage
         {
-            get => _userMessage;
+            get => userMessage;
             set
             {
-                _userMessage = value;
+                userMessage = value;
                 OnPropertyChanged();
             }
         }
@@ -151,7 +152,7 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToogleClearFieldsExecute()
         {
-            var soundHelper = new SoundPlayerHelper();
+            var soundHelper = new SoundPlayerService();
             soundHelper.PlaySound("button");
 
             LoginField = string.Empty;
