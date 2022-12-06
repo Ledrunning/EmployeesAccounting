@@ -118,7 +118,7 @@ namespace EA.DesktopApp.Services
             foreach (var f in faceAndEyes.Item1)
             {
                 image.Draw(f, new Bgr(Color.Red), FaceRectanglethickness);
-                image.Draw(EmployeeData, ref font, new Point(f.X - 2, f.Y - 5), new Bgr(Color.Red));
+                //image.Draw(EmployeeData, ref font, new Point(f.X - 2, f.Y - 5), new Bgr(Color.Red));
 
                 foreach (var e in faceAndEyes.Item2)
                 {
