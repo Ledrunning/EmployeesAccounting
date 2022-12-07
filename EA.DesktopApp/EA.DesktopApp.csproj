@@ -161,9 +161,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\FaceDetectionService.cs" />
     <Compile Include="Services\PhotoShootService.cs" />
-    <Compile Include="Services\WebCamService.cs" />
+    <Compile Include="Services\FaceDetectionService.cs" />
     <Compile Include="ViewModels\AdminFormViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\LoginFormViewModel.cs" />

@@ -8,7 +8,7 @@ namespace EA.DesktopApp.Services
     /// <summary>
     ///     Class which realize photoshoot logic
     /// </summary>
-    public class PhotoShootService : WebCamService
+    public class PhotoShootService : FaceDetectionService
     {
         public delegate void ImageWithDetectionChangedEventHandler(object sender, Image<Bgr, byte> image);
 

@@ -1,209 +1,118 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using NLog;
 
 namespace EA.DesktopApp.Services
 {
-    public class FaceDetectionService : WebCamService
+    /// <summary>
+    ///     Class for camera call and async background works
+    ///     EMGU version 2.4.2.1777
+    ///     Libs:
+    ///     1.Emgu.CV
+    ///     2.Emgu.CV.GPU
+    ///     3.Emgu.CV.ML
+    ///     4.Emgu.CV.UI
+    ///     5.Emgu.Util
+    ///     6.nvcuda.dll needed if have not Nvidia GPU on computer
+    ///     All libs must to be copied into the bin folder
+    /// </summary>
+    public class FaceDetectionService
     {
-        public delegate void ImageWithDetectionChangedEventHandler(object sender, Image<Bgr, byte> image);
+        public delegate void ImageChangedEventHndler(object sender, Image<Bgr, byte> image);
 
-        private const string EyeFileName = "haarcascade_eye.xml";
-
-        /// <summary>
-        ///     Detecting algorithm for Open CV using xml files
-        /// </summary>
-        private const string FaceFileName = "haarcascade_frontalface_default.xml";
-
-        private readonly int EyeRectangleThickness = 2;
-        private readonly int FaceRectanglethickness = 2;
-
-
-        private Tuple<List<Rectangle>, List<Rectangle>> faceAndEyes =
-            new Tuple<List<Rectangle>, List<Rectangle>>(new List<Rectangle>(), new List<Rectangle>());
+        private readonly VideoCapture videoCapture;
+        private BackgroundWorker webCamWorker;
+        private CascadeClassifier cascadeClassifier;
 
         /// <summary>
-        ///     For haarcascade algorithm
-        /// </summary>
-        private Image<Gray, byte> gray;
-
-        /// <summary>
-        ///     Flag when face is detecting
-        /// </summary>
-        private bool isDetecting;
-
-        /// <summary>
-        ///     Init for face detection method
+        ///     Capture stream from camera
+        ///     And init background workers
         /// </summary>
         public FaceDetectionService()
         {
-            InitializeServices();
+            videoCapture = new VideoCapture();
+            InitializeWorkers();
+            InitializeClassifier();
         }
 
-        public string EmployeeData { get; set; }
-
-        public event ImageWithDetectionChangedEventHandler ImageWithDetectionChanged;
-
-        /// <summary>
-        ///     Event handler from web cam services
-        /// </summary>
-        private void InitializeServices()
+        private void InitializeClassifier()
         {
-            //face = new HaarCascade(_faceFileName);
-            //eye = new HaarCascade(_eyeFileName);
-            ImageChanged += WebCamServiceImageChanged;
+            var assembly = Assembly.GetExecutingAssembly();
+            var path = Path.GetDirectoryName(assembly.Location);
+
+            if (path != null)
+            {
+                cascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
+            }
+            else
+            {
+                //logger.Error("Could not find haarcascade xml file");
+            }
         }
 
+        public bool IsRunning => webCamWorker?.IsBusy ?? false;
+
+        public event ImageChangedEventHndler ImageChanged;
+
         /// <summary>
-        ///     Calling Image changet event delegate
+        ///     Async method for background work
         /// </summary>
-        /// <param name="image"></param>
-        private void RaiseImageWithDetectionChangedEvent(Image<Bgr, byte> image)
+        public void RunServiceAsync()
         {
-            ImageWithDetectionChanged?.Invoke(this, image);
+            webCamWorker.RunWorkerAsync();
         }
 
         /// <summary>
-        ///     Event when faces and eyes is changed
+        ///     Cancel Async method for background work
+        /// </summary>
+        public void CancelServiceAsync()
+        {
+            if (webCamWorker != null)
+            {
+                webCamWorker.CancelAsync();
+            }
+        }
+        
+        /// <summary>
+        ///     Method for background worker init
+        /// </summary>
+        private void InitializeWorkers()
+        {
+            webCamWorker = new BackgroundWorker();
+            webCamWorker.WorkerSupportsCancellation = true;
+            webCamWorker.DoWork += OnWebCamWorker;
+        }
+
+        /// <summary>
+        ///     Draw image method
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="image"></param>
-        private async void WebCamServiceImageChanged(object sender, Image<Bgr, byte> image)
+        /// <param name="e"></param>
+        private void OnWebCamWorker(object sender, DoWorkEventArgs e)
         {
-            var isDelayed = false;
-
-            if (!isDetecting)
+            while (!webCamWorker.CancellationPending)
             {
-                isDetecting = true;
-                var result = await FacesAndEyesAsync(image);
-
-                isDelayed = true;
-                faceAndEyes = result;
-                isDetecting = false;
-            }
-
-            if (!isDelayed) // to prevent displaing delayed image
-            {
-                try
-                {
-                    DrawRectangles(image);
-                    RaiseImageWithDetectionChangedEvent(image);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
+                var image = videoCapture.QueryFrame().ToImage<Bgr, byte>();
+                DetectFaces(image);
             }
         }
 
-        /// <summary>
-        ///     Method for draw rectangle around face and eyes with
-        ///     DetectFacesAndEyeAsync method
-        /// </summary>
-        /// <param name="image"></param>
-        private void DrawRectangles(Image<Bgr, byte> image)
+        private void DetectFaces(Image<Bgr, byte> image)
         {
-            foreach (var f in faceAndEyes.Item1)
+            var grayFrame = image.Convert<Gray, byte>();
+            var faces = cascadeClassifier.DetectMultiScale(grayFrame,
+                1.1,
+                10,
+                Size.Empty); //the actual face detection happens here
+            foreach (var face in faces)
             {
-                image.Draw(f, new Bgr(Color.Red), FaceRectanglethickness);
-
-                foreach (var e in faceAndEyes.Item2)
-                {
-                    image.Draw(e, new Bgr(Color.Blue), EyeRectangleThickness);
-                }
+                image.Draw(face, new Bgr(Color.Aqua),
+                    2); //the detected face(s) is highlighted here using a box that is drawn around it/them
             }
         }
-
-        /// <summary>
-        ///     Face and eyes detection method
-        /// </summary>
-        /// <param name="image"></param>
-        /// <returns></returns>
-        private Task<Tuple<List<Rectangle>, List<Rectangle>>> FacesAndEyesAsync(Image<Bgr, byte> image)
-        {
-            return Task.Run(() =>
-            {
-                var faces = new List<Rectangle>();
-                var eyes = new List<Rectangle>();
-
-                DetectFaceAndEyes(image, faces, eyes);
-                return new Tuple<List<Rectangle>, List<Rectangle>>(faces, eyes);
-            });
-        }
-
-        #region EMGU face detection methods
-
-        private void DetectFace(Image<Bgr, byte> image, List<Rectangle> faces)
-        {
-            using (var face = new CascadeClassifier(FaceFileName))
-            {
-                using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
-                {
-                    //normalizes brightness and increases contrast of the image
-                    gray._EqualizeHist();
-
-                    //Detect the faces  from the gray scale image and store the locations as rectangle
-                    //The first dimensional is the channel
-                    //The second dimension is the index of the rectangle in the specific channel
-                    var facesDetected = face.DetectMultiScale(
-                        gray,
-                        1.1,
-                        10,
-                        new Size(20, 20),
-                        Size.Empty);
-                    faces.AddRange(facesDetected);
-                }
-            }
-        }
-
-        private void DetectFaceAndEyes(Image<Bgr, byte> image, List<Rectangle> faces, List<Rectangle> eyes)
-        {
-            using (var face = new CascadeClassifier(FaceFileName))
-            using (var eye = new CascadeClassifier(EyeFileName))
-            {
-                using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
-                {
-                    //normalizes brightness and increases contrast of the image
-                    gray._EqualizeHist();
-
-                    //Detect the faces  from the gray scale image and store the locations as rectangle
-                    //The first dimensional is the channel
-                    //The second dimension is the index of the rectangle in the specific channel
-                    var facesDetected = face.DetectMultiScale(
-                        gray,
-                        1.1,
-                        10,
-                        new Size(20, 20),
-                        Size.Empty);
-                    faces.AddRange(facesDetected);
-
-                    foreach (var f in facesDetected)
-                    {
-                        //Set the region of interest on the faces
-                        gray.ROI = f;
-                        var eyesDetected = eye.DetectMultiScale(
-                            gray,
-                            1.1,
-                            10,
-                            new Size(20, 20),
-                            Size.Empty);
-                        gray.ROI = Rectangle.Empty;
-
-                        foreach (var e in eyesDetected)
-                        {
-                            var eyeRect = e;
-                            eyeRect.Offset(f.X, f.Y);
-                            eyes.Add(eyeRect);
-                        }
-                    }
-                }
-            }
-        }
-
-        #endregion EMGU face detection methods
     }
 }

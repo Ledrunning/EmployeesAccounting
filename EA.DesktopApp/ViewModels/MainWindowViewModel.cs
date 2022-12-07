@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
@@ -141,10 +140,8 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeServices()
         {
             logger.Info("Initialize of all services.....");
-            faceDetectionService = new FaceDetectionService();
             photoShootService = new PhotoShootService();
-            faceDetectionService.ImageWithDetectionChanged -= FaceDetectionServiceImageChanged;
-            faceDetectionService.ImageWithDetectionChanged += FaceDetectionServiceImageChanged;
+            faceDetectionService = new FaceDetectionService();
         }
 
         /// <summary>
