@@ -124,7 +124,7 @@ namespace EA.DesktopApp.ViewModels
         {
             //PhotoShootFrame = image.Bitmap;
             // New grayscale image for recognition
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(100, 100, INTER.CV_INTER_CUBIC);
+            PhotoShootGray = image.Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
         }
 
         #region ToolTip properties
@@ -342,7 +342,7 @@ namespace EA.DesktopApp.ViewModels
 
             var picture = PhotoShootGray.Bytes;
 
-            Image resultImage = PhotoShootGray.Bitmap;
+            Image resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
             var arr = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 

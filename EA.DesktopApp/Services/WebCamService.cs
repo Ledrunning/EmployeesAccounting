@@ -2,10 +2,8 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using Emgu.CV.VideoStab;
 using NLog;
 
 namespace EA.DesktopApp.Services
@@ -26,7 +24,7 @@ namespace EA.DesktopApp.Services
     {
         public delegate void ImageChangedEventHndler(object sender, Image<Bgr, byte> image);
 
-        private readonly VideoCapture capture;
+        private readonly VideoCapture videoCapture;
         private BackgroundWorker webCamWorker;
         private CascadeClassifier cascadeClassifier;
 
@@ -36,7 +34,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public WebCamService()
         {
-            capture = new VideoCapture();
+            videoCapture = new VideoCapture();
             InitializeWorkers();
             InitializeClassifier();
         }
@@ -98,7 +96,7 @@ namespace EA.DesktopApp.Services
         {
             while (!webCamWorker.CancellationPending)
             {
-                var image = capture.QueryFrame().ToImage<Bgr, byte>();
+                var image = videoCapture.QueryFrame().ToImage<Bgr, byte>();
                 var grayFrame = image.Convert<Gray, byte>();
                 var faces = cascadeClassifier.DetectMultiScale(grayFrame,
                     1,
