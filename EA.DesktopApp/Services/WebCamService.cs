@@ -1,6 +1,12 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.VideoStab;
+using NLog;
 
 namespace EA.DesktopApp.Services
 {
@@ -20,8 +26,9 @@ namespace EA.DesktopApp.Services
     {
         public delegate void ImageChangedEventHndler(object sender, Image<Bgr, byte> image);
 
-        private readonly Capture _capture;
-        private BackgroundWorker _webCamWorker;
+        private readonly VideoCapture capture;
+        private BackgroundWorker webCamWorker;
+        private CascadeClassifier cascadeClassifier;
 
         /// <summary>
         ///     Capture stream from camera
@@ -29,11 +36,27 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public WebCamService()
         {
-            _capture = new Capture();
+            capture = new VideoCapture();
             InitializeWorkers();
+            InitializeClassifier();
         }
 
-        public bool IsRunning => _webCamWorker != null ? _webCamWorker.IsBusy : false;
+        private void InitializeClassifier()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var path = Path.GetDirectoryName(assembly.Location);
+
+            if (path != null)
+            {
+                cascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
+            }
+            else
+            {
+                //logger.Error("Could not find haarcascade xml file");
+            }
+        }
+
+        public bool IsRunning => webCamWorker?.IsBusy ?? false;
 
         public event ImageChangedEventHndler ImageChanged;
 
@@ -42,7 +65,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void RunServiceAsync()
         {
-            _webCamWorker.RunWorkerAsync();
+            webCamWorker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -50,30 +73,20 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void CancelServiceAsync()
         {
-            if (_webCamWorker != null)
+            if (webCamWorker != null)
             {
-                _webCamWorker.CancelAsync();
+                webCamWorker.CancelAsync();
             }
         }
-
-        /// <summary>
-        ///     Method for calling ImageChanged delegate
-        /// </summary>
-        /// <param name="image"></param>
-        private void RaiseImageChangedEvent(Image<Bgr, byte> image)
-        {
-            ImageChanged?.Invoke(this, image);
-        }
-
+        
         /// <summary>
         ///     Method for background worker init
         /// </summary>
         private void InitializeWorkers()
         {
-            _webCamWorker = new BackgroundWorker();
-            _webCamWorker.WorkerSupportsCancellation = true;
-            _webCamWorker.DoWork += _webCamWorker_DoWork;
-            _webCamWorker.RunWorkerCompleted += _webCamWorker_RunWorkerCompleted;
+            webCamWorker = new BackgroundWorker();
+            webCamWorker.WorkerSupportsCancellation = true;
+            webCamWorker.DoWork += OnWebCamWorker;
         }
 
         /// <summary>
@@ -81,16 +94,21 @@ namespace EA.DesktopApp.Services
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void _webCamWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void OnWebCamWorker(object sender, DoWorkEventArgs e)
         {
-            while (!_webCamWorker.CancellationPending)
+            while (!webCamWorker.CancellationPending)
             {
-                RaiseImageChangedEvent(_capture.QueryFrame().Copy());
+                var image = capture.QueryFrame().ToImage<Bgr, byte>();
+                var grayFrame = image.Convert<Gray, byte>();
+                var faces = cascadeClassifier.DetectMultiScale(grayFrame,
+                    1,
+                    10,
+                    Size.Empty); //the actual face detection happens here
+                foreach (var face in faces)
+                {
+                    image.Draw(face, new Bgr(Color.Aqua), 2); 
+                }
             }
-        }
-
-        private void _webCamWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
         }
     }
 }

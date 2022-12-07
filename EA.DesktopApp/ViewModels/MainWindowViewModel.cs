@@ -240,7 +240,7 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="image"></param>
         private void FaceDetectionServiceImageChanged(object sender, Image<Bgr, byte> image)
         {
-            Frame = image.Bitmap;
+            //Frame = image.Bitmap;
         }
     }
 }

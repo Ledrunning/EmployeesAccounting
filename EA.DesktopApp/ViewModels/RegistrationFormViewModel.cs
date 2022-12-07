@@ -122,7 +122,7 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="image"></param>
         private void PhotoShootServiceImageChanged(object sender, Image<Bgr, byte> image)
         {
-            PhotoShootFrame = image.Bitmap;
+            //PhotoShootFrame = image.Bitmap;
             // New grayscale image for recognition
             PhotoShootGray = image.Convert<Gray, byte>().Resize(100, 100, INTER.CV_INTER_CUBIC);
         }
@@ -438,7 +438,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 var fileName = PersonName + " " + PersonLastName + "_" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") +
                                FileExtension;
-                PhotoShootGray.Resize(200, 200, INTER.CV_INTER_CUBIC).Save("Traineddata\\" + fileName);
+                //PhotoShootGray.Resize(200, 200, INTER.CV_INTER_CUBIC).Save("Traineddata\\" + fileName);
             }
             catch (Exception ex)
             {

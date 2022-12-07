@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.GPU;
 using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Services
@@ -16,23 +14,17 @@ namespace EA.DesktopApp.Services
 
         private const string EyeFileName = "haarcascade_eye.xml";
 
-        private readonly int EyeRectangleThickness = 2;
-
         /// <summary>
         ///     Detecting algorithm for Open CV using xml files
         /// </summary>
         private const string FaceFileName = "haarcascade_frontalface_default.xml";
+
+        private readonly int EyeRectangleThickness = 2;
         private readonly int FaceRectanglethickness = 2;
 
 
         private Tuple<List<Rectangle>, List<Rectangle>> faceAndEyes =
             new Tuple<List<Rectangle>, List<Rectangle>>(new List<Rectangle>(), new List<Rectangle>());
-
-        private List<Rectangle> faces = new List<Rectangle>();
-        private CascadeClassifier eye;
-
-        private CascadeClassifier face;
-        private MCvFont font = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
 
         /// <summary>
         ///     For haarcascade algorithm
@@ -118,7 +110,6 @@ namespace EA.DesktopApp.Services
             foreach (var f in faceAndEyes.Item1)
             {
                 image.Draw(f, new Bgr(Color.Red), FaceRectanglethickness);
-                //image.Draw(EmployeeData, ref font, new Point(f.X - 2, f.Y - 5), new Bgr(Color.Red));
 
                 foreach (var e in faceAndEyes.Item2)
                 {
@@ -148,119 +139,65 @@ namespace EA.DesktopApp.Services
 
         private void DetectFace(Image<Bgr, byte> image, List<Rectangle> faces)
         {
-#if !IOS
-            if (GpuInvoke.HasCuda)
+            using (var face = new CascadeClassifier(FaceFileName))
             {
-                using (var face = new GpuCascadeClassifier(FaceFileName))
+                using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
                 {
-                    using (var gpuImage = new GpuImage<Bgr, byte>(image))
-                    using (var gpuGray = gpuImage.Convert<Gray, byte>())
-                    {
-                        var faceRegion = face.DetectMultiScale(gpuGray, 1.1, 10, Size.Empty);
-                        faces.AddRange(faceRegion);
-                    }
-                }
-            }
-            else
-#endif
-            {
-                using (var face = new CascadeClassifier(FaceFileName))
-                {
-                    using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
-                    {
-                        //normalizes brightness and increases contrast of the image
-                        gray._EqualizeHist();
+                    //normalizes brightness and increases contrast of the image
+                    gray._EqualizeHist();
 
-                        //Detect the faces  from the gray scale image and store the locations as rectangle
-                        //The first dimensional is the channel
-                        //The second dimension is the index of the rectangle in the specific channel
-                        var facesDetected = face.DetectMultiScale(
-                            gray,
-                            1.1,
-                            10,
-                            new Size(20, 20),
-                            Size.Empty);
-                        faces.AddRange(facesDetected);
-                    }
+                    //Detect the faces  from the gray scale image and store the locations as rectangle
+                    //The first dimensional is the channel
+                    //The second dimension is the index of the rectangle in the specific channel
+                    var facesDetected = face.DetectMultiScale(
+                        gray,
+                        1.1,
+                        10,
+                        new Size(20, 20),
+                        Size.Empty);
+                    faces.AddRange(facesDetected);
                 }
             }
         }
 
         private void DetectFaceAndEyes(Image<Bgr, byte> image, List<Rectangle> faces, List<Rectangle> eyes)
         {
-#if !IOS
-            if (GpuInvoke.HasCuda)
+            using (var face = new CascadeClassifier(FaceFileName))
+            using (var eye = new CascadeClassifier(EyeFileName))
             {
-                using (var face = new GpuCascadeClassifier(FaceFileName))
-                using (var eye = new GpuCascadeClassifier(EyeFileName))
+                using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
                 {
-                    using (var gpuImage = new GpuImage<Bgr, byte>(image))
-                    using (var gpuGray = gpuImage.Convert<Gray, byte>())
-                    {
-                        var faceRegion = face.DetectMultiScale(gpuGray, 1.1, 10, Size.Empty);
-                        faces.AddRange(faceRegion);
-                        foreach (var f in faceRegion)
-                        {
-                            using (var faceImg = gpuGray.GetSubRect(f))
-                            {
-                                //For some reason a clone is required.
-                                //Might be a bug of GpuCascadeClassifier in opencv
-                                using (var clone = faceImg.Clone())
-                                {
-                                    var eyeRegion = eye.DetectMultiScale(clone, 1.1, 10, Size.Empty);
+                    //normalizes brightness and increases contrast of the image
+                    gray._EqualizeHist();
 
-                                    foreach (var e in eyeRegion)
-                                    {
-                                        var eyeRect = e;
-                                        eyeRect.Offset(f.X, f.Y);
-                                        eyes.Add(eyeRect);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-#endif
-            {
-                using (var face = new CascadeClassifier(FaceFileName))
-                using (var eye = new CascadeClassifier(EyeFileName))
-                {
-                    using (var gray = image.Convert<Gray, byte>()) //Convert it to Grayscale
-                    {
-                        //normalizes brightness and increases contrast of the image
-                        gray._EqualizeHist();
+                    //Detect the faces  from the gray scale image and store the locations as rectangle
+                    //The first dimensional is the channel
+                    //The second dimension is the index of the rectangle in the specific channel
+                    var facesDetected = face.DetectMultiScale(
+                        gray,
+                        1.1,
+                        10,
+                        new Size(20, 20),
+                        Size.Empty);
+                    faces.AddRange(facesDetected);
 
-                        //Detect the faces  from the gray scale image and store the locations as rectangle
-                        //The first dimensional is the channel
-                        //The second dimension is the index of the rectangle in the specific channel
-                        var facesDetected = face.DetectMultiScale(
+                    foreach (var f in facesDetected)
+                    {
+                        //Set the region of interest on the faces
+                        gray.ROI = f;
+                        var eyesDetected = eye.DetectMultiScale(
                             gray,
                             1.1,
                             10,
                             new Size(20, 20),
                             Size.Empty);
-                        faces.AddRange(facesDetected);
+                        gray.ROI = Rectangle.Empty;
 
-                        foreach (var f in facesDetected)
+                        foreach (var e in eyesDetected)
                         {
-                            //Set the region of interest on the faces
-                            gray.ROI = f;
-                            var eyesDetected = eye.DetectMultiScale(
-                                gray,
-                                1.1,
-                                10,
-                                new Size(20, 20),
-                                Size.Empty);
-                            gray.ROI = Rectangle.Empty;
-
-                            foreach (var e in eyesDetected)
-                            {
-                                var eyeRect = e;
-                                eyeRect.Offset(f.X, f.Y);
-                                eyes.Add(eyeRect);
-                            }
+                            var eyeRect = e;
+                            eyeRect.Offset(f.X, f.Y);
+                            eyes.Add(eyeRect);
                         }
                     }
                 }
