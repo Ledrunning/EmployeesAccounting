@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -24,9 +25,12 @@ namespace EA.DesktopApp.Services
     {
         public delegate void ImageChangedEventHndler(Image<Bgr, byte> image);
 
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private readonly VideoCapture videoCapture;
+        private CascadeClassifier eyeCascadeClassifier;
+        private CascadeClassifier faceCascadeClassifier;
         private BackgroundWorker webCamWorker;
-        private CascadeClassifier cascadeClassifier;
 
         /// <summary>
         ///     Capture stream from camera
@@ -39,22 +43,31 @@ namespace EA.DesktopApp.Services
             InitializeClassifier();
         }
 
+        public bool IsRunning => webCamWorker?.IsBusy ?? false;
+
         private void InitializeClassifier()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var path = Path.GetDirectoryName(assembly.Location);
+            try
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var path = Path.GetDirectoryName(assembly.Location);
 
-            if (path != null)
-            {
-                cascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
+                if (path != null)
+                {
+                    faceCascadeClassifier =
+                        new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
+                    eyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
+                }
+                else
+                {
+                    logger.Error("Could not find haarcascade xml file");
+                }
             }
-            else
+            catch (Exception e)
             {
-                //logger.Error("Could not find haarcascade xml file");
+                logger.Error(e, "Could not find clissifier files");
             }
         }
-
-        public bool IsRunning => webCamWorker?.IsBusy ?? false;
 
         public event ImageChangedEventHndler ImageChanged;
 
@@ -76,7 +89,7 @@ namespace EA.DesktopApp.Services
                 webCamWorker.CancelAsync();
             }
         }
-        
+
         /// <summary>
         ///     Method for background worker init
         /// </summary>
@@ -105,15 +118,27 @@ namespace EA.DesktopApp.Services
         private void DetectFaces(Image<Bgr, byte> image)
         {
             var grayFrame = image.Convert<Gray, byte>();
-            var faces = cascadeClassifier.DetectMultiScale(grayFrame,
-                1.1,
-                10,
-                Size.Empty); //the actual face detection happens here
+            var faces = GetRectangles(faceCascadeClassifier, grayFrame); 
+            var eyes = GetRectangles(eyeCascadeClassifier, grayFrame);
+
             foreach (var face in faces)
             {
-                image.Draw(face, new Bgr(Color.Aqua),
-                    2); //the detected face(s) is highlighted here using a box that is drawn around it/them
+                image.Draw(face, new Bgr(Color.Aqua), 2);
+
+                foreach (var eye in eyes)
+                {
+                    image.Draw(eye, new Bgr(Color.Aqua), 2);
+                }
             }
+        }
+
+        private static Rectangle[] GetRectangles(CascadeClassifier classifier, IOutputArrayOfArrays grayFrame)
+        {
+            var rectangles = classifier.DetectMultiScale(grayFrame,
+                1.1,
+                10,
+                Size.Empty);
+            return rectangles;
         }
     }
 }
