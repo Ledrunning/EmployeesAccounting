@@ -120,9 +120,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="image"></param>
-        private void PhotoShootServiceImageChanged(object sender, Image<Bgr, byte> image)
+        private void PhotoShootServiceImageChanged(Image<Bgr, byte> image)
         {
-            //PhotoShootFrame = image.Bitmap;
+            PhotoShootFrame = image.ToBitmap();
             // New grayscale image for recognition
             PhotoShootGray = image.Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
         }

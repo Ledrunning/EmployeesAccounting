@@ -61,17 +61,17 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Get start tooltip
         /// </summary>
-        public string GetStarted { get; } = StartDetectorTooltipMessage;
+        public string GetStarted => StartDetectorTooltipMessage;
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string GetPhoto { get; } = GetPhotoTooltipMessage;
+        public string GetPhoto => GetPhotoTooltipMessage;
 
         /// <summary>
         ///     Help tooltip message
         /// </summary>
-        public string GetHelpTooltip { get; } = HelpTooltipMessage;
+        public string GetHelpTooltip => HelpTooltipMessage;
 
         /// <summary>
         ///     Current date binding property
@@ -79,11 +79,7 @@ namespace EA.DesktopApp.ViewModels
         public string CurrentTimeDate
         {
             get => currentTaimeDate;
-            set
-            {
-                currentTaimeDate = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref currentTaimeDate, value);
         }
 
         /// <summary>
@@ -142,6 +138,7 @@ namespace EA.DesktopApp.ViewModels
             logger.Info("Initialize of all services.....");
             photoShootService = new PhotoShootService();
             faceDetectionService = new FaceDetectionService();
+            faceDetectionService.ImageChanged += OnImageChanged;
         }
 
         /// <summary>
@@ -233,9 +230,8 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Draw the bitmap on control
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="image"></param>
-        private void FaceDetectionServiceImageChanged(object sender, Image<Bgr, byte> image)
+        private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
         }

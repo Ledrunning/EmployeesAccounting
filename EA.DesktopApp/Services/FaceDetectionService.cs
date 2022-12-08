@@ -22,7 +22,7 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService
     {
-        public delegate void ImageChangedEventHndler(object sender, Image<Bgr, byte> image);
+        public delegate void ImageChangedEventHndler(Image<Bgr, byte> image);
 
         private readonly VideoCapture videoCapture;
         private BackgroundWorker webCamWorker;
@@ -98,6 +98,7 @@ namespace EA.DesktopApp.Services
             {
                 var image = videoCapture.QueryFrame().ToImage<Bgr, byte>();
                 DetectFaces(image);
+                ImageChanged?.Invoke(image);
             }
         }
 

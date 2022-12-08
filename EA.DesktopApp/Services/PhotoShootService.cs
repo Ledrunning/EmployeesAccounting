@@ -10,7 +10,7 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class PhotoShootService : FaceDetectionService
     {
-        public delegate void ImageWithDetectionChangedEventHandler(object sender, Image<Bgr, byte> image);
+        public delegate void ImageWithDetectionChangedEventHandler(Image<Bgr, byte> image);
 
         /// <summary>
         ///     Init for face detection method
@@ -38,7 +38,7 @@ namespace EA.DesktopApp.Services
         {
             try
             {
-                ImageWithDetectionChanged?.Invoke(this, image);
+                ImageWithDetectionChanged?.Invoke(image);
             }
             catch (Exception e)
             {
@@ -51,7 +51,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="image"></param>
-        private void WebCamServiceImageChanged(object sender, Image<Bgr, byte> image)
+        private void WebCamServiceImageChanged(Image<Bgr, byte> image)
         {
             RaiseImageWithDetectionChangedEvent(image);
         }
