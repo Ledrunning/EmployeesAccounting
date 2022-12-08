@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using EA.DesktopApp.Constants;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using NLog;
@@ -10,14 +11,11 @@ using NLog;
 namespace EA.DesktopApp.Services
 {
     /// <summary>
-    ///     Class for camera call and async background works
-    ///     EMGU version 2.4.2.1777
+    ///     Class for camera calls face and eyes detection
+    ///     EMGU version 4.6.0.5131
     ///     Libs:
     ///     1.Emgu.CV
-    ///     2.Emgu.CV.GPU
-    ///     3.Emgu.CV.ML
-    ///     4.Emgu.CV.UI
-    ///     5.Emgu.Util
+    ///     2.Emgu.CV.Bitmap
     ///     6.nvcuda.dll needed if have not Nvidia GPU on computer
     ///     All libs must to be copied into the bin folder
     /// </summary>
@@ -84,10 +82,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void CancelServiceAsync()
         {
-            if (webCamWorker != null)
-            {
-                webCamWorker.CancelAsync();
-            }
+            webCamWorker?.CancelAsync();
         }
 
         /// <summary>
@@ -118,25 +113,27 @@ namespace EA.DesktopApp.Services
         private void DetectFaces(Image<Bgr, byte> image)
         {
             var grayFrame = image.Convert<Gray, byte>();
-            var faces = GetRectangles(faceCascadeClassifier, grayFrame); 
+            var faces = GetRectangles(faceCascadeClassifier, grayFrame);
             var eyes = GetRectangles(eyeCascadeClassifier, grayFrame);
 
             foreach (var face in faces)
             {
-                image.Draw(face, new Bgr(Color.Aqua), 2);
+                image.Draw(face, ImageProcessingConstants.RectanglesColor,
+                    ImageProcessingConstants.RectangleThickness);
 
                 foreach (var eye in eyes)
                 {
-                    image.Draw(eye, new Bgr(Color.Aqua), 2);
+                    image.Draw(eye, ImageProcessingConstants.RectanglesColor,
+                        ImageProcessingConstants.RectangleThickness);
                 }
             }
         }
 
-        private static Rectangle[] GetRectangles(CascadeClassifier classifier, IOutputArrayOfArrays grayFrame)
+        private static Rectangle[] GetRectangles(CascadeClassifier classifier, IInputArray grayFrame)
         {
             var rectangles = classifier.DetectMultiScale(grayFrame,
-                1.1,
-                10,
+                ImageProcessingConstants.ScaleFactor,
+                ImageProcessingConstants.MinimumNeighbors,
                 Size.Empty);
             return rectangles;
         }

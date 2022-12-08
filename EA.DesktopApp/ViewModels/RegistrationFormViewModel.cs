@@ -118,7 +118,6 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Event handler for image changing
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="image"></param>
         private void PhotoShootServiceImageChanged(Image<Bgr, byte> image)
         {

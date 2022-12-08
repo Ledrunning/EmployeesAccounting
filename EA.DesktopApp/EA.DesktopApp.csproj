@@ -145,6 +145,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Constants\ImageProcessingConstants.cs" />
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="Services\DialogService.cs" />

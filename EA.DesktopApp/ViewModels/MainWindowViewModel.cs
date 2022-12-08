@@ -88,11 +88,7 @@ namespace EA.DesktopApp.ViewModels
         public bool IsStreaming
         {
             get => isStreaming;
-            set
-            {
-                isStreaming = value;
-                SetField(ref isStreaming, value);
-            }
+            set => SetField(ref isStreaming, value);
         }
 
         /// <summary>
