@@ -38,7 +38,7 @@ namespace EA.DesktopApp.ViewModels
         private bool isRunning;
 
         private bool isStreaming;
-        private PasswordWindow loginForm;
+        private LoginWindow loginForm;
         private PhotoShootService photoShootService;
         private RegistrationForm registrationFormPage;
         private SoundPlayerService soundPlayerHelper;
@@ -173,7 +173,7 @@ namespace EA.DesktopApp.ViewModels
 
             if (loginForm == null || loginForm.IsClosed)
             {
-                loginForm = new PasswordWindow();
+                loginForm = new LoginWindow();
                 var loginFormViewModel = new LoginFormViewModel(loginForm);
 
                 loginForm.DataContext = loginFormViewModel;

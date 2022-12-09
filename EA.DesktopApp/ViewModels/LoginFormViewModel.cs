@@ -10,7 +10,7 @@ namespace EA.DesktopApp.ViewModels
 {
     public class LoginFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private readonly PasswordWindow passwordWindow;
+        private readonly LoginWindow loginWindow;
         private bool isReady;
         private bool isRunning;
         private RegistrationForm registrationFormPage;
@@ -26,9 +26,9 @@ namespace EA.DesktopApp.ViewModels
             InitializeCommands();
         }
 
-        public LoginFormViewModel(PasswordWindow passwordWindow)
+        public LoginFormViewModel(LoginWindow loginWindow)
         {
-            this.passwordWindow = passwordWindow;
+            this.loginWindow = loginWindow;
             InitializeCommands();
         }
 
@@ -105,8 +105,7 @@ namespace EA.DesktopApp.ViewModels
                         {
                             error = "Введите логин!";
                         }
-
-                        if (LoginField.Contains(" "))
+                        else if (LoginField.Contains(" "))
                         {
                             error = "Пароль не может содержать пробел";
                         }
@@ -118,8 +117,7 @@ namespace EA.DesktopApp.ViewModels
                         {
                             error = "Введите пароль!";
                         }
-
-                        if (PasswordField.Contains(" "))
+                        else if (PasswordField.Contains(" "))
                         {
                             error = "Пароль не может содержать пробел";
                         }
@@ -138,12 +136,12 @@ namespace EA.DesktopApp.ViewModels
 
         private void InitializeCommands()
         {
-            LoginCommand = new RelayCommand(ToogleLoginExecute);
-            CancelCommand = new RelayCommand(ToogleCancelExecute);
-            AdminModeCommand = new RelayCommand(ToogleAdminWindowShowExecute);
+            LoginCommand = new RelayCommand(ToggleLoginExecute);
+            CancelCommand = new RelayCommand(ToggleCancelExecute);
+            AdminModeCommand = new RelayCommand(ToggleAdminWindowShowExecute);
         }
 
-        private void ToogleLoginExecute()
+        private void ToggleLoginExecute()
         {
             // Playing sound effect for button
             soundPlayerHelper = new SoundPlayerService();
@@ -151,19 +149,23 @@ namespace EA.DesktopApp.ViewModels
 
             // True - button is pushed - Working!
             IsRunning = false;
-            if (registrationFormPage == null || registrationFormPage.IsClosed)
+            if (registrationFormPage != null && !registrationFormPage.IsClosed)
             {
-                var registrationFormViewModel = new RegistrationFormViewModel();
-
-                registrationFormPage = new RegistrationForm(IsRunning);
-                registrationFormPage.DataContext = registrationFormViewModel;
-                registrationFormPage.Owner = Application.Current.MainWindow;
-
-                //_registrationFormPage.Show();
-                //IsStreaming = false;
-                //_faceDetectionService.CancelServiceAsync();
-                registrationFormPage.ShowDialog();
+                return;
             }
+
+            var registrationFormViewModel = new RegistrationFormViewModel();
+
+            registrationFormPage = new RegistrationForm(IsRunning)
+            {
+                DataContext = registrationFormViewModel,
+                Owner = Application.Current.MainWindow
+            };
+
+            //_registrationFormPage.Show();
+            //IsStreaming = false;
+            //_faceDetectionService.CancelServiceAsync();
+            registrationFormPage.ShowDialog();
 
             //if (!_faceDetectionService.IsRunning)
             //{
@@ -172,7 +174,7 @@ namespace EA.DesktopApp.ViewModels
             //}
         }
 
-        private void ToogleCancelExecute()
+        private void ToggleCancelExecute()
         {
             soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound("button");
@@ -181,7 +183,7 @@ namespace EA.DesktopApp.ViewModels
             PasswordField = string.Empty;
         }
 
-        private void ToogleAdminWindowShowExecute()
+        private void ToggleAdminWindowShowExecute()
         {
             soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound("button");
@@ -192,7 +194,7 @@ namespace EA.DesktopApp.ViewModels
 
         public void ShowWindow()
         {
-            passwordWindow.ShowDialog();
+            loginWindow.ShowDialog();
         }
     }
 }

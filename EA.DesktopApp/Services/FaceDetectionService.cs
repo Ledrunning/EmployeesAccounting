@@ -8,7 +8,6 @@ using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using NLog;
-using static EA.DesktopApp.Event.ImageEvent;
 
 namespace EA.DesktopApp.Services
 {

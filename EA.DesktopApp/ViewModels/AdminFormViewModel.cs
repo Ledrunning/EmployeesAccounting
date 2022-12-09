@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    class AdminFormViewModel : BaseViewModel, IDataErrorInfo
+    internal class AdminFormViewModel : BaseViewModel, IDataErrorInfo
     {
         private bool isReady;
         private bool isRunning;
-        private string userMessage;
 
         private string loginValue;
+        private string oldPasswordValue;
 
         private string passwordValue;
-        private string oldPasswordValue;
+        private string userMessage;
+
+        public AdminFormViewModel()
+        {
+            InitializeCommands();
+        }
 
         public string Registration { get; } = "Нажмите для регистрации";
         public string ClearFields { get; } = "Нажмите для очистки полей";
@@ -111,17 +111,38 @@ namespace EA.DesktopApp.ViewModels
                 switch (columnName)
                 {
                     case "LoginField":
-                        if (string.IsNullOrEmpty(LoginField)) error = "Введите логин!";
-                        if (LoginField.Contains(" ")) error = "Логин не может содержать пробел";
+                        if (string.IsNullOrEmpty(LoginField))
+                        {
+                            error = "Введите логин!";
+                        }
+                        else if (LoginField.Contains(" "))
+                        {
+                            error = "Логин не может содержать пробел";
+                        }
+
                         break;
 
                     case "PasswordField":
-                        if (string.IsNullOrEmpty(PasswordField)) error = "Введите пароль!";
-                        if(PasswordField.Contains(" ")) error = "Пароль не может содержать пробел";
+                        if (string.IsNullOrEmpty(PasswordField))
+                        {
+                            error = "Введите пароль!";
+                        }
+                        else if (PasswordField.Contains(" "))
+                        {
+                            error = "Пароль не может содержать пробел";
+                        }
+
                         break;
                     case "OldPasswordField":
-                        if (string.IsNullOrEmpty(PasswordField)) error = "Введите старый пароль!";
-                        if(OldPasswordField.Contains(" ")) error = "Пароль не может содержать пробел";
+                        if (string.IsNullOrEmpty(PasswordField))
+                        {
+                            error = "Введите старый пароль!";
+                        }
+                        else if (OldPasswordField.Contains(" "))
+                        {
+                            error = "Пароль не может содержать пробел";
+                        }
+
                         break;
                 }
 
@@ -134,23 +155,17 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string Error => "Введите данные!";
 
-        public AdminFormViewModel()
-        {
-            InitializeCommands();
-        }
-
         private void InitializeCommands()
         {
-            ClearFieldsCommand = new RelayCommand(ToogleClearFieldsExecute);
-            RegistrationCommand = new RelayCommand(ToogleRegistrationExecute);
+            ClearFieldsCommand = new RelayCommand(ToggleClearFieldsExecute);
+            RegistrationCommand = new RelayCommand(ToggleRegistrationExecute);
         }
 
-        private void ToogleRegistrationExecute()
+        private void ToggleRegistrationExecute()
         {
-
         }
 
-        private void ToogleClearFieldsExecute()
+        private void ToggleClearFieldsExecute()
         {
             var soundHelper = new SoundPlayerService();
             soundHelper.PlaySound("button");

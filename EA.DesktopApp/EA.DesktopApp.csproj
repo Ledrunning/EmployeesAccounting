@@ -181,8 +181,8 @@
     <Compile Include="View\RedactorForm.xaml.cs">
       <DependentUpon>RedactorForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\PasswordWindow.xaml.cs">
-      <DependentUpon>PasswordWindow.xaml</DependentUpon>
+    <Compile Include="View\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RegistrationForm.xaml.cs">
       <DependentUpon>RegistrationForm.xaml</DependentUpon>
@@ -311,7 +311,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\PasswordWindow.xaml">
+    <Page Include="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

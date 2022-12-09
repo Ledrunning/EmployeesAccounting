@@ -100,8 +100,8 @@ namespace EA.DesktopApp.ViewModels
             photoShootService = new PhotoShootService();
             // Run image capture from WebCam
             photoShootService.RunServiceAsync();
-            photoShootService.ImageWithDetectionChanged -= PhotoShootServiceImageChanged;
-            photoShootService.ImageWithDetectionChanged += PhotoShootServiceImageChanged;
+            photoShootService.ImageChanged -= PhotoShootServiceImageChanged;
+            photoShootService.ImageChanged += PhotoShootServiceImageChanged;
         }
 
         /// <summary>
