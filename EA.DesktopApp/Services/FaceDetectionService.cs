@@ -4,9 +4,11 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using EA.DesktopApp.Constants;
+using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using NLog;
+using static EA.DesktopApp.Event.ImageEvent;
 
 namespace EA.DesktopApp.Services
 {
@@ -21,8 +23,6 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService
     {
-        public delegate void ImageChangedEventHndler(Image<Bgr, byte> image);
-
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private readonly VideoCapture videoCapture;
@@ -67,7 +67,7 @@ namespace EA.DesktopApp.Services
             }
         }
 
-        public event ImageChangedEventHndler ImageChanged;
+        public event ImageChangedEventHandler ImageChanged;
 
         /// <summary>
         ///     Async method for background work

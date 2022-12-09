@@ -28,11 +28,12 @@ namespace EA.DesktopApp.ViewModels
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-        private string currentTaimeDate;
+        private string currentTimeDate;
 
         private WebServerApi dataStorage;
         private FaceDetectionService faceDetectionService;
         private Bitmap frame;
+        private readonly ModalWindowViewModel modalWindow = new ModalWindowViewModel();
 
         private bool isRunning;
 
@@ -78,12 +79,12 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string CurrentTimeDate
         {
-            get => currentTaimeDate;
-            set => SetField(ref currentTaimeDate, value);
+            get => currentTimeDate;
+            set => SetField(ref currentTimeDate, value);
         }
 
         /// <summary>
-        ///     Start webCam service button toogle
+        ///     Start webCam service button toggle
         /// </summary>
         public bool IsStreaming
         {
@@ -92,7 +93,7 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Start webCam service button toogle
+        ///     Start webCam service button toggle
         /// </summary>
         public bool IsRunning
         {
@@ -193,11 +194,21 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Execute method for relay command
+        ///     Execute method for relay command TODO: file does not exist
+        ///     TODO and will fix modal window NRE exception 
         /// </summary>
-        private void ToogleHelpServiceExecute()
+        private void ToggleHelpServiceExecute()
         {
-            Process.Start(@"Help\intro.html");
+            try
+            {
+                Process.Start(@"Help\intro.html");
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "An error occuried in opening Help file!");
+                modalWindow.SetMessage("An error occuried in opening Help file!");
+                modalWindow.ShowWindow();
+            }
         }
 
         /// <summary>
@@ -207,7 +218,7 @@ namespace EA.DesktopApp.ViewModels
         {
             ToggleWebServiceCommand = new RelayCommand(ToggleWebServiceExecute);
             TogglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
-            ToggleHelpCallCommand = new RelayCommand(ToogleHelpServiceExecute);
+            ToggleHelpCallCommand = new RelayCommand(ToggleHelpServiceExecute);
         }
 
         /// <summary>

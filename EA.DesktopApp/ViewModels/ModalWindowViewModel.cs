@@ -45,7 +45,6 @@ namespace EA.DesktopApp.ViewModels
             set
             {
                 warningText = value;
-                // From INotifyPropertyChanged
                 SetField(ref warningText, value);
             }
         }
@@ -56,7 +55,7 @@ namespace EA.DesktopApp.ViewModels
         public ICommand ToggleOkButtonCommand
         {
             get => toggleOkButtonCommand;
-            set { }
+            set => toggleOkButtonCommand = value;
         }
 
         /// <summary>
