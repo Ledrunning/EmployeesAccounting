@@ -4,7 +4,7 @@
         xmlns:viewModels="clr-namespace:EA.DesktopApp.ViewModels"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
-        Title="Ffinder" Height="300" Width="535" MinHeight="300" MaxHeight="200" MinWidth="535"
+        Title="Employees Accounting" Height="300" Width="535" MinHeight="300" MaxHeight="200" MinWidth="535"
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
@@ -27,8 +27,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
-                    <!--<Setter Property="Background" Value="Red"/>-->
-                    <Setter Property="ToolTip"
+                <Setter Property="ToolTip"
                             Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)[0].ErrorContent}" />
                 </Trigger>
             </Style.Triggers>
@@ -57,7 +56,7 @@
                     <!-- Triggered values -->
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Регистрация" />
+                            <Setter Property="Content" Value="Registration" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -89,9 +88,9 @@
         </TextBox>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" HorizontalAlignment="Left"
-                   Margin="36,58,0,0" TextWrapping="Wrap" Text="Логин" VerticalAlignment="Top" Height="30" Width="77" />
+                   Margin="36,58,0,0" TextWrapping="Wrap" Text="Login" VerticalAlignment="Top" Height="30" Width="77" />
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" HorizontalAlignment="Left"
-                   Margin="36,105,0,0" TextWrapping="Wrap" Text="Старый пароль" VerticalAlignment="Top" Height="40"
+                   Margin="36,105,0,0" TextWrapping="Wrap" Text="Old password" VerticalAlignment="Top" Height="40"
                    Width="77" />
         <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,162,30,22">
             <TextBox.Text>
@@ -103,7 +102,7 @@
             </TextBox.Text>
         </TextBox>
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" HorizontalAlignment="Left"
-                   Margin="36,162,0,0" TextWrapping="Wrap" Text="Новый пароль" VerticalAlignment="Top" Height="40"
+                   Margin="36,162,0,0" TextWrapping="Wrap" Text="New password" VerticalAlignment="Top" Height="40"
                    Width="77" />
         <StackPanel HorizontalAlignment="Left" Height="45" Margin="138,0,0,0" Grid.Row="1" Grid.Column="0"
                     VerticalAlignment="Top" Width="100"/>
@@ -120,11 +119,11 @@
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Foreground" Value="White" />
                         <Setter Property="BorderThickness" Value="1" />
-                        <!--<Setter Property="BorderBrush" Value="Black"/>-->
+
                         <!-- Triggered values -->
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsReady}" Value="False">
-                                <Setter Property="Content" Value="Очистить" />
+                                <Setter Property="Content" Value="Clear" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

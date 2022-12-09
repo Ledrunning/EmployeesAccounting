@@ -4,7 +4,7 @@
         xmlns:viewModels="clr-namespace:EA.DesktopApp.ViewModels"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
-        Title="Ffinder" Height="300" Width="535" MinHeight="300" MaxHeight="200" MinWidth="535"
+        Title="Employees Accounting" Height="300" Width="535" MinHeight="300" MaxHeight="200" MinWidth="535"
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
@@ -70,20 +70,20 @@
 
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                    HorizontalAlignment="Left"
-                   Margin="36,120,0,0" TextWrapping="Wrap" Text="Логин" VerticalAlignment="Top" Height="30" Width="77" />
+                   Margin="36,120,0,0" TextWrapping="Wrap" Text="Login" VerticalAlignment="Top" Height="30" Width="77" />
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                    HorizontalAlignment="Left"
-                   Margin="36,179,0,0" TextWrapping="Wrap" Text="Пароль" VerticalAlignment="Top" Height="30" Width="77" />
+                   Margin="36,179,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Height="30" Width="77" />
 
         <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Height="72" HorizontalAlignment="Center"
                    Margin="24,20,0,0" x:Name="textBlockHeading" VerticalAlignment="Top" FontSize="12" Padding="5"
                    Width="386">
-            <Run Text="Внимание: Пожалуйста зарегистрируйтесь, " /><LineBreak />
-            <Run Text="если вы впервые используете редактирование" /><LineBreak /><LineBreak />
+            <Run Text="Attention: If you are using edit form for the first time" /><LineBreak />
+            <Run Text="Please register first!" /><LineBreak /><LineBreak />
             <InlineUIContainer>
                 <TextBlock>
                     <Hyperlink Command="{Binding AdminModeCommand}" FontSize="14" FontStyle="Normal">
-                        <Run Text="РЕГИСТРАЦИЯ" />
+                        <Run Text="REGISTRATION" />
                     </Hyperlink>
                 </TextBlock>
             </InlineUIContainer>
@@ -102,7 +102,7 @@
                             <!-- Triggered values -->
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsReady}" Value="False">
-                                    <Setter Property="Content" Value="Очистить" />
+                                    <Setter Property="Content" Value="Clear" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -123,7 +123,7 @@
                             <!-- Triggered values -->
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsReady}" Value="False">
-                                    <Setter Property="Content" Value="Войти" />
+                                    <Setter Property="Content" Value="Sign in" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

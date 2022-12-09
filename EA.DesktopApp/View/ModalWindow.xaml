@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:EA.DesktopApp.ViewModels"
         xmlns:converters="clr-namespace:EA.DesktopApp.Converters"
         Background="{StaticResource BackgroundKey}"
-        Title="Внимание!" TextBlock.TextAlignment="Center" Height="220" Width="250"  
+        Title="Caution!" TextBlock.TextAlignment="Center" Height="220" Width="250"  
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
