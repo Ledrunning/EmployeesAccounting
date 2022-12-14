@@ -8,22 +8,22 @@ namespace EA.DesktopApp.ViewModels
 {
     internal class AdminFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private bool isReady;
-        private bool isRunning;
+        private bool _isReady;
+        private bool _isRunning;
 
-        private string loginValue;
-        private string oldPasswordValue;
+        private string _loginValue;
+        private string _oldPasswordValue;
 
-        private string passwordValue;
-        private string userMessage;
+        private string _passwordValue;
+        private string _userMessage;
 
         public AdminFormViewModel()
         {
             InitializeCommands();
         }
 
-        public string Registration { get; } = "Нажмите для регистрации";
-        public string ClearFields { get; } = "Нажмите для очистки полей";
+        public string Registration => "Нажмите для регистрации";
+        public string ClearFields => "Нажмите для очистки полей";
 
         public ICommand ClearFieldsCommand { get; set; }
         public ICommand RegistrationCommand { get; set; }
@@ -33,10 +33,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsRunning
         {
-            get => isRunning;
+            get => _isRunning;
             set
             {
-                isRunning = value;
+                _isRunning = value;
                 OnPropertyChanged();
             }
         }
@@ -46,20 +46,20 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsReady
         {
-            get => isReady;
+            get => _isReady;
             set
             {
-                isReady = value;
+                _isReady = value;
                 OnPropertyChanged();
             }
         }
 
         public string UserMessage
         {
-            get => userMessage;
+            get => _userMessage;
             set
             {
-                userMessage = value;
+                _userMessage = value;
                 OnPropertyChanged();
             }
         }
@@ -67,10 +67,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string LoginField
         {
-            get => loginValue;
+            get => _loginValue;
             set
             {
-                loginValue = value;
+                _loginValue = value;
                 OnPropertyChanged();
             }
         }
@@ -78,10 +78,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
-            get => passwordValue;
+            get => _passwordValue;
             set
             {
-                passwordValue = value;
+                _passwordValue = value;
                 OnPropertyChanged();
             }
         }
@@ -89,10 +89,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string OldPasswordField
         {
-            get => oldPasswordValue;
+            get => _oldPasswordValue;
             set
             {
-                oldPasswordValue = value;
+                _oldPasswordValue = value;
                 OnPropertyChanged();
             }
         }

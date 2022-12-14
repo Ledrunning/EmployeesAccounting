@@ -28,29 +28,29 @@ namespace EA.DesktopApp.ViewModels
 
         private const int PhotoWidth = 500;
 
-        private static readonly string trainerDataPath = Path.GetDirectoryName(
-                                                             Assembly.GetExecutingAssembly().Location) +
-                                                         "\\Traineddata";
-
         /// <summary>
         ///     Readonly fields
         /// </summary>
-        private readonly string FileExtension = ".jpg";
+        private const string FileExtension = ".jpg";
 
-        private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+        private static readonly string TrainerDataPath = Path.GetDirectoryName(
+                                                             Assembly.GetExecutingAssembly().Location) +
+                                                         "\\Traineddata";
 
-        private bool isReady;
-        private ModalWindowViewModel modalView;
-        private ModalWindow modalWindow;
+        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+
+        private bool _isReady;
+        private ModalWindowViewModel _modalView;
+        private ModalWindow _modalWindow;
 
         /// <summary>
         ///     PhotoShoot Service needed
         /// </summary>
-        private PhotoShootService photoShootService;
+        private PhotoShootService _photoShootService;
 
-        private SoundPlayerService soundPlayerHelper;
+        private SoundPlayerService _soundPlayerHelper;
 
-        private bool takePhotoflag;
+        private bool _takePhotoFlag;
 
         /// <summary>
         ///     .ctor
@@ -67,19 +67,19 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsReady
         {
-            get => isReady;
+            get => _isReady;
             set
             {
-                isReady = value;
+                _isReady = value;
                 OnPropertyChanged();
             }
         }
 
-        private void CreateFolder()
+        private static void CreateFolder()
         {
             try
             {
-                if (!Directory.Exists(trainerDataPath))
+                if (!Directory.Exists(TrainerDataPath))
                 {
                     Directory.CreateDirectory("Traineddata");
                 }
@@ -97,11 +97,11 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeServices()
         {
-            photoShootService = new PhotoShootService();
+            _photoShootService = new PhotoShootService();
             // Run image capture from WebCam
-            photoShootService.RunServiceAsync();
-            photoShootService.ImageChanged -= PhotoShootServiceImageChanged;
-            photoShootService.ImageChanged += PhotoShootServiceImageChanged;
+            _photoShootService.RunServiceAsync();
+            _photoShootService.ImageChanged -= OnImageChanged;
+            _photoShootService.ImageChanged += OnImageChanged;
         }
 
         /// <summary>
@@ -109,17 +109,17 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            toggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
+            _toggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
             //_toggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
-            toggleSavePhotoCommand = new RelayCommand(ToggleSaveFaceExecute);
-            toggleAddToDbCommand = new RelayCommand(ToogleAddImageToDataBase);
+            _toggleSavePhotoCommand = new RelayCommand(ToggleSaveFaceExecute);
+            _toggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
         /// <summary>
         ///     Event handler for image changing
         /// </summary>
         /// <param name="image"></param>
-        private void PhotoShootServiceImageChanged(Image<Bgr, byte> image)
+        private void OnImageChanged(Image<Bgr, byte> image)
         {
             PhotoShootFrame = image.ToBitmap();
             // New grayscale image for recognition
@@ -235,90 +235,90 @@ namespace EA.DesktopApp.ViewModels
 
         #region Image fields
 
-        private Bitmap grayScaleImage;
+        private Bitmap _grayScaleImage;
 
         /// <summary>
         ///     Get bitmap from frame
         /// </summary>
         public Bitmap GrayScaleImage
         {
-            get => grayScaleImage;
+            get => _grayScaleImage;
 
-            set => SetField(ref grayScaleImage, value);
+            set => SetField(ref _grayScaleImage, value);
         }
 
-        private Bitmap photoShootFrame;
+        private Bitmap _photoShootFrame;
 
         /// <summary>
         ///     Get bitmap from frame
         /// </summary>
         public Bitmap PhotoShootFrame
         {
-            get => photoShootFrame;
+            get => _photoShootFrame;
 
-            set => SetField(ref photoShootFrame, value);
+            set => SetField(ref _photoShootFrame, value);
         }
 
-        private Image<Gray, byte> photoShootGray;
+        private Image<Gray, byte> _photoShootGray;
 
         /// <summary>
         ///     Get bitmap from frame
         /// </summary>
         public Image<Gray, byte> PhotoShootGray
         {
-            get => photoShootGray;
+            get => _photoShootGray;
 
-            set => SetField(ref photoShootGray, value);
+            set => SetField(ref _photoShootGray, value);
         }
 
         #endregion Image fields
 
         #region Command properties
 
-        private ICommand toggleCameraCaptureCommand;
+        private ICommand _toggleCameraCaptureCommand;
 
         /// <summary>
         ///     Toogle to photoshoot command
         /// </summary>
         public ICommand ToggleCameraCaptureCommand
         {
-            get => toggleCameraCaptureCommand;
+            get => _toggleCameraCaptureCommand;
 
             private set { }
         }
 
-        private ICommand toggleSavePhotoCommand;
+        private ICommand _toggleSavePhotoCommand;
 
         /// <summary>
         ///     Toogle to photoshoot save by open file dialog
         /// </summary>
         public ICommand ToggSavePhotoCommand
         {
-            get => toggleSavePhotoCommand;
+            get => _toggleSavePhotoCommand;
 
             private set { }
         }
 
-        private ICommand toggleAddToDbCommand;
+        private ICommand _toggleAddToDbCommand;
 
         /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
         public ICommand ToggleAddToDbCommand
         {
-            get => toggleAddToDbCommand;
+            get => _toggleAddToDbCommand;
 
             private set { }
         }
 
-        private ICommand toogleEditFormCommand;
+        private ICommand _toogleEditFormCommand;
 
         /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
         public ICommand ToggleEditFormCommand
         {
-            get => toogleEditFormCommand;
+            get => _toogleEditFormCommand;
 
             private set { }
         }
@@ -330,14 +330,14 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Send image to Data base
         /// </summary>
-        private void ToogleAddImageToDataBase()
+        private void ToggleAddImageToDataBase()
         {
-            modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalWindowViewModel(new ModalWindow());
             //_modalView.ShowWindow();
 
-            soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper = new SoundPlayerService();
 
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper.PlaySound("button");
 
             var picture = PhotoShootGray.Bytes;
 
@@ -358,28 +358,28 @@ namespace EA.DesktopApp.ViewModels
             if (person.Name == null || person.LastName == null
                                     || person.Department == null)
             {
-                modalView.SetMessage("Введите данные!");
-                modalView.ShowWindow();
+                _modalView.SetMessage("Введите данные!");
+                _modalView.ShowWindow();
             }
             else
             {
                 try
                 {
-                    var client = new WebServerApi(urlAddress);
+                    var client = new WebServerApi(_urlAddress);
 
                     client.AddPerson(person);
-                    modalView.SetMessage("Данные успешно загружены в базу данных.");
-                    modalView.ShowWindow();
+                    _modalView.SetMessage("Данные успешно загружены в базу данных.");
+                    _modalView.ShowWindow();
                 }
                 catch (CommunicationException err)
                 {
-                    modalView.SetMessage("Ошибка связи с базой данных!");
-                    modalView.ShowWindow();
+                    _modalView.SetMessage("Ошибка связи с базой данных!");
+                    _modalView.ShowWindow();
                 }
                 catch (Exception err)
                 {
-                    modalView.SetMessage("Ошибка связи с базой данных!");
-                    modalView.ShowWindow();
+                    _modalView.SetMessage("Ошибка связи с базой данных!");
+                    _modalView.ShowWindow();
                 }
             }
         }
@@ -389,13 +389,13 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void ToggleGetImageExecute()
         {
-            soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper = new SoundPlayerService();
 
-            soundPlayerHelper.PlaySound("camera");
+            _soundPlayerHelper.PlaySound("camera");
 
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
-            takePhotoflag = true;
+            _takePhotoFlag = true;
         }
 
         /// <summary>
@@ -405,12 +405,12 @@ namespace EA.DesktopApp.ViewModels
         {
             var dialogService = new DialogService();
 
-            modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalWindowViewModel(new ModalWindow());
 
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
-            if (takePhotoflag)
+            if (_takePhotoFlag)
             {
                 if (dialogService.SaveFileDialog())
                 {
@@ -419,19 +419,19 @@ namespace EA.DesktopApp.ViewModels
                     PhotoShootFrame.Save($"{dialogService.FilePath}{FileExtension}", ImageFormat.Jpeg);
                 }
 
-                takePhotoflag = false;
+                _takePhotoFlag = false;
             }
             else
             {
-                modalView.SetMessage("Фото не сделано!");
-                modalView.ShowWindow();
+                _modalView.SetMessage("Фото не сделано!");
+                _modalView.ShowWindow();
             }
         }
 
         //Тестовый 
         public void ToggleSaveFaceExecute()
         {
-            modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalWindowViewModel(new ModalWindow());
 
             try
             {
@@ -441,8 +441,8 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception ex)
             {
-                modalView.SetMessage("Ошибка сохранения файла");
-                modalView.ShowWindow();
+                _modalView.SetMessage("Ошибка сохранения файла");
+                _modalView.ShowWindow();
             }
         }
 

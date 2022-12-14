@@ -8,12 +8,12 @@ namespace EA.DesktopApp.ViewModels
 {
     internal class ModalWindowViewModel : BaseViewModel
     {
-        private readonly ModalWindow modalWindow;
-        private RegistrationForm registrationForm;
+        private readonly ModalWindow _modalWindow;
+        private RegistrationForm _registrationForm;
 
-        private ICommand toggleOkButtonCommand;
+        private ICommand _toggleOkButtonCommand;
 
-        private string warningText;
+        private string _warningText;
 
         //private ModalWindow _modelWindow;
 
@@ -31,7 +31,7 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="modalWindow"></param>
         public ModalWindowViewModel(ModalWindow modalWindow)
         {
-            this.modalWindow = modalWindow;
+            this._modalWindow = modalWindow;
             InitializeCommands();
         }
 
@@ -41,11 +41,11 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string WarningText
         {
-            get => warningText;
+            get => _warningText;
             set
             {
-                warningText = value;
-                SetField(ref warningText, value);
+                _warningText = value;
+                SetField(ref _warningText, value);
             }
         }
 
@@ -54,8 +54,8 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public ICommand ToggleOkButtonCommand
         {
-            get => toggleOkButtonCommand;
-            set => toggleOkButtonCommand = value;
+            get => _toggleOkButtonCommand;
+            set => _toggleOkButtonCommand = value;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            toggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
+            _toggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace EA.DesktopApp.ViewModels
         {
             var soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound("button");
-            modalWindow.Close();
+            _modalWindow.Close();
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public void ShowWindow()
         {
-            modalWindow.DataContext = this;
-            modalWindow.Owner = Application.Current.MainWindow;
-            modalWindow.ShowDialog();
+            _modalWindow.DataContext = this;
+            _modalWindow.Owner = Application.Current.MainWindow;
+            _modalWindow.ShowDialog();
         }
 
         /// <summary>

@@ -25,23 +25,23 @@ namespace EA.DesktopApp.ViewModels
         private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
         private const string HelpTooltipMessage = "Нажмите для справки";
         private const int OneSecond = 1;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-        private string currentTimeDate;
+        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+        private string _currentTimeDate;
 
-        private WebServerApi dataStorage;
-        private FaceDetectionService faceDetectionService;
-        private Bitmap frame;
-        private readonly ModalWindowViewModel modalWindow = new ModalWindowViewModel();
+        private WebServerApi _dataStorage;
+        private FaceDetectionService _faceDetectionService;
+        private Bitmap _frame;
+        private readonly ModalWindowViewModel _modalWindow = new ModalWindowViewModel();
 
-        private bool isRunning;
+        private bool _isRunning;
 
-        private bool isStreaming;
-        private LoginWindow loginForm;
-        private PhotoShootService photoShootService;
-        private RegistrationForm registrationFormPage;
-        private SoundPlayerService soundPlayerHelper;
+        private bool _isStreaming;
+        private LoginWindow _loginForm;
+        private PhotoShootService _photoShootService;
+        private RegistrationForm _registrationFormPage;
+        private SoundPlayerService _soundPlayerHelper;
 
         /// <summary>
         ///     Timer
@@ -56,7 +56,7 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            dataStorage = new WebServerApi(urlAddress);
+            _dataStorage = new WebServerApi(_urlAddress);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string CurrentTimeDate
         {
-            get => currentTimeDate;
-            set => SetField(ref currentTimeDate, value);
+            get => _currentTimeDate;
+            set => SetField(ref _currentTimeDate, value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsStreaming
         {
-            get => isStreaming;
-            set => SetField(ref isStreaming, value);
+            get => _isStreaming;
+            set => SetField(ref _isStreaming, value);
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsRunning
         {
-            get => isRunning;
+            get => _isRunning;
             set
             {
-                isRunning = value;
-                SetField(ref isRunning, value);
+                _isRunning = value;
+                SetField(ref _isRunning, value);
             }
         }
 
@@ -110,9 +110,9 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public Bitmap Frame
         {
-            get => frame;
+            get => _frame;
 
-            set => SetField(ref frame, value);
+            set => SetField(ref _frame, value);
         }
 
         /// <summary>
@@ -132,10 +132,10 @@ namespace EA.DesktopApp.ViewModels
 
         private void InitializeServices()
         {
-            logger.Info("Initialize of all services.....");
-            photoShootService = new PhotoShootService();
-            faceDetectionService = new FaceDetectionService();
-            faceDetectionService.ImageChanged += OnImageChanged;
+            Logger.Info("Initialize of all services.....");
+            _photoShootService = new PhotoShootService();
+            _faceDetectionService = new FaceDetectionService();
+            _faceDetectionService.ImageChanged += OnImageChanged;
         }
 
         /// <summary>
@@ -144,18 +144,18 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleWebServiceExecute()
         {
             // Playing sound effect for button
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
-            if (!faceDetectionService.IsRunning)
+            if (!_faceDetectionService.IsRunning)
             {
                 IsStreaming = true;
-                faceDetectionService.RunServiceAsync();
+                _faceDetectionService.RunServiceAsync();
             }
             else
             {
                 IsStreaming = false;
-                faceDetectionService.CancelServiceAsync();
+                _faceDetectionService.CancelServiceAsync();
             }
         }
 
@@ -165,32 +165,32 @@ namespace EA.DesktopApp.ViewModels
         private void TogglePhotoShootServiceExecute()
         {
             // Playing sound effect for button
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
             // True - button is pushed - Working!
             IsRunning = false;
 
-            if (loginForm == null || loginForm.IsClosed)
+            if (_loginForm == null || _loginForm.IsClosed)
             {
-                loginForm = new LoginWindow();
-                var loginFormViewModel = new LoginFormViewModel(loginForm);
+                _loginForm = new LoginWindow();
+                var loginFormViewModel = new LoginFormViewModel(_loginForm);
 
-                loginForm.DataContext = loginFormViewModel;
-                loginForm.Owner = Application.Current.MainWindow;
+                _loginForm.DataContext = loginFormViewModel;
+                _loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
-                faceDetectionService.CancelServiceAsync();
+                _faceDetectionService.CancelServiceAsync();
                 loginFormViewModel.ShowWindow();
             }
 
 
-            if (faceDetectionService.IsRunning)
+            if (_faceDetectionService.IsRunning)
             {
                 return;
             }
 
             IsStreaming = true;
-            faceDetectionService.RunServiceAsync();
+            _faceDetectionService.RunServiceAsync();
         }
 
         /// <summary>
@@ -205,9 +205,9 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
-                logger.Error(e, "An error occuried in opening Help file!");
-                modalWindow.SetMessage("An error occuried in opening Help file!");
-                modalWindow.ShowWindow();
+                Logger.Error(e, "An error occuried in opening Help file!");
+                _modalWindow.SetMessage("An error occuried in opening Help file!");
+                _modalWindow.ShowWindow();
             }
         }
 

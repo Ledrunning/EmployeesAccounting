@@ -22,12 +22,12 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly VideoCapture videoCapture;
-        private CascadeClassifier eyeCascadeClassifier;
-        private CascadeClassifier faceCascadeClassifier;
-        private BackgroundWorker webCamWorker;
+        private readonly VideoCapture _videoCapture;
+        private CascadeClassifier _eyeCascadeClassifier;
+        private CascadeClassifier _faceCascadeClassifier;
+        private BackgroundWorker _webCamWorker;
 
         /// <summary>
         ///     Capture stream from camera
@@ -35,12 +35,12 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public FaceDetectionService()
         {
-            videoCapture = new VideoCapture();
+            _videoCapture = new VideoCapture();
             InitializeWorkers();
             InitializeClassifier();
         }
 
-        public bool IsRunning => webCamWorker?.IsBusy ?? false;
+        public bool IsRunning => _webCamWorker?.IsBusy ?? false;
 
         private void InitializeClassifier()
         {
@@ -51,18 +51,18 @@ namespace EA.DesktopApp.Services
 
                 if (path != null)
                 {
-                    faceCascadeClassifier =
+                    _faceCascadeClassifier =
                         new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
-                    eyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
+                    _eyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
                 }
                 else
                 {
-                    logger.Error("Could not find haarcascade xml file");
+                    Logger.Error("Could not find haarcascade xml file");
                 }
             }
             catch (Exception e)
             {
-                logger.Error(e, "Could not find clissifier files");
+                Logger.Error(e, "Could not find clissifier files");
             }
         }
 
@@ -73,7 +73,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void RunServiceAsync()
         {
-            webCamWorker.RunWorkerAsync();
+            _webCamWorker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void CancelServiceAsync()
         {
-            webCamWorker?.CancelAsync();
+            _webCamWorker?.CancelAsync();
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace EA.DesktopApp.Services
         /// </summary>
         private void InitializeWorkers()
         {
-            webCamWorker = new BackgroundWorker();
-            webCamWorker.WorkerSupportsCancellation = true;
-            webCamWorker.DoWork += OnWebCamWorker;
+            _webCamWorker = new BackgroundWorker();
+            _webCamWorker.WorkerSupportsCancellation = true;
+            _webCamWorker.DoWork += OnWebCamWorker;
         }
 
         /// <summary>
@@ -101,9 +101,9 @@ namespace EA.DesktopApp.Services
         /// <param name="e"></param>
         private void OnWebCamWorker(object sender, DoWorkEventArgs e)
         {
-            while (!webCamWorker.CancellationPending)
+            while (!_webCamWorker.CancellationPending)
             {
-                var image = videoCapture.QueryFrame().ToImage<Bgr, byte>();
+                var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();
                 DetectFaces(image);
                 ImageChanged?.Invoke(image);
             }
@@ -112,8 +112,8 @@ namespace EA.DesktopApp.Services
         private void DetectFaces(Image<Bgr, byte> image)
         {
             var grayFrame = image.Convert<Gray, byte>();
-            var faces = GetRectangles(faceCascadeClassifier, grayFrame);
-            var eyes = GetRectangles(eyeCascadeClassifier, grayFrame);
+            var faces = GetRectangles(_faceCascadeClassifier, grayFrame);
+            var eyes = GetRectangles(_eyeCascadeClassifier, grayFrame);
 
             foreach (var face in faces)
             {

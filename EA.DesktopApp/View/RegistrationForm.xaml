@@ -37,15 +37,6 @@
 <!-- End IData Error style -->
 
     </Window.Resources>
-    
-    <!--<Window.Background>
-        <LinearGradientBrush StartPoint="0.5,0" EndPoint="1,1">
-            <GradientStop Color="LightBlue" Offset="0" />
-            <GradientStop Color="ForestGreen" Offset="0.3" />
-            <GradientStop Color="LightGreen" Offset="1" />
-        </LinearGradientBrush>
-    </Window.Background>-->
-    
     <Grid DataContext="{StaticResource RegistrationFormViewModel}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -58,10 +49,6 @@
 
         <Image Name="v_Image_Frame" Source="{Binding PhotoShootFrame, Converter={StaticResource BitmapToImageSourceConverter}}" 
                Stretch="Uniform" Margin="0,0,4,0"/>
-        <!--
-        <Image Grid.Column="1" Grid.Row ="0"  Name="v_Photo_Frame" Source="{Binding PhotoShootFrame, Converter={StaticResource BitmapToImageSourceConverter}}" 
-               Stretch="Uniform" Margin="0,194,4,0"/>
-        -->
         <Image Grid.Column="1" Grid.Row ="0"  Name="v_Photo_Frame" Source="{Binding GrayScaleImage, Converter={StaticResource BitmapToImageSourceConverter}}" 
                Stretch="Uniform" Margin="0,194,4,0"/>
         <Button Grid.Row="1" Height="24" Width="90" Command="{Binding ToggleCameraCaptureCommand}"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10">
@@ -70,7 +57,6 @@
                     <Setter Property="Background" Value="Transparent"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="BorderThickness" Value="1"/>
-                    <!--<Setter Property="BorderBrush" Value="Black"/>-->
                     <!-- Triggered values -->
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsReady}" Value="False">
@@ -110,7 +96,6 @@
                     <Setter Property="Background" Value="Transparent"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="BorderThickness" Value="1"/>
-                    <!--<Setter Property="BorderBrush" Value="Black"/>-->
                     <!-- Triggered values -->
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsReady}" Value="False">
@@ -126,23 +111,7 @@
 
         <StackPanel Grid.Row="0" Grid.Column="1">
 
-            <!--<Label Height="28" Width="90">
-                <Label.Style>
-                    <Style TargetType="{x:Type Label}">
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="Content" Value="Имя"/>
-                    </Style>
-                </Label.Style>
-            </Label>-->
-
             <TextBlock Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" Text="Name"/>
-            <!--<Label.Style>
-                    <Style TargetType="{x:Type Label}">
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="Content" Value="Имя"/>
-                    </Style>
-                </Label.Style>-->
-
             <TextBox Background="Transparent" Height="30" Width="140" Grid.Row="0"  
                      TextAlignment="Center" Foreground="White" HorizontalAlignment="Center"  Grid.Column="1">
                 <TextBox.Text>
@@ -157,16 +126,6 @@
                     <ToolTip HasDropShadow="True" Content="{Binding EnterPersonName}" />
                 </TextBox.ToolTip>
             </TextBox>
-
-            <!--<Label Height="28" Width="90"  Grid.Column="1">
-                    <Label.Style>
-                        <Style TargetType="{x:Type Label}">
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="Content" Value="Фамилия"/>
-                        </Style>
-                    </Label.Style>
-                </Label>-->
-
             <TextBlock Height="28" Width="90"  Grid.Column="1" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" Text="Last name" />
 
             <TextBox Background="Transparent" Height="30" Width="140" Grid.Row="0"  
@@ -184,16 +143,6 @@
                     <ToolTip HasDropShadow="True" Content="{Binding EnterPersonLastName}" />
                 </TextBox.ToolTip>
             </TextBox>
-
-            <!--<Label Height="28" Width="90"  Grid.Column="1">
-                <Label.Style>
-                    <Style TargetType="{x:Type Label}">
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="Content" Value="Отдел"/>
-                    </Style>
-                </Label.Style>
-            </Label>-->
-
             <TextBlock Height="28" Width="90"  Grid.Column="1" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" Text="Department" />
 
             <TextBox Background="Transparent" Height="30" Width="140" Grid.Row="0" 

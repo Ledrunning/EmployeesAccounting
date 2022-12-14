@@ -14,15 +14,16 @@ namespace EA.DesktopApp.Rest
     /// </summary>
     public class WebServerApi
     {
-        private readonly string baseAddress;
         private const string ApiName = "api/employee/";
+        private readonly string _baseAddress;
+
         /// <summary>
         ///     .ctor
         /// </summary>
         /// <param name="baseAddress"></param>
         public WebServerApi(string baseAddress)
         {
-            this.baseAddress = baseAddress;
+            this._baseAddress = baseAddress;
         }
 
         /// <summary>
@@ -34,22 +35,20 @@ namespace EA.DesktopApp.Rest
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response;
-
                 try
                 {
-                    response = await client.GetAsync($"{ApiName}{id}");
+                    var response = await client.GetAsync($"{ApiName}{id}");
                     if (response.IsSuccessStatusCode)
                     {
                         var person = await response.Content.ReadAsAsync<Person>();
                         return person;
                     }
                 }
-                catch (Exception e)
+                catch (System.Exception e)
                 {
                     Debug.WriteLine(e);
                 }
@@ -66,23 +65,21 @@ namespace EA.DesktopApp.Rest
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response;
                 try
 
                 {
-                    response = await client.GetAsync(ApiName);
+                    var response = await client.GetAsync(ApiName);
                     if (response.IsSuccessStatusCode)
                     {
-                        //Person person = await response.Content.ReadAsAsync<Person>();
                         var person = await response.Content.ReadAsAsync<IEnumerable<Person>>();
                         return person;
                     }
                 }
-                catch (Exception e)
+                catch (System.Exception e)
                 {
                     Debug.WriteLine(e);
                 }
@@ -99,17 +96,19 @@ namespace EA.DesktopApp.Rest
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response;
 
                 try
                 {
-                    response = await client.PostAsJsonAsync($"{ApiName}", person);
-                    if (!response.IsSuccessStatusCode) Debug.WriteLine("Error when adding file!");
+                    var response = await client.PostAsJsonAsync($"{ApiName}", person);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Debug.WriteLine("Error when adding file!");
+                    }
                 }
-                catch (Exception e)
+                catch (System.Exception e)
                 {
                     Console.WriteLine(e);
                 }
@@ -120,7 +119,7 @@ namespace EA.DesktopApp.Rest
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

@@ -5,8 +5,8 @@ namespace EA.DesktopApp.ViewModels.Commands
 {
     public class RelayCommand : ICommand
     {
-        private readonly Func<bool> canExecute;
-        private readonly Action execute;
+        private readonly Func<bool> _canExecute;
+        private readonly Action _execute;
 
         /// <summary>
         ///     Creates a new command.
@@ -15,8 +15,8 @@ namespace EA.DesktopApp.ViewModels.Commands
         /// <param name="canExecute">The execution status logic.</param>
         public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
-            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            this.canExecute = canExecute;
+            this._execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this._canExecute = canExecute;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace EA.DesktopApp.ViewModels.Commands
         /// <returns>true if this command can be executed; otherwise, false.</returns>
         public bool CanExecute(object parameter)
         {
-            return canExecute?.Invoke() ?? true;
+            return _canExecute?.Invoke() ?? true;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace EA.DesktopApp.ViewModels.Commands
         /// </param>
         public void Execute(object parameter)
         {
-            execute();
+            _execute();
         }
 
         /// <summary>

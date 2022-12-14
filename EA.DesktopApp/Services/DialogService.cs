@@ -11,13 +11,13 @@ namespace EA.DesktopApp.Services
     public class DialogService : IDialogService
     {
         private const string MessageBoxTitle = "Оповещение";
-        private readonly ModalWindowViewModel modalWindow;
+        private readonly ModalWindowViewModel _modalWindow;
         private const string PhotoNonSave = "Фото не сохранено!";
         private const string PhotoSaveDone = "Фото сделано и сохранено!";
 
         public DialogService()
         {
-            modalWindow = new ModalWindowViewModel(new ModalWindow());
+            _modalWindow = new ModalWindowViewModel(new ModalWindow());
         }
 
         /// <summary>
@@ -70,8 +70,8 @@ namespace EA.DesktopApp.Services
         /// <param name="message"></param>
         public void ShowMessage(string message)
         {
-            modalWindow.SetMessage(message);
-            modalWindow.ShowWindow();
+            _modalWindow.SetMessage(message);
+            _modalWindow.ShowWindow();
         }
     }
 }

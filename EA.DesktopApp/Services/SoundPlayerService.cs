@@ -11,7 +11,7 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class SoundPlayerService : ISoundPlayer
     {
-        private readonly Dictionary<string, UnmanagedMemoryStream> sounds =
+        private readonly Dictionary<string, UnmanagedMemoryStream> _sounds =
             new Dictionary<string, UnmanagedMemoryStream>();
 
         /// <summary>
@@ -19,8 +19,8 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public SoundPlayerService()
         {
-            sounds.Add("button", Resources.button);
-            sounds.Add("camera", Resources.camera);
+            _sounds.Add("button", Resources.button);
+            _sounds.Add("camera", Resources.camera);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace EA.DesktopApp.Services
         {
             using (var player = new SoundPlayer())
             {
-                player.Stream = sounds[sound];
+                player.Stream = _sounds[sound];
                 player.Play();
             }
         }

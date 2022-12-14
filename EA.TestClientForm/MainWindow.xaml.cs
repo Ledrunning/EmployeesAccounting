@@ -15,8 +15,8 @@ namespace EA.TestClientForm
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-        private byte[] image;
+        private string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+        private byte[] _image;
 
         public MainWindow()
         {
@@ -29,7 +29,7 @@ namespace EA.TestClientForm
         {
             try
             {
-                var sender = new WebApiSender(urlAddress);
+                var sender = new WebApiSender(_urlAddress);
                 var persons = await sender.GetAllPersonsAsync();
                 grdEmployee.ItemsSource = persons; // as IQueryable<Person>;
             }
@@ -45,7 +45,7 @@ namespace EA.TestClientForm
             {
                 var client = new HttpClient();
 
-                client.BaseAddress = new Uri(urlAddress);
+                client.BaseAddress = new Uri(_urlAddress);
 
                 // ДИЧЬ!!!!
                 var id = grdEmployee.SelectedItem;
@@ -85,10 +85,10 @@ namespace EA.TestClientForm
                 LastName = txtLastName.Text,
                 Department = txtDepartment.Text,
                 DateTime = DateTimeOffset.Now,
-                Photo = Convert.ToBase64String(image)
+                Photo = Convert.ToBase64String(_image)
             };
 
-            var client = new WebApiSender(urlAddress);
+            var client = new WebApiSender(_urlAddress);
             client.AddPerson(fileModel);
 
             MessageBox.Show("File has been uploaded");
@@ -107,7 +107,7 @@ namespace EA.TestClientForm
             {
                 try
                 {
-                    image = File.ReadAllBytes(dialogService.FilePath);
+                    _image = File.ReadAllBytes(dialogService.FilePath);
                     MessageBox.Show("File has been opened");
                 }
                 catch (IOException err)
@@ -119,7 +119,7 @@ namespace EA.TestClientForm
 
         private async void GetUserByIdClick(object sender, RoutedEventArgs e)
         {
-            var client = new WebApiSender(urlAddress);
+            var client = new WebApiSender(_urlAddress);
             string[] formats = { "N", "D", "B", "P", "X" };
             Guid result;
 

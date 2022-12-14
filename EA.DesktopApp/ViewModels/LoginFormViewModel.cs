@@ -10,15 +10,15 @@ namespace EA.DesktopApp.ViewModels
 {
     public class LoginFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private readonly LoginWindow loginWindow;
-        private bool isReady;
-        private bool isRunning;
-        private RegistrationForm registrationFormPage;
-        private SoundPlayerService soundPlayerHelper = new SoundPlayerService();
+        private readonly LoginWindow _loginWindow;
+        private bool _isReady;
+        private bool _isRunning;
+        private RegistrationForm _registrationFormPage;
+        private SoundPlayerService _soundPlayerHelper = new SoundPlayerService();
 
-        private string loginValue;
+        private string _loginValue;
 
-        private string passwordValue;
+        private string _passwordValue;
 
 
         public LoginFormViewModel()
@@ -28,7 +28,7 @@ namespace EA.DesktopApp.ViewModels
 
         public LoginFormViewModel(LoginWindow loginWindow)
         {
-            this.loginWindow = loginWindow;
+            this._loginWindow = loginWindow;
             InitializeCommands();
         }
 
@@ -36,18 +36,18 @@ namespace EA.DesktopApp.ViewModels
         public ICommand CancelCommand { get; private set; }
         public ICommand AdminModeCommand { get; private set; }
 
-        public string Login { get; } = "Введите логин";
-        public string Cancel { get; } = "Нажмите для очистки полей";
+        public string Login { get; } = "Enter the password";
+        public string Cancel { get; } = "Press for clear";
 
         /// <summary>
-        ///     Start webCam service button toogle
+        ///     Start webCam service button toggle
         /// </summary>
         public bool IsRunning
         {
-            get => isRunning;
+            get => _isRunning;
             set
             {
-                isRunning = value;
+                _isRunning = value;
                 OnPropertyChanged();
             }
         }
@@ -57,10 +57,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public bool IsReady
         {
-            get => isReady;
+            get => _isReady;
             set
             {
-                isReady = value;
+                _isReady = value;
                 OnPropertyChanged();
             }
         }
@@ -68,10 +68,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string LoginField
         {
-            get => loginValue;
+            get => _loginValue;
             set
             {
-                loginValue = value;
+                _loginValue = value;
                 OnPropertyChanged();
             }
         }
@@ -79,10 +79,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
-            get => passwordValue;
+            get => _passwordValue;
             set
             {
-                passwordValue = value;
+                _passwordValue = value;
                 OnPropertyChanged();
             }
         }
@@ -144,19 +144,19 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleLoginExecute()
         {
             // Playing sound effect for button
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
             // True - button is pushed - Working!
             IsRunning = false;
-            if (registrationFormPage != null && !registrationFormPage.IsClosed)
+            if (_registrationFormPage != null && !_registrationFormPage.IsClosed)
             {
                 return;
             }
 
             var registrationFormViewModel = new RegistrationFormViewModel();
 
-            registrationFormPage = new RegistrationForm(IsRunning)
+            _registrationFormPage = new RegistrationForm(IsRunning)
             {
                 DataContext = registrationFormViewModel,
                 Owner = Application.Current.MainWindow
@@ -165,7 +165,7 @@ namespace EA.DesktopApp.ViewModels
             //_registrationFormPage.Show();
             //IsStreaming = false;
             //_faceDetectionService.CancelServiceAsync();
-            registrationFormPage.ShowDialog();
+            _registrationFormPage.ShowDialog();
 
             //if (!_faceDetectionService.IsRunning)
             //{
@@ -176,8 +176,8 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToggleCancelExecute()
         {
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
             LoginField = string.Empty;
             PasswordField = string.Empty;
@@ -185,16 +185,18 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToggleAdminWindowShowExecute()
         {
-            soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
-            var adminForm = new AdminForm();
-            adminForm.Owner = Application.Current.MainWindow;
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
+            var adminForm = new AdminForm
+            {
+                Owner = Application.Current.MainWindow
+            };
             adminForm.ShowDialog();
         }
 
         public void ShowWindow()
         {
-            loginWindow.ShowDialog();
+            _loginWindow.ShowDialog();
         }
     }
 }
