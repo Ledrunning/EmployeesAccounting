@@ -149,6 +149,7 @@
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="Event\ImageEvent.cs" />
+    <Compile Include="Services\BaseCameraService.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayer.cs" />
@@ -168,8 +169,8 @@
     <Compile Include="ViewModels\AdminFormViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\LoginFormViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\ModalWindowViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ModalViewModel.cs" />
     <Compile Include="ViewModels\RedactorFormViewModel.cs" />
     <Compile Include="ViewModels\RegistrationFormViewModel.cs" />
     <Compile Include="View\ModalWindow.xaml.cs">

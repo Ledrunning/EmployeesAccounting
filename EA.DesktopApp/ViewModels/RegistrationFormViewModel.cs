@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.ServiceModel;
 using System.Windows.Input;
+using EA.DesktopApp.Constants;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
@@ -24,10 +25,6 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class RegistrationFormViewModel : BaseViewModel, IDataErrorInfo
     {
-        private const int PhotoHeight = 400;
-
-        private const int PhotoWidth = 500;
-
         /// <summary>
         ///     Readonly fields
         /// </summary>
@@ -40,7 +37,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
 
         private bool _isReady;
-        private ModalWindowViewModel _modalView;
+        private ModalViewModel _modalView;
         private ModalWindow _modalWindow;
 
         /// <summary>
@@ -86,7 +83,7 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
-                var modal = new ModalWindowViewModel();
+                var modal = new ModalViewModel();
                 modal.SetMessage("Ошибка создания папки");
                 modal.ShowWindow();
             }
@@ -100,8 +97,8 @@ namespace EA.DesktopApp.ViewModels
             _photoShootService = new PhotoShootService();
             // Run image capture from WebCam
             _photoShootService.RunServiceAsync();
-            _photoShootService.ImageChanged -= OnImageChanged;
-            _photoShootService.ImageChanged += OnImageChanged;
+            _photoShootService.PhotoImageChanged -= OnImageChanged;
+            _photoShootService.PhotoImageChanged += OnImageChanged;
         }
 
         /// <summary>
@@ -332,7 +329,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void ToggleAddImageToDataBase()
         {
-            _modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalViewModel(new ModalWindow());
             //_modalView.ShowWindow();
 
             _soundPlayerHelper = new SoundPlayerService();
@@ -405,7 +402,7 @@ namespace EA.DesktopApp.ViewModels
         {
             var dialogService = new DialogService();
 
-            _modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalViewModel(new ModalWindow());
 
             _soundPlayerHelper = new SoundPlayerService();
             _soundPlayerHelper.PlaySound("button");
@@ -415,7 +412,9 @@ namespace EA.DesktopApp.ViewModels
                 if (dialogService.SaveFileDialog())
                 {
                     // New Bitmap and save to file
-                    PhotoShootFrame = new Bitmap(PhotoShootFrame, PhotoWidth, PhotoHeight);
+                    PhotoShootFrame = new Bitmap(PhotoShootFrame, 
+                        ImageProcessingConstants.PhotoWidth, 
+                        ImageProcessingConstants.PhotoHeight);
                     PhotoShootFrame.Save($"{dialogService.FilePath}{FileExtension}", ImageFormat.Jpeg);
                 }
 
@@ -431,7 +430,7 @@ namespace EA.DesktopApp.ViewModels
         //Тестовый 
         public void ToggleSaveFaceExecute()
         {
-            _modalView = new ModalWindowViewModel(new ModalWindow());
+            _modalView = new ModalViewModel(new ModalWindow());
 
             try
             {

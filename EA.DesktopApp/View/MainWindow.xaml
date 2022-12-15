@@ -8,11 +8,11 @@
         Icon="..\camera128x128.ico"
         Background="{StaticResource BackgroundKey}">
     <Window.Resources>
-        <viewModels:MainWindowViewModel x:Key="MainWindowViewModel" />
+        <viewModels:MainViewModel x:Key="MainViewModel" />
         <converters:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
     </Window.Resources>
     
-    <Grid DataContext="{StaticResource MainWindowViewModel}">
+    <Grid DataContext="{StaticResource MainViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
             <RowDefinition Height="40"/>

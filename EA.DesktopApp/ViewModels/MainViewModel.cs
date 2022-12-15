@@ -19,7 +19,7 @@ namespace EA.DesktopApp.ViewModels
     /// <summary>
     ///     View model class for main screen
     /// </summary>
-    public class MainWindowViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel
     {
         private const string GetPhotoTooltipMessage = "Нажмите, что бы сделать фотографию";
         private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
@@ -33,7 +33,7 @@ namespace EA.DesktopApp.ViewModels
         private WebServerApi _dataStorage;
         private FaceDetectionService _faceDetectionService;
         private Bitmap _frame;
-        private readonly ModalWindowViewModel _modalWindow = new ModalWindowViewModel();
+        private readonly ModalViewModel _modalWindow = new ModalViewModel();
 
         private bool _isRunning;
 
@@ -51,7 +51,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public MainWindowViewModel()
+        public MainViewModel()
         {
             InitializeServices();
             InitializeCommands();
@@ -135,7 +135,7 @@ namespace EA.DesktopApp.ViewModels
             Logger.Info("Initialize of all services.....");
             _photoShootService = new PhotoShootService();
             _faceDetectionService = new FaceDetectionService();
-            _faceDetectionService.ImageChanged += OnImageChanged;
+            _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
         /// <summary>

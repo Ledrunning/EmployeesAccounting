@@ -6,7 +6,7 @@ using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    internal class ModalWindowViewModel : BaseViewModel
+    internal class ModalViewModel : BaseViewModel
     {
         private readonly ModalWindow _modalWindow;
         private RegistrationForm _registrationForm;
@@ -20,7 +20,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public ModalWindowViewModel()
+        public ModalViewModel()
         {
             InitializeCommands();
         }
@@ -29,7 +29,7 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         /// <param name="modalWindow"></param>
-        public ModalWindowViewModel(ModalWindow modalWindow)
+        public ModalViewModel(ModalWindow modalWindow)
         {
             this._modalWindow = modalWindow;
             InitializeCommands();

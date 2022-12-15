@@ -9,7 +9,7 @@ namespace EA.DesktopApp.Services
     /// <summary>
     ///     Class which realize photoshoot logic
     /// </summary>
-    public class PhotoShootService : FaceDetectionService
+    public class PhotoShootService : BaseCameraService
     {
         /// <summary>
         ///     Init for face detection method
@@ -19,7 +19,7 @@ namespace EA.DesktopApp.Services
             InitializeServices();
         }
 
-        public event ImageChangedEventHandler ImageChanged;
+        public event ImageChangedEventHandler PhotoImageChanged;
 
         /// <summary>
         ///     Event handler from web cam services
@@ -35,7 +35,7 @@ namespace EA.DesktopApp.Services
         /// <param name="image"></param>
         private void OnImageChanged(Image<Bgr, byte> image)
         {
-            ImageChanged?.Invoke(image);
+            PhotoImageChanged?.Invoke(image);
         }
     }
 }

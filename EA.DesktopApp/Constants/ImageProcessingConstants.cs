@@ -14,5 +14,7 @@ namespace EA.DesktopApp.Constants
         public const int MinimumNeighbors = 10;
         public const double ScaleFactor = 1.1;
         public static readonly Bgr RectanglesColor = new Bgr(Color.Aqua);
+        public const int PhotoHeight = 400;
+        public const int PhotoWidth = 500;
     }
 }
