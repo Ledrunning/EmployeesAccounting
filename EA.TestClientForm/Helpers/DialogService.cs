@@ -5,9 +5,9 @@ namespace EA.TestClientForm.Helpers
 {
     internal class DialogService : IDialogService
     {
-        private readonly string photoSendDone = "Фото отправлено!";
-        private readonly string photoSendFailure = "Фото не отправлено!";
-        private readonly string messageBoxTitle = "Оповещение";
+        private readonly string _photoSendDone = "Фото отправлено!";
+        private readonly string _photoSendFailure = "Фото не отправлено!";
+        private readonly string _messageBoxTitle = "Оповещение";
 
         /// <summary>
         /// Get file path
@@ -49,12 +49,12 @@ namespace EA.TestClientForm.Helpers
             var saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog() == false)
             {
-                ShowMessage(photoSendFailure, messageBoxTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowMessage(_photoSendFailure, _messageBoxTitle, MessageBoxButton.OK, MessageBoxImage.Information);
                 return false;
             }
 
             FilePath = saveFileDialog.FileName;
-            ShowMessage(photoSendDone, messageBoxTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowMessage(_photoSendDone, _messageBoxTitle, MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
         }
 

@@ -338,3 +338,18 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+#external EMGU libs
+/EmguExternalLibs/*
+/EA.DesktopApp/License-LGPL.txt
+/EA.DesktopApp/concrt140.dll
+/EA.DesktopApp/cvextern.dll
+/EA.DesktopApp/msvcp140.dll
+/EA.DesktopApp/msvcp140_1.dll
+/EA.DesktopApp/msvcp140_2.dll
+/EA.DesktopApp/msvcp140_atomic_wait.dll
+/EA.DesktopApp/msvcp140_codecvt_ids.dll
+/EA.DesktopApp/opencv_videoio_ffmpeg460_64.dll
+/EA.DesktopApp/vcruntime140.dll
+/EA.DesktopApp/vcruntime140_1.dll
+/EA.DesktopApp/version_string.inc

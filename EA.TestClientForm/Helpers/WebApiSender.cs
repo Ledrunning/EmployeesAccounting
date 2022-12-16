@@ -9,18 +9,18 @@ namespace EA.TestClientForm.Helpers
 {
     public class WebApiSender
     {
-        private readonly string baseAddress;
+        private readonly string _baseAddress;
 
         public WebApiSender(string baseAddress)
         {
-            this.baseAddress = baseAddress;
+            this._baseAddress = baseAddress;
         }
 
         public async Task<Person> GetPersonAsync(Guid id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response;
@@ -39,7 +39,7 @@ namespace EA.TestClientForm.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response;
@@ -58,7 +58,7 @@ namespace EA.TestClientForm.Helpers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -70,7 +70,7 @@ namespace EA.TestClientForm.Helpers
         public Person SearchEmploeeById(string id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri(baseAddress);
+            client.BaseAddress = new Uri(_baseAddress);
 
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
