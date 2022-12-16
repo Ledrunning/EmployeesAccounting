@@ -53,6 +53,12 @@ namespace EA.DesktopApp.Services
         /// <param name="e"></param>
         protected void OnWebCamWorker(object sender, DoWorkEventArgs e)
         {
+            if (_webCamWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             while (!_webCamWorker.CancellationPending)
             {
                 var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();

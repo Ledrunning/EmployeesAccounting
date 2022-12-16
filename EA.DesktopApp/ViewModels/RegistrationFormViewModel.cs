@@ -102,14 +102,14 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Initiaalize all commands
+        ///     Initialize all commands
         /// </summary>
         private void InitializeCommands()
         {
-            _toggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
+            ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
             //_toggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
-            _toggleSavePhotoCommand = new RelayCommand(ToggleSaveFaceExecute);
-            _toggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
+            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveFaceExecute);
+            ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
         /// <summary>
@@ -128,43 +128,44 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     For main xaml take a photo
         /// </summary>
-        public string TakePicture { get; } = "Сфотографировать";
+        public string TakePicture => "Take a photo";
 
         /// <summary>
         ///     For main xaml add person from DB tooltip message
         /// </summary>
-        public string AddPerson { get; } = "Нажмите, что бы добавить сотрудника";
+        public string AddPerson => "Press to add an employee";
 
         /// <summary>
         ///     For main xaml delete person from DB tooltip message
         /// </summary>
-        public string DeletePerson { get; } = "Нажмите, что бы удалить сотрудника";
+        public string DeletePerson => "Press to delete employee";
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string SavePicture { get; } = "Нажмите, что бы сохранить фотографию";
+        public string SavePicture => "Press to save photo";
 
         /// <summary>
         ///     For main xaml enter name tooltip message
         /// </summary>
-        public string EnterPersonName { get; } = "Введите имя сотрудника в поле";
+        public string EnterPersonName => "Enter an employee name";
 
         /// <summary>
         ///     For main xaml enter last name tooltip message
         /// </summary>
-        public string EnterPersonLastName { get; } = "Введите имя сотрудника в поле";
+        public string EnterPersonLastName => "Enter an employee last name";
 
         /// <summary>
         ///     For main xaml enter department tooltip message
         /// </summary>
-        public string EnterPersonDepartment { get; } = "Введите департамент";
+        public string EnterPersonDepartment => "Enter the department name";
 
         #endregion ToolTip properties
 
         #region TextBox properties
 
-        /// Binding person name to TextBox
+        /// <summary>
+        ///     Binding person name to TextBox
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         public string PersonName { get; set; }
@@ -197,7 +198,7 @@ namespace EA.DesktopApp.ViewModels
                     case "PersonName":
                         if (string.IsNullOrEmpty(PersonName))
                         {
-                            error = "Введите имя!";
+                            error = "Enter the name!";
                         }
 
                         break;
@@ -205,7 +206,7 @@ namespace EA.DesktopApp.ViewModels
                     case "PersonLastName":
                         if (string.IsNullOrEmpty(PersonLastName))
                         {
-                            error = "Введите Фамилию!";
+                            error = "Enter the last name";
                         }
 
                         break;
@@ -213,7 +214,7 @@ namespace EA.DesktopApp.ViewModels
                     case "PersonDepartment":
                         if (string.IsNullOrEmpty(PersonDepartment))
                         {
-                            error = "Введите название отдела!";
+                            error = "Enter the department name";
                         }
 
                         break;
@@ -226,7 +227,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Error exception throwing
         /// </summary>
-        public string Error => "Введите данные!";
+        public string Error => "Enter the data!";
 
         #endregion TextBox properties
 
@@ -272,53 +273,25 @@ namespace EA.DesktopApp.ViewModels
 
         #region Command properties
 
-        private ICommand _toggleCameraCaptureCommand;
-
         /// <summary>
-        ///     Toogle to photoshoot command
+        ///     Toggle to photoshoot command
         /// </summary>
-        public ICommand ToggleCameraCaptureCommand
-        {
-            get => _toggleCameraCaptureCommand;
-
-            private set { }
-        }
-
-        private ICommand _toggleSavePhotoCommand;
+        public ICommand ToggleCameraCaptureCommand { get; private set; }
 
         /// <summary>
         ///     Toogle to photoshoot save by open file dialog
         /// </summary>
-        public ICommand ToggSavePhotoCommand
-        {
-            get => _toggleSavePhotoCommand;
-
-            private set { }
-        }
-
-        private ICommand _toggleAddToDbCommand;
+        public ICommand ToggleSavePhotoCommand { get; private set; }
 
         /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
-        public ICommand ToggleAddToDbCommand
-        {
-            get => _toggleAddToDbCommand;
-
-            private set { }
-        }
-
-        private ICommand _toogleEditFormCommand;
+        public ICommand ToggleAddToDbCommand { get; private set; }
 
         /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
-        public ICommand ToggleEditFormCommand
-        {
-            get => _toogleEditFormCommand;
-
-            private set { }
-        }
+        public ICommand ToggleEditFormCommand => null;
 
         #endregion Command properties
 
@@ -340,7 +313,7 @@ namespace EA.DesktopApp.ViewModels
 
             Image resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
-            var arr = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
+            var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 
             var person = new Person
             {
@@ -349,13 +322,13 @@ namespace EA.DesktopApp.ViewModels
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
                 //Photo = Convert.ToBase64String(_picture)
-                Photo = Convert.ToBase64String(arr)
+                Photo = Convert.ToBase64String(imageArray)
             };
 
             if (person.Name == null || person.LastName == null
                                     || person.Department == null)
             {
-                _modalView.SetMessage("Введите данные!");
+                _modalView.SetMessage("Enter the data");
                 _modalView.ShowWindow();
             }
             else
@@ -365,17 +338,17 @@ namespace EA.DesktopApp.ViewModels
                     var client = new WebServerApi(_urlAddress);
 
                     client.AddPerson(person);
-                    _modalView.SetMessage("Данные успешно загружены в базу данных.");
+                    _modalView.SetMessage("Data has been successfully loaded to database.");
                     _modalView.ShowWindow();
                 }
                 catch (CommunicationException err)
                 {
-                    _modalView.SetMessage("Ошибка связи с базой данных!");
+                    _modalView.SetMessage("Error database connection.");
                     _modalView.ShowWindow();
                 }
                 catch (Exception err)
                 {
-                    _modalView.SetMessage("Ошибка связи с базой данных!");
+                    _modalView.SetMessage("Error to save data into database");
                     _modalView.ShowWindow();
                 }
             }
@@ -422,7 +395,7 @@ namespace EA.DesktopApp.ViewModels
             }
             else
             {
-                _modalView.SetMessage("Фото не сделано!");
+                _modalView.SetMessage("Photo does not exist");
                 _modalView.ShowWindow();
             }
         }
@@ -440,7 +413,7 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception ex)
             {
-                _modalView.SetMessage("Ошибка сохранения файла");
+                _modalView.SetMessage("Error saving into the file.");
                 _modalView.ShowWindow();
             }
         }
