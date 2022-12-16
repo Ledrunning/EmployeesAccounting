@@ -17,6 +17,7 @@ using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
@@ -35,7 +36,7 @@ namespace EA.DesktopApp.ViewModels
                                                          "\\Traineddata";
 
         private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private bool _isReady;
         private ModalViewModel _modalView;
         private ModalWindow _modalWindow;
@@ -84,7 +85,7 @@ namespace EA.DesktopApp.ViewModels
             catch (Exception e)
             {
                 var modal = new ModalViewModel();
-                modal.SetMessage("Ошибка создания папки");
+                modal.SetMessage("Error to creating the folder");
                 modal.ShowWindow();
             }
         }
@@ -107,8 +108,7 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeCommands()
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            //_toggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
-            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveFaceExecute);
+            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
@@ -341,15 +341,17 @@ namespace EA.DesktopApp.ViewModels
                     _modalView.SetMessage("Data has been successfully loaded to database.");
                     _modalView.ShowWindow();
                 }
-                catch (CommunicationException err)
+                catch (CommunicationException ex)
                 {
                     _modalView.SetMessage("Error database connection.");
                     _modalView.ShowWindow();
+                    Logger.Error(ex, "Error database connection.");
                 }
-                catch (Exception err)
+                catch (Exception ex)
                 {
                     _modalView.SetMessage("Error to save data into database");
                     _modalView.ShowWindow();
+                    Logger.Error(ex, "Error to save data into database");
                 }
             }
         }
@@ -399,25 +401,6 @@ namespace EA.DesktopApp.ViewModels
                 _modalView.ShowWindow();
             }
         }
-
-        //Тестовый 
-        public void ToggleSaveFaceExecute()
-        {
-            _modalView = new ModalViewModel(new ModalWindow());
-
-            try
-            {
-                var fileName = PersonName + " " + PersonLastName + "_" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") +
-                               FileExtension;
-                //PhotoShootGray.Resize(200, 200, INTER.CV_INTER_CUBIC).Save("Traineddata\\" + fileName);
-            }
-            catch (Exception ex)
-            {
-                _modalView.SetMessage("Error saving into the file.");
-                _modalView.ShowWindow();
-            }
-        }
-
         #endregion Toggles Execute methods
     }
 }
