@@ -87,6 +87,7 @@ namespace EA.DesktopApp.ViewModels
                 var modal = new ModalViewModel();
                 modal.SetMessage("Error to creating the folder");
                 modal.ShowWindow();
+                Logger.Error(e, "Error to creating the folder");
             }
         }
 

@@ -147,16 +147,32 @@ namespace EA.DesktopApp.ViewModels
             _soundPlayerHelper = new SoundPlayerService();
             _soundPlayerHelper.PlaySound("button");
 
+            if (_faceDetectionService == null)
+            {
+                _faceDetectionService = new FaceDetectionService();
+                _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
+            }
+
             if (!_faceDetectionService.IsRunning)
             {
                 IsStreaming = true;
                 _faceDetectionService.RunServiceAsync();
+                Logger.Info("Video streaming is started!");
             }
             else
             {
                 IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
+                StopPhotoService();
             }
+        }
+
+        private void StopPhotoService()
+        {
+            _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
+            _faceDetectionService.CancelServiceAsync();
+            Logger.Info("Video streaming stopped!");
+            _faceDetectionService.Dispose();
+            _faceDetectionService = null;
         }
 
         /// <summary>

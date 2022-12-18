@@ -1,19 +1,30 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Services
 {
-    public class BaseCameraService
+    public class BaseCameraService : IDisposable
     {
-        private readonly VideoCapture _videoCapture;
+        private VideoCapture _videoCapture;
         protected BackgroundWorker _webCamWorker;
 
         public BaseCameraService()
         {
             _videoCapture = new VideoCapture();
             InitializeWorkers();
+        }
+
+        public void Dispose()
+        {
+            _webCamWorker.DoWork -= OnWebCamWorker;
+            _webCamWorker.CancelAsync();
+            _videoCapture?.Dispose();
+            _videoCapture = null;
+            _webCamWorker?.Dispose();
         }
 
         public bool IsRunning => _webCamWorker?.IsBusy ?? false;
@@ -25,6 +36,8 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void RunServiceAsync()
         {
+            InitializeVideoCapture();
+            InitializeWorkers();
             _webCamWorker.RunWorkerAsync();
         }
 
@@ -46,7 +59,7 @@ namespace EA.DesktopApp.Services
             _webCamWorker.DoWork += OnWebCamWorker;
         }
 
-        /// <summary>
+        // <summary>
         ///     Draw image method
         /// </summary>
         /// <param name="sender"></param>
@@ -63,6 +76,28 @@ namespace EA.DesktopApp.Services
             {
                 var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();
                 ImageChanged?.Invoke(image);
+            }
+        }
+
+        private void InitializeVideoCapture()
+        {
+            try
+            {
+                if (_videoCapture == null)
+                {
+                    _videoCapture = new VideoCapture();
+
+                    if (!_videoCapture.IsOpened)
+                    {
+                        _videoCapture.Start();
+                    }
+
+                    _videoCapture.Stop();
+                }
+            }
+            catch (Exception e)
+            {
+                //logger.Error("Video capture failed! {e}", e);
             }
         }
     }
