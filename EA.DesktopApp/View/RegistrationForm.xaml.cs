@@ -13,14 +13,6 @@ namespace EA.DesktopApp.View
             InitializeComponent();
         }
 
-        public RegistrationForm(bool test)
-        {
-            InitializeComponent();
-            Test = test;
-        }
-
-        private bool Test { get; }
-
         public bool IsClosed { get; private set; }
 
         protected override void OnClosed(EventArgs e)

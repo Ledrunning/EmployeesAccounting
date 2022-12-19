@@ -166,13 +166,13 @@
     </Compile>
     <Compile Include="Services\PhotoShootService.cs" />
     <Compile Include="Services\FaceDetectionService.cs" />
-    <Compile Include="ViewModels\AdminFormViewModel.cs" />
+    <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\LoginFormViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ModalViewModel.cs" />
-    <Compile Include="ViewModels\RedactorFormViewModel.cs" />
-    <Compile Include="ViewModels\RegistrationFormViewModel.cs" />
+    <Compile Include="ViewModels\RedactorViewModel.cs" />
+    <Compile Include="ViewModels\RegistrationViewModel.cs" />
     <Compile Include="View\ModalWindow.xaml.cs">
       <DependentUpon>ModalWindow.xaml</DependentUpon>
     </Compile>

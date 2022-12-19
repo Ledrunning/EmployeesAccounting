@@ -8,7 +8,7 @@
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
-        <viewModels:AdminFormViewModel x:Key="AdminFormViewModel" />
+        <viewModels:AdminViewModel x:Key="AdminFormViewModel" />
 
         <!-- IData Error style  -->
 

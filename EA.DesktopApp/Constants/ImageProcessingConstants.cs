@@ -16,5 +16,7 @@ namespace EA.DesktopApp.Constants
         public static readonly Bgr RectanglesColor = new Bgr(Color.Aqua);
         public const int PhotoHeight = 400;
         public const int PhotoWidth = 500;
+        public const int GrayPhotoHeight = 100;
+        public const int GrayPhotoWidth = 100;
     }
 }

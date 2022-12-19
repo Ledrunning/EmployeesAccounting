@@ -8,7 +8,7 @@
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
-        <viewModels:LoginFormViewModel x:Key="LoginFormViewModel" />
+        <viewModels:LoginViewModel x:Key="LoginFormViewModel" />
 
         <!-- IData Error style  -->
 

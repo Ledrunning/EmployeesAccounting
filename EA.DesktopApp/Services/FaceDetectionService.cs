@@ -25,6 +25,14 @@ namespace EA.DesktopApp.Services
         private CascadeClassifier _eyeCascadeClassifier;
         private CascadeClassifier _faceCascadeClassifier;
 
+        private static FaceDetectionService _instance;
+
+        //TODO: before I used IoC
+        public static FaceDetectionService GetInstance()
+        {
+            return _instance ?? (_instance = new FaceDetectionService());
+        }
+
         /// <summary>
         ///     Capture stream from camera
         ///     And init background workers

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -12,22 +11,19 @@ namespace EA.DesktopApp.Services
         private VideoCapture _videoCapture;
         protected BackgroundWorker _webCamWorker;
 
-        public BaseCameraService()
-        {
-            _videoCapture = new VideoCapture();
-            InitializeWorkers();
-        }
+        public bool IsRunning => _webCamWorker?.IsBusy ?? false;
 
         public void Dispose()
         {
-            _webCamWorker.DoWork -= OnWebCamWorker;
-            _webCamWorker.CancelAsync();
+            if (_webCamWorker != null)
+            {
+                _webCamWorker.DoWork -= OnWebCamWorker;
+                _webCamWorker.CancelAsync();
+            }
             _videoCapture?.Dispose();
             _videoCapture = null;
             _webCamWorker?.Dispose();
         }
-
-        public bool IsRunning => _webCamWorker?.IsBusy ?? false;
 
         public event ImageChangedEventHandler ImageChanged;
 
@@ -60,7 +56,7 @@ namespace EA.DesktopApp.Services
         }
 
         // <summary>
-        ///     Draw image method
+        /// Draw image method
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -81,24 +77,11 @@ namespace EA.DesktopApp.Services
 
         private void InitializeVideoCapture()
         {
-            try
+            if (_videoCapture != null)
             {
-                if (_videoCapture == null)
-                {
-                    _videoCapture = new VideoCapture();
-
-                    if (!_videoCapture.IsOpened)
-                    {
-                        _videoCapture.Start();
-                    }
-
-                    _videoCapture.Stop();
-                }
+                return;
             }
-            catch (Exception e)
-            {
-                //logger.Error("Video capture failed! {e}", e);
-            }
+            _videoCapture = new VideoCapture();
         }
     }
 }

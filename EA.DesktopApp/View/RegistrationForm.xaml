@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterOwner"
         Title="EmployeesAccounting" Height="400" Width="535" MinHeight="400" MaxHeight="500" MinWidth="535" MaxWidth="800">
     <Window.Resources>
-        <viewModels:RegistrationFormViewModel x:Key="RegistrationFormViewModel" />
+        <viewModels:RegistrationViewModel x:Key="RegistrationFormViewModel" />
         <converters:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
        
         <!-- IData Error style  -->

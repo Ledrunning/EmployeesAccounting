@@ -1,35 +1,46 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    internal class AdminFormViewModel : BaseViewModel, IDataErrorInfo
+    public class LoginViewModel : BaseViewModel, IDataErrorInfo
     {
+        private readonly LoginWindow _loginWindow;
         private bool _isReady;
         private bool _isRunning;
+        private RegistrationForm _registrationFormPage;
+        private SoundPlayerService _soundPlayerHelper = new SoundPlayerService();
 
         private string _loginValue;
-        private string _oldPasswordValue;
 
         private string _passwordValue;
-        private string _userMessage;
 
-        public AdminFormViewModel()
+
+        public LoginViewModel()
         {
             InitializeCommands();
         }
 
-        public string Registration => "Нажмите для регистрации";
-        public string ClearFields => "Нажмите для очистки полей";
+        public LoginViewModel(LoginWindow loginWindow)
+        {
+            this._loginWindow = loginWindow;
+            InitializeCommands();
+        }
 
-        public ICommand ClearFieldsCommand { get; set; }
-        public ICommand RegistrationCommand { get; set; }
+        public ICommand LoginCommand { get; private set; }
+        public ICommand CancelCommand { get; private set; }
+        public ICommand AdminModeCommand { get; private set; }
+
+        public string Login { get; } = "Enter the password";
+        public string Cancel { get; } = "Press for clear";
 
         /// <summary>
-        ///     Start webCam service button toogle
+        ///     Start webCam service button toggle
         /// </summary>
         public bool IsRunning
         {
@@ -50,16 +61,6 @@ namespace EA.DesktopApp.ViewModels
             set
             {
                 _isReady = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string UserMessage
-        {
-            get => _userMessage;
-            set
-            {
-                _userMessage = value;
                 OnPropertyChanged();
             }
         }
@@ -86,17 +87,6 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
-        [Required(AllowEmptyStrings = false)]
-        public string OldPasswordField
-        {
-            get => _oldPasswordValue;
-            set
-            {
-                _oldPasswordValue = value;
-                OnPropertyChanged();
-            }
-        }
-
         /// <summary>
         ///     Error indexer
         /// </summary>
@@ -117,7 +107,7 @@ namespace EA.DesktopApp.ViewModels
                         }
                         else if (LoginField.Contains(" "))
                         {
-                            error = "Логин не может содержать пробел";
+                            error = "Пароль не может содержать пробел";
                         }
 
                         break;
@@ -128,17 +118,6 @@ namespace EA.DesktopApp.ViewModels
                             error = "Введите пароль!";
                         }
                         else if (PasswordField.Contains(" "))
-                        {
-                            error = "Пароль не может содержать пробел";
-                        }
-
-                        break;
-                    case "OldPasswordField":
-                        if (string.IsNullOrEmpty(PasswordField))
-                        {
-                            error = "Введите старый пароль!";
-                        }
-                        else if (OldPasswordField.Contains(" "))
                         {
                             error = "Пароль не может содержать пробел";
                         }
@@ -157,22 +136,57 @@ namespace EA.DesktopApp.ViewModels
 
         private void InitializeCommands()
         {
-            ClearFieldsCommand = new RelayCommand(ToggleClearFieldsExecute);
-            RegistrationCommand = new RelayCommand(ToggleRegistrationExecute);
+            LoginCommand = new RelayCommand(ToggleLoginExecute);
+            CancelCommand = new RelayCommand(ToggleCancelExecute);
+            AdminModeCommand = new RelayCommand(ToggleAdminWindowShowExecute);
+        }
+        //todo login check
+        private void ToggleLoginExecute()
+        {
+            // Playing sound effect for button
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
+
+            if (_registrationFormPage != null && !_registrationFormPage.IsClosed)
+            {
+                return;
+            }
+
+            var registrationFormViewModel = new RegistrationViewModel();
+
+            _registrationFormPage = new RegistrationForm()
+            {
+                DataContext = registrationFormViewModel,
+                Owner = Application.Current.MainWindow
+            };
+
+            _loginWindow.Close();
+            _registrationFormPage.ShowDialog();
         }
 
-        private void ToggleRegistrationExecute()
+        private void ToggleCancelExecute()
         {
-        }
-
-        private void ToggleClearFieldsExecute()
-        {
-            var soundHelper = new SoundPlayerService();
-            soundHelper.PlaySound("button");
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
 
             LoginField = string.Empty;
             PasswordField = string.Empty;
-            OldPasswordField = string.Empty;
+        }
+
+        private void ToggleAdminWindowShowExecute()
+        {
+            _soundPlayerHelper = new SoundPlayerService();
+            _soundPlayerHelper.PlaySound("button");
+            var adminForm = new AdminForm
+            {
+                Owner = Application.Current.MainWindow
+            };
+            adminForm.ShowDialog();
+        }
+
+        public void ShowLoginWindow()
+        {
+            _loginWindow.ShowDialog();
         }
     }
 }

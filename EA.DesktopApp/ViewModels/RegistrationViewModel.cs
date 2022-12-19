@@ -24,7 +24,7 @@ namespace EA.DesktopApp.ViewModels
     /// <summary>
     ///     View model class for registration form
     /// </summary>
-    public class RegistrationFormViewModel : BaseViewModel, IDataErrorInfo
+    public class RegistrationViewModel : BaseViewModel, IDataErrorInfo
     {
         /// <summary>
         ///     Readonly fields
@@ -53,7 +53,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationFormViewModel()
+        public RegistrationViewModel()
         {
             InitializeServices();
             InitializeCommands();
@@ -61,7 +61,7 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Start webCam service button toogle
+        ///     Start webCam service button toggle
         /// </summary>
         public bool IsReady
         {
@@ -96,10 +96,8 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeServices()
         {
-            _photoShootService = new PhotoShootService();
-            // Run image capture from WebCam
+            _photoShootService = PhotoShootService.GetInstance();
             _photoShootService.RunServiceAsync();
-            _photoShootService.PhotoImageChanged -= OnImageChanged;
             _photoShootService.PhotoImageChanged += OnImageChanged;
         }
 
@@ -121,7 +119,8 @@ namespace EA.DesktopApp.ViewModels
         {
             PhotoShootFrame = image.ToBitmap();
             // New grayscale image for recognition
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(100, 100, Inter.Cubic);
+            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth, 
+                    ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
         }
 
         #region ToolTip properties
@@ -304,7 +303,7 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleAddImageToDataBase()
         {
             _modalView = new ModalViewModel(new ModalWindow());
-            //_modalView.ShowWindow();
+            //_modalView.ShowLoginWindow();
 
             _soundPlayerHelper = new SoundPlayerService();
 

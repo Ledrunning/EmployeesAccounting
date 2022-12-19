@@ -11,6 +11,15 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class PhotoShootService : BaseCameraService
     {
+
+        private static PhotoShootService _instance;
+
+        //TODO: before I used IoC
+        public static PhotoShootService GetInstance()
+        {
+            return _instance ?? (_instance = new PhotoShootService());
+        }
+
         /// <summary>
         ///     Init for face detection method
         /// </summary>

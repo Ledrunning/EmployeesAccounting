@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EA.DesktopApp.ViewModels
 {
-    public class RedactorFormViewModel : BaseViewModel
+    public class RedactorViewModel : BaseViewModel
     {
-        public RedactorFormViewModel()
+        public RedactorViewModel()
         {
             InitializeCommands();
         }

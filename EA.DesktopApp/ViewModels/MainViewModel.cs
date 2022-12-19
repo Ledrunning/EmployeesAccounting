@@ -21,9 +21,9 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        private const string GetPhotoTooltipMessage = "Нажмите, что бы сделать фотографию";
-        private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
-        private const string HelpTooltipMessage = "Нажмите для справки";
+        private const string GetPhotoTooltipMessage = "Press to take a photo and add a person details";
+        private const string StartDetectorTooltipMessage = "Press to run facial detection";
+        private const string HelpTooltipMessage = "Press to get a program help";
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -39,7 +39,6 @@ namespace EA.DesktopApp.ViewModels
 
         private bool _isStreaming;
         private LoginWindow _loginForm;
-        private PhotoShootService _photoShootService;
         private RegistrationForm _registrationFormPage;
         private SoundPlayerService _soundPlayerHelper;
 
@@ -133,15 +132,14 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeServices()
         {
             Logger.Info("Initialize of all services.....");
-            _photoShootService = new PhotoShootService();
-            _faceDetectionService = new FaceDetectionService();
+            _faceDetectionService = FaceDetectionService.GetInstance();
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
         /// <summary>
         ///     Service From WebCamService
         /// </summary>
-        private void ToggleWebServiceExecute()
+        private void FaceDetectionServiceExecute()
         {
             // Playing sound effect for button
             _soundPlayerHelper = new SoundPlayerService();
@@ -149,7 +147,7 @@ namespace EA.DesktopApp.ViewModels
 
             if (_faceDetectionService == null)
             {
-                _faceDetectionService = new FaceDetectionService();
+                _faceDetectionService = FaceDetectionService.GetInstance();
                 _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
             }
 
@@ -157,20 +155,20 @@ namespace EA.DesktopApp.ViewModels
             {
                 IsStreaming = true;
                 _faceDetectionService.RunServiceAsync();
-                Logger.Info("Video streaming is started!");
+                Logger.Info("Face detection is started!");
             }
             else
             {
                 IsStreaming = false;
-                StopPhotoService();
+                StopFaceDetectionService();
             }
         }
 
-        private void StopPhotoService()
+        private void StopFaceDetectionService()
         {
             _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
             _faceDetectionService.CancelServiceAsync();
-            Logger.Info("Video streaming stopped!");
+            Logger.Info("Face detection stopped!");
             _faceDetectionService.Dispose();
             _faceDetectionService = null;
         }
@@ -190,23 +188,24 @@ namespace EA.DesktopApp.ViewModels
             if (_loginForm == null || _loginForm.IsClosed)
             {
                 _loginForm = new LoginWindow();
-                var loginFormViewModel = new LoginFormViewModel(_loginForm);
+                var loginFormViewModel = new LoginViewModel(_loginForm);
 
                 _loginForm.DataContext = loginFormViewModel;
                 _loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
                 _faceDetectionService.CancelServiceAsync();
-                loginFormViewModel.ShowWindow();
+                StopFaceDetectionService();
+                loginFormViewModel.ShowLoginWindow();
             }
 
 
-            if (_faceDetectionService.IsRunning)
+            if (_faceDetectionService != null && _faceDetectionService.IsRunning)
             {
                 return;
             }
 
             IsStreaming = true;
-            _faceDetectionService.RunServiceAsync();
+            _faceDetectionService?.RunServiceAsync();
         }
 
         /// <summary>
@@ -232,7 +231,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            ToggleWebServiceCommand = new RelayCommand(ToggleWebServiceExecute);
+            ToggleWebServiceCommand = new RelayCommand(FaceDetectionServiceExecute);
             TogglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
             ToggleHelpCallCommand = new RelayCommand(ToggleHelpServiceExecute);
         }
