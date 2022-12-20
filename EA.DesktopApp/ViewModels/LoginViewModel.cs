@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -14,15 +15,17 @@ namespace EA.DesktopApp.ViewModels
         private bool _isReady;
         private bool _isRunning;
         private RegistrationForm _registrationFormPage;
-        private SoundPlayerService _soundPlayerHelper = new SoundPlayerService();
-
+        private ISoundPlayerService _soundPlayerHelper;
+        private IPhotoShootService _photoShootService;
         private string _loginValue;
 
         private string _passwordValue;
 
 
-        public LoginViewModel()
+        public LoginViewModel(ISoundPlayerService soundPlayerHelper, IPhotoShootService photoShootService)
         {
+            _soundPlayerHelper = soundPlayerHelper;
+            _photoShootService = photoShootService;
             InitializeCommands();
         }
 
@@ -152,7 +155,7 @@ namespace EA.DesktopApp.ViewModels
                 return;
             }
 
-            var registrationFormViewModel = new RegistrationViewModel();
+            var registrationFormViewModel = new RegistrationViewModel(_photoShootService);
 
             _registrationFormPage = new RegistrationForm()
             {

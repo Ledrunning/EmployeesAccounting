@@ -3,7 +3,7 @@
     /// <summary>
     ///     Interface for sound effects playing
     /// </summary>
-    public interface ISoundPlayer
+    public interface ISoundPlayerService
     {
         /// <summary>
         ///     Play sound method.

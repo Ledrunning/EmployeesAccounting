@@ -7,20 +7,23 @@ using EA.DesktopApp.Properties;
 namespace EA.DesktopApp.Services
 {
     /// <summary>
-    ///     Class for sound effects playing extends ISoundPlayer
+    ///     Class for sound effects playing extends ISoundPlayerService
     /// </summary>
-    public class SoundPlayerService : ISoundPlayer
+    public class SoundPlayerService : ISoundPlayerService
     {
         private readonly Dictionary<string, UnmanagedMemoryStream> _sounds =
             new Dictionary<string, UnmanagedMemoryStream>();
+
+        public const string ButtonSound = "button";
+        public const string CameraSound = "camera";
 
         /// <summary>
         ///     .ctor
         /// </summary>
         public SoundPlayerService()
         {
-            _sounds.Add("button", Resources.button);
-            _sounds.Add("camera", Resources.camera);
+            _sounds.Add(ButtonSound, Resources.button);
+            _sounds.Add(CameraSound, Resources.camera);
         }
 
         /// <summary>

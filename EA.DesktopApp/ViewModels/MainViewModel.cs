@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -27,11 +28,10 @@ namespace EA.DesktopApp.ViewModels
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private string _currentTimeDate;
 
-        private WebServerApi _dataStorage;
-        private FaceDetectionService _faceDetectionService;
+        private IEmployeeApi _employeeApi;
+        private IFaceDetectionService _faceDetectionService;
         private Bitmap _frame;
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
 
@@ -47,15 +47,20 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public DispatcherTimer Timer;
 
+        public MainViewModel()
+        {
+        }
+
         /// <summary>
         ///     .ctor
         /// </summary>
-        public MainViewModel()
+        public MainViewModel(IFaceDetectionService faceDetectionService, IEmployeeApi employeeApi)
         {
+            _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            _dataStorage = new WebServerApi(_urlAddress);
+            _employeeApi = employeeApi;
         }
 
         /// <summary>
@@ -132,7 +137,6 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeServices()
         {
             Logger.Info("Initialize of all services.....");
-            _faceDetectionService = FaceDetectionService.GetInstance();
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
@@ -142,12 +146,10 @@ namespace EA.DesktopApp.ViewModels
         private void FaceDetectionServiceExecute()
         {
             // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_faceDetectionService == null)
             {
-                _faceDetectionService = FaceDetectionService.GetInstance();
                 _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
             }
 
@@ -178,9 +180,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void TogglePhotoShootServiceExecute()
         {
-            // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             // True - button is pushed - Working!
             IsRunning = false;

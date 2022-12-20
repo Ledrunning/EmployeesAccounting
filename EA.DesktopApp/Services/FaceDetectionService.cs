@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using EA.DesktopApp.Constants;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -19,19 +20,11 @@ namespace EA.DesktopApp.Services
     ///     6.nvcuda.dll needed if have not Nvidia GPU on computer
     ///     All libs must to be copied into the bin folder
     /// </summary>
-    public class FaceDetectionService : BaseCameraService
+    public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private CascadeClassifier _eyeCascadeClassifier;
         private CascadeClassifier _faceCascadeClassifier;
-
-        private static FaceDetectionService _instance;
-
-        //TODO: before I used IoC
-        public static FaceDetectionService GetInstance()
-        {
-            return _instance ?? (_instance = new FaceDetectionService());
-        }
 
         /// <summary>
         ///     Capture stream from camera

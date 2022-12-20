@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
 
 namespace EA.DesktopApp.Rest
@@ -12,7 +13,7 @@ namespace EA.DesktopApp.Rest
     ///     Client class for REST Web API
     ///     HTTP Client Nuget needed
     /// </summary>
-    public class WebServerApi
+    public class EmployeeApi : IEmployeeApi
     {
         private const string ApiName = "api/employee/";
         private readonly string _baseAddress;
@@ -21,7 +22,7 @@ namespace EA.DesktopApp.Rest
         ///     .ctor
         /// </summary>
         /// <param name="baseAddress"></param>
-        public WebServerApi(string baseAddress)
+        public EmployeeApi(string baseAddress)
         {
             this._baseAddress = baseAddress;
         }

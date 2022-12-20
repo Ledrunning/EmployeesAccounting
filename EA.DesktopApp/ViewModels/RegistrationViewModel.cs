@@ -9,6 +9,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
@@ -44,7 +45,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     PhotoShoot Service needed
         /// </summary>
-        private PhotoShootService _photoShootService;
+        private IPhotoShootService _photoShootService;
 
         private SoundPlayerService _soundPlayerHelper;
 
@@ -53,8 +54,9 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel()
+        public RegistrationViewModel(IPhotoShootService photoShootService)
         {
+            _photoShootService = photoShootService;
             InitializeServices();
             InitializeCommands();
             CreateFolder();
@@ -96,7 +98,6 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeServices()
         {
-            _photoShootService = PhotoShootService.GetInstance();
             _photoShootService.RunServiceAsync();
             _photoShootService.PhotoImageChanged += OnImageChanged;
         }
@@ -335,7 +336,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    var client = new WebServerApi(_urlAddress);
+                    var client = new EmployeeApi(_urlAddress);
 
                     client.AddPerson(person);
                     _modalView.SetMessage("Data has been successfully loaded to database.");
