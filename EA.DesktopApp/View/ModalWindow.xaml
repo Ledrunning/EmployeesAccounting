@@ -9,7 +9,6 @@
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <local:ModalViewModel x:Key="ModalWindowViewModel" />
         <converters:IconToImageSourceConverter x:Key="IconToImageSourceConverter" />
     </Window.Resources>
    

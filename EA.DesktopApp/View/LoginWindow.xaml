@@ -8,8 +8,6 @@
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
-        <viewModels:LoginViewModel x:Key="LoginFormViewModel" />
-
         <!-- IData Error style  -->
 
         <Style x:Key="TextErrorStyle" TargetType="{x:Type TextBox}">
@@ -36,7 +34,7 @@
     </Window.Resources>
     <!-- End IData Error style -->
 
-    <Grid DataContext="{StaticResource LoginFormViewModel}">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="421*" />
             <ColumnDefinition Width="107*" />

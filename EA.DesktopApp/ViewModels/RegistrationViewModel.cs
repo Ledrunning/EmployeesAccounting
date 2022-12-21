@@ -36,16 +36,16 @@ namespace EA.DesktopApp.ViewModels
                                                              Assembly.GetExecutingAssembly().Location) +
                                                          "\\Traineddata";
 
-        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private bool _isReady;
         private ModalViewModel _modalView;
-        private ModalWindow _modalWindow;
 
         /// <summary>
         ///     PhotoShoot Service needed
         /// </summary>
-        private IPhotoShootService _photoShootService;
+        private readonly IPhotoShootService _photoShootService;
 
         private SoundPlayerService _soundPlayerHelper;
 
@@ -108,7 +108,7 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeCommands()
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
+            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute);
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
@@ -120,8 +120,8 @@ namespace EA.DesktopApp.ViewModels
         {
             PhotoShootFrame = image.ToBitmap();
             // New grayscale image for recognition
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth, 
-                    ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
+            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth,
+                ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
         }
 
         #region ToolTip properties
@@ -388,8 +388,8 @@ namespace EA.DesktopApp.ViewModels
                 if (dialogService.SaveFileDialog())
                 {
                     // New Bitmap and save to file
-                    PhotoShootFrame = new Bitmap(PhotoShootFrame, 
-                        ImageProcessingConstants.PhotoWidth, 
+                    PhotoShootFrame = new Bitmap(PhotoShootFrame,
+                        ImageProcessingConstants.PhotoWidth,
                         ImageProcessingConstants.PhotoHeight);
                     PhotoShootFrame.Save($"{dialogService.FilePath}{FileExtension}", ImageFormat.Jpeg);
                 }
@@ -402,6 +402,7 @@ namespace EA.DesktopApp.ViewModels
                 _modalView.ShowWindow();
             }
         }
+
         #endregion Toggles Execute methods
     }
 }

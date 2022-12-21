@@ -13,11 +13,6 @@ namespace EA.DesktopApp
         protected override void OnStartup(StartupEventArgs e)
         {
             AutofacConfigure.ConfigureContainer();
-            using (var scope = AutofacConfigure.Container.BeginLifetimeScope())
-            {
-                var window = scope.Resolve<MainWindow>();
-                window.Show();
-            }
         }
     }
 }

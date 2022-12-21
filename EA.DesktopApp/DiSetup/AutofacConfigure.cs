@@ -5,6 +5,7 @@ using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
+using EA.DesktopApp.ViewModels;
 
 namespace EA.DesktopApp.DiSetup
 {
@@ -18,8 +19,9 @@ namespace EA.DesktopApp.DiSetup
             {
                 var builder = new ContainerBuilder();
 
-                var _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-                var _dataStorage = new EmployeeApi(_urlAddress);
+                var urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+                var employeeApi = new EmployeeApi(urlAddress);
+                builder.RegisterInstance(employeeApi).As<IEmployeeApi>().SingleInstance();
 
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().SingleInstance();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().SingleInstance();
@@ -40,16 +42,16 @@ namespace EA.DesktopApp.DiSetup
 
                 //builder.RegisterType<SqLiteManager>().As<ISqLiteManager>().SingleInstance();
                 //builder.RegisterType<BreezeService>().AsSelf().SingleInstance();
-                // Add the MainWindowclass and later resolve
 
-                builder.RegisterType<MainWindow>().AsSelf();
+                builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
                 Container = builder.Build();
+
                 return true;
             }
             catch (Exception e)
             {
                 //LoggerManager.FatalMessage("Ошибка инициализации службы! ", e);
-                return false;
+                throw new ApplicationException( $"{e.Message}. Hui");
             }
         }
     }

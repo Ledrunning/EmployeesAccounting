@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -7,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
-using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -27,40 +25,39 @@ namespace EA.DesktopApp.ViewModels
         private const string HelpTooltipMessage = "Press to get a program help";
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ModalViewModel _modalWindow = new ModalViewModel();
+        private readonly ISoundPlayerService _soundPlayerHelper;
 
         private string _currentTimeDate;
 
         private IEmployeeApi _employeeApi;
         private IFaceDetectionService _faceDetectionService;
         private Bitmap _frame;
-        private readonly ModalViewModel _modalWindow = new ModalViewModel();
 
         private bool _isRunning;
 
         private bool _isStreaming;
         private LoginWindow _loginForm;
-        private RegistrationForm _registrationFormPage;
-        private SoundPlayerService _soundPlayerHelper;
 
         /// <summary>
         ///     Timer
         /// </summary>
         public DispatcherTimer Timer;
 
-        public MainViewModel()
-        {
-        }
-
         /// <summary>
         ///     .ctor
         /// </summary>
-        public MainViewModel(IFaceDetectionService faceDetectionService, IEmployeeApi employeeApi)
+        public MainViewModel(
+            IFaceDetectionService faceDetectionService,
+            IEmployeeApi employeeApi,
+            ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
             TimeTicker();
             _employeeApi = employeeApi;
+            _soundPlayerHelper = soundPlayerHelper;
         }
 
         /// <summary>
@@ -210,7 +207,7 @@ namespace EA.DesktopApp.ViewModels
 
         /// <summary>
         ///     Execute method for relay command TODO: file does not exist
-        ///     TODO and will fix modal window NRE exception 
+        ///     TODO and will fix modal window NRE exception
         /// </summary>
         private void ToggleHelpServiceExecute()
         {
