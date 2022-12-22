@@ -169,7 +169,7 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.CancelServiceAsync();
             Logger.Info("Face detection stopped!");
             _faceDetectionService.Dispose();
-            _faceDetectionService = null;
+            //_faceDetectionService = null;
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
-                Logger.Error(e, "An error occuried in opening Help file!");
+                Logger.Error("An error occuried in opening Help file! {e}", e);
                 _modalWindow.SetMessage("An error occuried in opening Help file!");
                 _modalWindow.ShowWindow();
             }

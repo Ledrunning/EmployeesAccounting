@@ -155,11 +155,11 @@ namespace EA.DesktopApp.ViewModels
                 return;
             }
 
-            var registrationFormViewModel = new RegistrationViewModel(_photoShootService);
+            //var registrationFormViewModel = new RegistrationViewModel(_photoShootService);
 
             _registrationFormPage = new RegistrationForm()
             {
-                DataContext = registrationFormViewModel,
+                //DataContext = registrationFormViewModel,
                 Owner = Application.Current.MainWindow
             };
 

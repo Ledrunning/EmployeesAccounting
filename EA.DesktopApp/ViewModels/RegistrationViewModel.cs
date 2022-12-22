@@ -38,25 +38,21 @@ namespace EA.DesktopApp.ViewModels
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IPhotoShootService _photoShootService;
+        private readonly ISoundPlayerService _soundPlayerService;
+
         private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private bool _isReady;
         private ModalViewModel _modalView;
-
-        /// <summary>
-        ///     PhotoShoot Service needed
-        /// </summary>
-        private readonly IPhotoShootService _photoShootService;
-
-        private SoundPlayerService _soundPlayerHelper;
-
         private bool _takePhotoFlag;
 
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService)
+        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService)
         {
             _photoShootService = photoShootService;
+            _soundPlayerService = soundPlayerService;
             InitializeServices();
             InitializeCommands();
             CreateFolder();
@@ -89,7 +85,7 @@ namespace EA.DesktopApp.ViewModels
                 var modal = new ModalViewModel();
                 modal.SetMessage("Error to creating the folder");
                 modal.ShowWindow();
-                Logger.Error(e, "Error to creating the folder");
+                Logger.Error("Error to creating the folder {e}", e);
             }
         }
 
@@ -306,9 +302,7 @@ namespace EA.DesktopApp.ViewModels
             _modalView = new ModalViewModel(new ModalWindow());
             //_modalView.ShowLoginWindow();
 
-            _soundPlayerHelper = new SoundPlayerService();
-
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerService.PlaySound("button");
 
             var picture = PhotoShootGray.Bytes;
 
@@ -342,17 +336,17 @@ namespace EA.DesktopApp.ViewModels
                     _modalView.SetMessage("Data has been successfully loaded to database.");
                     _modalView.ShowWindow();
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException e)
                 {
                     _modalView.SetMessage("Error database connection.");
                     _modalView.ShowWindow();
-                    Logger.Error(ex, "Error database connection.");
+                    Logger.Error("Error database connection. {e}", e);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     _modalView.SetMessage("Error to save data into database");
                     _modalView.ShowWindow();
-                    Logger.Error(ex, "Error to save data into database");
+                    Logger.Error("Error to save data into database {e}", e);
                 }
             }
         }
@@ -362,9 +356,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void ToggleGetImageExecute()
         {
-            _soundPlayerHelper = new SoundPlayerService();
-
-            _soundPlayerHelper.PlaySound("camera");
+            _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
 
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
@@ -379,9 +371,7 @@ namespace EA.DesktopApp.ViewModels
             var dialogService = new DialogService();
 
             _modalView = new ModalViewModel(new ModalWindow());
-
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_takePhotoFlag)
             {

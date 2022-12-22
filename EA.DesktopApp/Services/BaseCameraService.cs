@@ -20,6 +20,7 @@ namespace EA.DesktopApp.Services
                 _webCamWorker.DoWork -= OnWebCamWorker;
                 _webCamWorker.CancelAsync();
             }
+
             _videoCapture?.Dispose();
             _videoCapture = null;
             _webCamWorker?.Dispose();
@@ -55,11 +56,11 @@ namespace EA.DesktopApp.Services
             _webCamWorker.DoWork += OnWebCamWorker;
         }
 
-        // <summary>
-        /// Draw image method
+        /// <summary>
+        ///     Draw image method
+        ///     <param name="sender"></param>
+        ///     <param name="e"></param>
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         protected void OnWebCamWorker(object sender, DoWorkEventArgs e)
         {
             if (_webCamWorker.CancellationPending)
@@ -81,6 +82,7 @@ namespace EA.DesktopApp.Services
             {
                 return;
             }
+
             _videoCapture = new VideoCapture();
         }
     }

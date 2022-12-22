@@ -33,6 +33,7 @@ namespace EA.DesktopApp.Services
         public FaceDetectionService()
         {
             InitializeClassifier();
+            ImageChanged -= OnFaceDetectionFound;
             ImageChanged += OnFaceDetectionFound;
         }
 
@@ -80,8 +81,10 @@ namespace EA.DesktopApp.Services
                     ImageProcessingConstants.RectangleThickness);
 
                 foreach (var eye in eyes)
+                {
                     image.Draw(eye, ImageProcessingConstants.RectanglesColor,
                         ImageProcessingConstants.RectangleThickness);
+                }
             }
         }
 
