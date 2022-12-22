@@ -137,6 +137,8 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
+        private bool test;
+
         /// <summary>
         ///     Service From WebCamService
         /// </summary>
@@ -145,13 +147,9 @@ namespace EA.DesktopApp.ViewModels
             // Playing sound effect for button
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
-            if (_faceDetectionService == null)
+            if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
                 _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
-            }
-
-            if (!_faceDetectionService.IsRunning)
-            {
                 IsStreaming = true;
                 _faceDetectionService.RunServiceAsync();
                 Logger.Info("Face detection is started!");
@@ -169,7 +167,6 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.CancelServiceAsync();
             Logger.Info("Face detection stopped!");
             _faceDetectionService.Dispose();
-            //_faceDetectionService = null;
         }
 
         /// <summary>
