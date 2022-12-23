@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Threading;
 using Autofac;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Rest;
@@ -14,6 +15,7 @@ namespace EA.DesktopApp.DiSetup
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static IContainer Container { get; private set; }
 
+        private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         public static void ConfigureContainer()
         {
@@ -24,6 +26,8 @@ namespace EA.DesktopApp.DiSetup
                 var urlAddress = ConfigurationManager.AppSettings["serverUriString"];
                 var employeeApi = new EmployeeApi(urlAddress);
                 builder.RegisterInstance(employeeApi).As<IEmployeeApi>().SingleInstance();
+
+                builder.RegisterInstance(CancellationTokenSource).AsSelf().SingleInstance();
 
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().SingleInstance();

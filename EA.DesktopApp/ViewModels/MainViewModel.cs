@@ -20,8 +20,10 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
+        //TODO move to resource!
         private const string GetPhotoTooltipMessage = "Press to take a photo and add a person details";
         private const string StartDetectorTooltipMessage = "Press to run facial detection";
+        private const string StopDetectorTooltipMessage = "Press to stop facial detection";
         private const string HelpTooltipMessage = "Press to get a program help";
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -31,7 +33,7 @@ namespace EA.DesktopApp.ViewModels
         private string _currentTimeDate;
 
         private IEmployeeApi _employeeApi;
-        private IFaceDetectionService _faceDetectionService;
+        private readonly IFaceDetectionService _faceDetectionService;
         private Bitmap _frame;
 
         private bool _isRunning;
@@ -60,10 +62,19 @@ namespace EA.DesktopApp.ViewModels
             _soundPlayerHelper = soundPlayerHelper;
         }
 
+        private string _getStarted;
         /// <summary>
         ///     Get start tooltip
         /// </summary>
-        public string GetStarted => StartDetectorTooltipMessage;
+        public string GetStarted
+        {
+            get
+            {
+                _getStarted = !_faceDetectionService.IsRunning ? StartDetectorTooltipMessage : StopDetectorTooltipMessage;
+                return _getStarted;
+            }
+            set => SetField(ref _getStarted, value);
+        }
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
@@ -136,8 +147,6 @@ namespace EA.DesktopApp.ViewModels
             Logger.Info("Initialize of all services.....");
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
-
-        private bool test;
 
         /// <summary>
         ///     Service From WebCamService
