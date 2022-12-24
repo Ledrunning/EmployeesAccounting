@@ -8,8 +8,6 @@
         MaxWidth="535" ResizeMode="NoResize">
 
     <Window.Resources>
-        <viewModels:AdminViewModel x:Key="AdminFormViewModel" />
-
         <!-- IData Error style  -->
 
         <Style x:Key="TextErrorStyle" TargetType="{x:Type TextBox}">
@@ -35,7 +33,7 @@
     </Window.Resources>
     <!-- End IData Error style -->
 
-    <Grid DataContext="{StaticResource AdminFormViewModel}">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="421*" />
             <ColumnDefinition Width="107*" />

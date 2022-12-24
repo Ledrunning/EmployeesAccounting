@@ -1,5 +1,8 @@
-﻿using System;
+﻿using EA.DesktopApp.DiSetup;
+using EA.DesktopApp.ViewModels;
+using System;
 using System.Windows;
+using Autofac;
 
 namespace EA.DesktopApp.View
 {
@@ -11,6 +14,7 @@ namespace EA.DesktopApp.View
         public RegistrationForm()
         {
             InitializeComponent();
+            DataContext = AutofacConfigure.Container.Resolve<RegistrationViewModel>();
         }
 
         public bool IsClosed { get; private set; }

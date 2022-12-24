@@ -9,6 +9,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
@@ -35,26 +36,23 @@ namespace EA.DesktopApp.ViewModels
                                                              Assembly.GetExecutingAssembly().Location) +
                                                          "\\Traineddata";
 
-        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private readonly IPhotoShootService _photoShootService;
+        private readonly ISoundPlayerService _soundPlayerService;
+
+        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private bool _isReady;
         private ModalViewModel _modalView;
-        private ModalWindow _modalWindow;
-
-        /// <summary>
-        ///     PhotoShoot Service needed
-        /// </summary>
-        private PhotoShootService _photoShootService;
-
-        private SoundPlayerService _soundPlayerHelper;
-
         private bool _takePhotoFlag;
 
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel()
+        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService)
         {
+            _photoShootService = photoShootService;
+            _soundPlayerService = soundPlayerService;
             InitializeServices();
             InitializeCommands();
             CreateFolder();
@@ -87,7 +85,7 @@ namespace EA.DesktopApp.ViewModels
                 var modal = new ModalViewModel();
                 modal.SetMessage("Error to creating the folder");
                 modal.ShowWindow();
-                Logger.Error(e, "Error to creating the folder");
+                Logger.Error("Error to creating the folder {e}", e);
             }
         }
 
@@ -96,7 +94,6 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeServices()
         {
-            _photoShootService = PhotoShootService.GetInstance();
             _photoShootService.RunServiceAsync();
             _photoShootService.PhotoImageChanged += OnImageChanged;
         }
@@ -107,7 +104,7 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeCommands()
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute); 
+            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute);
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
@@ -119,8 +116,8 @@ namespace EA.DesktopApp.ViewModels
         {
             PhotoShootFrame = image.ToBitmap();
             // New grayscale image for recognition
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth, 
-                    ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
+            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth,
+                ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
         }
 
         #region ToolTip properties
@@ -305,9 +302,7 @@ namespace EA.DesktopApp.ViewModels
             _modalView = new ModalViewModel(new ModalWindow());
             //_modalView.ShowLoginWindow();
 
-            _soundPlayerHelper = new SoundPlayerService();
-
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerService.PlaySound("button");
 
             var picture = PhotoShootGray.Bytes;
 
@@ -335,23 +330,23 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    var client = new WebServerApi(_urlAddress);
+                    var client = new EmployeeApi(_urlAddress);
 
                     client.AddPerson(person);
                     _modalView.SetMessage("Data has been successfully loaded to database.");
                     _modalView.ShowWindow();
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException e)
                 {
                     _modalView.SetMessage("Error database connection.");
                     _modalView.ShowWindow();
-                    Logger.Error(ex, "Error database connection.");
+                    Logger.Error("Error database connection. {e}", e);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     _modalView.SetMessage("Error to save data into database");
                     _modalView.ShowWindow();
-                    Logger.Error(ex, "Error to save data into database");
+                    Logger.Error("Error to save data into database {e}", e);
                 }
             }
         }
@@ -361,9 +356,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void ToggleGetImageExecute()
         {
-            _soundPlayerHelper = new SoundPlayerService();
-
-            _soundPlayerHelper.PlaySound("camera");
+            _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
 
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
@@ -378,17 +371,15 @@ namespace EA.DesktopApp.ViewModels
             var dialogService = new DialogService();
 
             _modalView = new ModalViewModel(new ModalWindow());
-
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_takePhotoFlag)
             {
                 if (dialogService.SaveFileDialog())
                 {
                     // New Bitmap and save to file
-                    PhotoShootFrame = new Bitmap(PhotoShootFrame, 
-                        ImageProcessingConstants.PhotoWidth, 
+                    PhotoShootFrame = new Bitmap(PhotoShootFrame,
+                        ImageProcessingConstants.PhotoWidth,
                         ImageProcessingConstants.PhotoHeight);
                     PhotoShootFrame.Save($"{dialogService.FilePath}{FileExtension}", ImageFormat.Jpeg);
                 }
@@ -401,6 +392,7 @@ namespace EA.DesktopApp.ViewModels
                 _modalView.ShowWindow();
             }
         }
+
         #endregion Toggles Execute methods
     }
 }
