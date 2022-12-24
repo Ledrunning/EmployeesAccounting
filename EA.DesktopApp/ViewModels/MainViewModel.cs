@@ -20,20 +20,17 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        //TODO move to resource!
-        private const string GetPhotoTooltipMessage = "Press to take a photo and add a person details";
-        private const string StartDetectorTooltipMessage = "Press to run facial detection";
-        private const string StopDetectorTooltipMessage = "Press to stop facial detection";
-        private const string HelpTooltipMessage = "Press to get a program help";
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IFaceDetectionService _faceDetectionService;
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
         private readonly ISoundPlayerService _soundPlayerHelper;
 
         private string _currentTimeDate;
 
+        private string _detectionHint;
+
         private IEmployeeApi _employeeApi;
-        private readonly IFaceDetectionService _faceDetectionService;
         private Bitmap _frame;
 
         private bool _isRunning;
@@ -60,31 +57,31 @@ namespace EA.DesktopApp.ViewModels
             TimeTicker();
             _employeeApi = employeeApi;
             _soundPlayerHelper = soundPlayerHelper;
+            DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
-        private string _getStarted;
         /// <summary>
         ///     Get start tooltip
         /// </summary>
-        public string GetStarted
+        public string DetectionHint
         {
-            get
+            get => _detectionHint;
+            set
             {
-                _getStarted = !_faceDetectionService.IsRunning ? StartDetectorTooltipMessage : StopDetectorTooltipMessage;
-                return _getStarted;
+                _detectionHint = value;
+                OnPropertyChanged(nameof(DetectionHint));
             }
-            set => SetField(ref _getStarted, value);
         }
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string GetPhoto => GetPhotoTooltipMessage;
+        public string PhotoHint => ProgramResources.PhotoTooltipMessage;
 
         /// <summary>
         ///     Help tooltip message
         /// </summary>
-        public string GetHelpTooltip => HelpTooltipMessage;
+        public string HelpHint => ProgramResources.HelpTooltipMessage;
 
         /// <summary>
         ///     Current date binding property
@@ -153,6 +150,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void FaceDetectionServiceExecute()
         {
+            DetectionHint = IsStreaming
+                ? ProgramResources.StartDetectorTooltipMessage
+                : ProgramResources.StopDetectorTooltipMessage;
+
             // Playing sound effect for button
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 

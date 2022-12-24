@@ -178,6 +178,11 @@
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />
+    <Compile Include="ProgramResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProgramResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\BaseCameraService.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Contracts\IDialogService.cs" />
@@ -371,6 +376,10 @@
     <Content Include="version_string.inc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="ProgramResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProgramResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

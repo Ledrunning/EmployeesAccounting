@@ -25,7 +25,7 @@
         <Button Grid.Row="0" Margin="0,0,0,265" Height="45" Width="45"
                 Content="?" FontSize="20" Command="{Binding ToggleHelpCallCommand}" Grid.Column="1">
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetHelpTooltip}" />
+                <ToolTip HasDropShadow="True" Content="{Binding HelpHint}" />
             </Button.ToolTip>
             </Button>
 
@@ -53,7 +53,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetStarted}" />
+                <ToolTip HasDropShadow="True" Content="{Binding DetectionHint}" />
             </Button.ToolTip>
         </Button>
 
@@ -79,7 +79,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetPhoto}" />
+                <ToolTip HasDropShadow="True" Content="{Binding PhotoHint}" />
             </Button.ToolTip>
         </Button>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
@@ -12,7 +13,6 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class PhotoShootService : BaseCameraService, IPhotoShootService
     {
-
         /// <summary>
         ///     Init for face detection method
         /// </summary>

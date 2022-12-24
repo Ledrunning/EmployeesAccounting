@@ -14,9 +14,7 @@ namespace EA.DesktopApp.DiSetup
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static IContainer Container { get; private set; }
-
-        private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-
+        
         public static void ConfigureContainer()
         {
             try
@@ -26,11 +24,8 @@ namespace EA.DesktopApp.DiSetup
                 var urlAddress = ConfigurationManager.AppSettings["serverUriString"];
                 var employeeApi = new EmployeeApi(urlAddress);
                 builder.RegisterInstance(employeeApi).As<IEmployeeApi>().SingleInstance();
-
-                builder.RegisterInstance(CancellationTokenSource).AsSelf().SingleInstance();
-
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
-                builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().SingleInstance();
+                builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
 
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
@@ -43,8 +38,8 @@ namespace EA.DesktopApp.DiSetup
             }
             catch (Exception e)
             {
-                Logger.Error("Ошибка инициализации службы! {e}", e);
-                throw new ApplicationException($"{e.Message}. Hui");
+                Logger.Error("Application run error! {e}", e);
+                throw new ApplicationException($"{e.Message}. Application run error!");
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
@@ -30,7 +31,7 @@ namespace EA.DesktopApp.Services
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService()
+        public FaceDetectionService() 
         {
             InitializeClassifier();
             ImageChanged -= OnFaceDetectionFound;
