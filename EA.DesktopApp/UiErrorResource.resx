@@ -117,25 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CancelTooltipMessage" xml:space="preserve">
-    <value>Press for clear</value>
+  <data name="DataError" xml:space="preserve">
+    <value>Please, enter valid data</value>
   </data>
-  <data name="HelpTooltipMessage" xml:space="preserve">
-    <value>Press to get a program help</value>
+  <data name="EmptyLogin" xml:space="preserve">
+    <value>Enter the login!</value>
   </data>
-  <data name="LoginTooltipMessage" xml:space="preserve">
-    <value>Enter the login</value>
+  <data name="EmptyPassword" xml:space="preserve">
+    <value>Enter the password!</value>
   </data>
-  <data name="PasswordTooltipMessage" xml:space="preserve">
-    <value>Enter the password</value>
+  <data name="SpaceInlogin" xml:space="preserve">
+    <value>Login cannot contain a space</value>
   </data>
-  <data name="PhotoTooltipMessage" xml:space="preserve">
-    <value>Press to take a photo and add a person details</value>
-  </data>
-  <data name="StartDetectorTooltipMessage" xml:space="preserve">
-    <value>Press to run facial detection</value>
-  </data>
-  <data name="StopDetectorTooltipMessage" xml:space="preserve">
-    <value>Press to stop facial detection</value>
+  <data name="SpaceInPassword" xml:space="preserve">
+    <value>Password cannot contain a space</value>
   </data>
 </root>

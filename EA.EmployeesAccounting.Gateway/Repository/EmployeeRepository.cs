@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using EA.WebApiServerSide.Model;
+﻿using EA.ServerGateway.Model;
 
-namespace EA.WebApiServerSide.Repository
+namespace EA.ServerGateway.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
@@ -21,22 +19,22 @@ namespace EA.WebApiServerSide.Repository
         /// <summary>
         ///     Add user to database
         /// </summary>
-        /// <param name="person"></param>
+        /// <param name="employee"></param>
         /// <returns></returns>
-        public Person AddEmployee(Person person)
+        public Employee AddEmployee(Employee employee)
         {
-            //person.Id = Guid.NewGuid();
-            _employeeContext.Person.Add(person);
+            //employee.Id = Guid.NewGuid();
+            _employeeContext.Person.Add(employee);
             _employeeContext.SaveChanges();
-            return person;
+            return employee;
         }
 
         /// <summary>
-        ///     Get person by ID
+        ///     Get employee by ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Person GetEmployeeById(int id)
+        public Employee GetEmployeeById(int id)
         {
             return _employeeContext.Person.SingleOrDefault(c => c.Id == id);
         }
@@ -45,13 +43,13 @@ namespace EA.WebApiServerSide.Repository
         ///     Get all data from data base
         /// </summary>
         /// <returns></returns>
-        public IQueryable<Person> GetAllEmployees()
+        public IQueryable<Employee> GetAllEmployees()
         {
             return _employeeContext.Person.AsQueryable();
         }
 
         /// <summary>
-        ///     RemoveEmployeeById person from data base
+        ///     RemoveEmployeeById employee from data base
         ///     using Id
         /// </summary>
         /// <param name="id"></param>
@@ -59,7 +57,7 @@ namespace EA.WebApiServerSide.Repository
         {
             try
             {
-                var personToRemove = new Person {Id = id};
+                var personToRemove = new Employee {Id = id};
                 _employeeContext.Person.Attach(personToRemove);
                 _employeeContext.Person.Remove(personToRemove);
                 _employeeContext.SaveChanges();
@@ -73,9 +71,9 @@ namespace EA.WebApiServerSide.Repository
         /// <summary>
         ///     Not used methods
         /// </summary>
-        /// <param name="person"></param>
+        /// <param name="employee"></param>
         /// <returns></returns>
-        public bool UpdateEmployeeData(Person person)
+        public bool UpdateEmployeeData(Employee employee)
         {
             throw new NotImplementedException();
         }

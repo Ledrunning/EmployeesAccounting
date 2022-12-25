@@ -187,6 +187,11 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayerService.cs" />
+    <Compile Include="UiErrorResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UiErrorResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Services\SoundPlayerService.cs" />
     <Compile Include="Rest\EmployeeApi.cs" />
@@ -383,6 +388,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UiErrorResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UiErrorResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Diagrams\Page1.cd" />
     <None Include="Diagrams\Page2.cd" />

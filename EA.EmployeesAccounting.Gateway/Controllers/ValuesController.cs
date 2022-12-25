@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EA.WebApiServerSide.Controllers
+namespace EA.ServerGateway.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {

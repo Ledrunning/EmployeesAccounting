@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace EA.WebApiServerSide.Model
+﻿namespace EA.ServerGateway.Model
 {
     public class EmployeeContext : DbContext
     {
         /// <summary>
         /// Database table name
         /// </summary>
-        public DbSet<Person> Person { get; set; }
+        public DbSet<Employee> Person { get; set; }
 
         public DbSet<AdminModel> Admin { get; set; }
 

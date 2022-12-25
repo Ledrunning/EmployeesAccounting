@@ -1,14 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EA.WebApiServerSide.Model
+namespace EA.ServerGateway.Model
 {
     /// <summary>
     /// Add-Migration Initial
     /// Update-Database
     /// </summary>
-    public class Person
+    public record Employee
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

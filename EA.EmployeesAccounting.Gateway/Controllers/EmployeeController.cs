@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using EA.WebApiServerSide.Model;
-using EA.WebApiServerSide.Repository;
+﻿using EA.ServerGateway.Model;
+using EA.ServerGateway.Repository;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EA.WebApiServerSide.Controllers
+namespace EA.ServerGateway.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
@@ -26,7 +26,7 @@ namespace EA.WebApiServerSide.Controllers
         ///     Get all persons from data base
         /// </summary>
         /// <returns></returns>
-        public IQueryable<Person> GetAllEmployee()
+        public IQueryable<Employee> GetAllEmployee()
         {
             return Employee.GetAllEmployees();
         }
@@ -45,27 +45,22 @@ namespace EA.WebApiServerSide.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Person person)
+        public IActionResult Create([FromBody] Employee employee)
         {
-            if (person == null)
-            {
-                return BadRequest();
-            }
-
-            Employee.AddEmployee(person);
-            return CreatedAtRoute("GetTodo", new {id = person.Id}, person);
+            Employee.AddEmployee(employee);
+            return CreatedAtRoute("GetTodo", new {id = employee.Id}, employee);
         }
 
         /// <summary>
         ///     Not used
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="person"></param>
+        /// <param name="employee"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult Update(string id, [FromBody] Person person)
+        public IActionResult Update(string id, [FromBody] Employee employee)
         {
-            //if (person == null || person.Id != id)
+            //if (employee == null || employee.Id != id)
             //{
             //    return BadRequest();
             //}
@@ -76,15 +71,15 @@ namespace EA.WebApiServerSide.Controllers
             //    return NotFound();
             //}
 
-            //Person.UpdateEmployeeData(person);
+            //Person.UpdateEmployeeData(employee);
             //return new NoContentResult();
             return null;
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Update([FromBody] Person item, string id)
+        public IActionResult Update([FromBody] Employee employee, string id)
         {
-            //if (item == null)
+            //if (employee == null)
             //{
             //    return BadRequest();
             //}
@@ -95,9 +90,9 @@ namespace EA.WebApiServerSide.Controllers
             //    return NotFound();
             //}
 
-            //item.Key = todo.Key;
+            //employee.Key = todo.Key;
 
-            //Person.UpdateEmployeeData(item);
+            //Person.UpdateEmployeeData(employee);
             //return new NoContentResult();
             return null;
         }

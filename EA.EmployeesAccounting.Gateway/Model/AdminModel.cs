@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EA.WebApiServerSide.Model
+namespace EA.ServerGateway.Model
 {
-    public class AdminModel
+    public record AdminModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
