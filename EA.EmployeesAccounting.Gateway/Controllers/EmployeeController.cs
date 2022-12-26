@@ -1,5 +1,5 @@
-﻿using EA.ServerGateway.Model;
-using EA.ServerGateway.Repository;
+﻿using EA.Repository.Model;
+using EA.Repository.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers
@@ -32,7 +32,7 @@ namespace EA.ServerGateway.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "GetTodo")]
+        [HttpGet("{id}", Name = "GetEmployeeById")]
         public IActionResult GetEmployeeById(int id)
         {
             var item = Employee.GetEmployeeById(id);
@@ -65,13 +65,13 @@ namespace EA.ServerGateway.Controllers
             //    return BadRequest();
             //}
 
-            //var todo = Person.Find(id);
+            //var todo = Employee.Find(id);
             //if (todo == null)
             //{
             //    return NotFound();
             //}
 
-            //Person.UpdateEmployeeData(employee);
+            //Employee.UpdateEmployeeData(employee);
             //return new NoContentResult();
             return null;
         }
@@ -84,7 +84,7 @@ namespace EA.ServerGateway.Controllers
             //    return BadRequest();
             //}
 
-            //var todo = Person.Find(id);
+            //var todo = Employee.Find(id);
             //if (todo == null)
             //{
             //    return NotFound();
@@ -92,7 +92,7 @@ namespace EA.ServerGateway.Controllers
 
             //employee.Key = todo.Key;
 
-            //Person.UpdateEmployeeData(employee);
+            //Employee.UpdateEmployeeData(employee);
             //return new NoContentResult();
             return null;
         }

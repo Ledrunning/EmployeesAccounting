@@ -1,6 +1,6 @@
-﻿using EA.ServerGateway.Model;
+﻿using EA.Repository.Model;
 
-namespace EA.ServerGateway.Repository
+namespace EA.Repository.Repository
 {
     /// <summary>
     ///     For IoC

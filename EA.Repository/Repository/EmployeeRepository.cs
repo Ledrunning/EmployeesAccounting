@@ -1,17 +1,17 @@
-﻿using EA.ServerGateway.Model;
+﻿using EA.Repository.Model;
 
-namespace EA.ServerGateway.Repository
+namespace EA.Repository.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly EmployeeContext _employeeContext;
+        private readonly EmployeeContext? _employeeContext;
         //TodoContext empContext;
 
         /// <summary>
         ///     .ctor instantiation
         /// </summary>
         /// <param name="employeeContext"></param>
-        public EmployeeRepository(EmployeeContext employeeContext)
+        public EmployeeRepository(EmployeeContext? employeeContext)
         {
             this._employeeContext = employeeContext;
         }
@@ -23,8 +23,7 @@ namespace EA.ServerGateway.Repository
         /// <returns></returns>
         public Employee AddEmployee(Employee employee)
         {
-            //employee.Id = Guid.NewGuid();
-            _employeeContext.Person.Add(employee);
+            _employeeContext?.Employee.Add(employee);
             _employeeContext.SaveChanges();
             return employee;
         }
@@ -36,7 +35,7 @@ namespace EA.ServerGateway.Repository
         /// <returns></returns>
         public Employee GetEmployeeById(int id)
         {
-            return _employeeContext.Person.SingleOrDefault(c => c.Id == id);
+            return _employeeContext.Employee.SingleOrDefault(c => c.Id == id);
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace EA.ServerGateway.Repository
         /// <returns></returns>
         public IQueryable<Employee> GetAllEmployees()
         {
-            return _employeeContext.Person.AsQueryable();
+            return _employeeContext.Employee.AsQueryable();
         }
 
         /// <summary>
@@ -58,8 +57,8 @@ namespace EA.ServerGateway.Repository
             try
             {
                 var personToRemove = new Employee {Id = id};
-                _employeeContext.Person.Attach(personToRemove);
-                _employeeContext.Person.Remove(personToRemove);
+                _employeeContext.Employee.Attach(personToRemove);
+                _employeeContext.Employee.Remove(personToRemove);
                 _employeeContext.SaveChanges();
             }
             catch (Exception err)
