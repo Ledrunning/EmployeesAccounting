@@ -81,7 +81,7 @@
     <Compile Include="Helpers\DialogService.cs" />
     <Compile Include="Helpers\IDialogService.cs" />
     <Compile Include="Helpers\WebApiSender.cs" />
-    <Compile Include="Model\Person.cs" />
+    <Compile Include="Model\Employee.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

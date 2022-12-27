@@ -2,7 +2,7 @@
 
 namespace EA.TestClientForm.Model
 {
-    public class Person
+    public class Employee
     {
         public int Id { get; set; }
 

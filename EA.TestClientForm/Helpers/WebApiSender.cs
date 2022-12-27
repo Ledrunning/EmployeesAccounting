@@ -13,61 +13,62 @@ namespace EA.TestClientForm.Helpers
 
         public WebApiSender(string baseAddress)
         {
-            this._baseAddress = baseAddress;
+            _baseAddress = baseAddress;
         }
 
-        public async Task<Person> GetPersonAsync(Guid id)
+        public async Task<Employee> GetPersonAsyncOrDefault(Guid id)
         {
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(_baseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response;
-                response = await client.GetAsync($"api/employee/{id}");
-                if (response.IsSuccessStatusCode)
+                var response = await client.GetAsync($"api/employee/{id}");
+                if (!response.IsSuccessStatusCode)
                 {
-                    var person = await response.Content.ReadAsAsync<Person>();
-                    return person;
+                    return null;
+                }
+
+                var person = await response.Content.ReadAsAsync<Employee>();
+                return person;
+            }
+        }
+
+        public async Task<IEnumerable<Employee>> GetAllPersonsAsyncOrDefault()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_baseAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await client.GetAsync("api/employee/");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var person = await response.Content.ReadAsAsync<IEnumerable<Employee>>();
+                return person;
+            }
+        }
+
+        public async Task AddPerson(Employee employee)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_baseAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = await client.PostAsJsonAsync("api/employee/", employee);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Error when adding file!");
                 }
             }
-
-            return null;
         }
 
-        public async Task<IEnumerable<Person>> GetAllPersonsAsync()
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(_baseAddress);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response;
-                response = await client.GetAsync("api/employee/");
-                if (response.IsSuccessStatusCode)
-                {
-                    var person = await response.Content.ReadAsAsync<IEnumerable<Person>>();
-                    return person;
-                }
-            }
-
-            return null;
-        }
-
-        public async Task AddPerson(Person person)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(_baseAddress);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var response = await client.PostAsJsonAsync("api/employee/", person);
-                if (!response.IsSuccessStatusCode) throw new Exception("Error when adding file!");
-            }
-        }
-
-        public Person SearchEmploeeById(string id)
+        public async Task<Employee> SearchEmployeeByIdOrDefault(string id)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(_baseAddress);
@@ -76,20 +77,18 @@ namespace EA.TestClientForm.Helpers
 
             var url = $"api/employee/{id}";
 
-            using (var response = client.GetAsync(url).GetAwaiter().GetResult())
+            using (var response = await client.GetAsync(url))
             {
-                if (response.IsSuccessStatusCode)
-                    try
-                    {
-                        var employees = response.Content.ReadAsAsync<Person>().GetAwaiter().GetResult();
-                        return employees;
-                    }
-                    catch (Exception err)
-                    {
-                        throw;
-                    }
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
 
-                throw new NullReferenceException();
+                {
+                    var employees = await response.Content.ReadAsAsync<Employee>();
+                    return employees;
+                }
+
             }
         }
     }
