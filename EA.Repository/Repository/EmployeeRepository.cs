@@ -4,14 +4,14 @@ namespace EA.Repository.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly EmployeeContext? _employeeContext;
+        private readonly DatabaseContext? _employeeContext;
         //TodoContext empContext;
 
         /// <summary>
         ///     .ctor instantiation
         /// </summary>
         /// <param name="employeeContext"></param>
-        public EmployeeRepository(EmployeeContext? employeeContext)
+        public EmployeeRepository(DatabaseContext? employeeContext)
         {
             this._employeeContext = employeeContext;
         }

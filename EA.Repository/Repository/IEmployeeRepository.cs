@@ -2,9 +2,6 @@
 
 namespace EA.Repository.Repository
 {
-    /// <summary>
-    ///     For IoC
-    /// </summary>
     public interface IEmployeeRepository
     {
         Employee AddEmployee(Employee employee);
