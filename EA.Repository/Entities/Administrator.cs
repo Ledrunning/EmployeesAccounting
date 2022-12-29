@@ -1,14 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace EA.Repository.Model
+namespace EA.Repository.Entities
 {
-    public record AdminModel
+    public record Administrator : BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Enter the name")]
         public string? Name { get; set; }
 

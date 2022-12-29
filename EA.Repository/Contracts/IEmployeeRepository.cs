@@ -1,6 +1,6 @@
-﻿using EA.Repository.Model;
+﻿using EA.Repository.Entities;
 
-namespace EA.Repository.Repository
+namespace EA.Repository.Contracts
 {
     public interface IEmployeeRepository
     {

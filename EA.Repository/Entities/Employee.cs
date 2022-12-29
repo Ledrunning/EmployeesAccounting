@@ -1,18 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EA.Repository.Model;
+namespace EA.Repository.Entities;
 
 /// <summary>
 ///     Add-Migration Initial
 ///     Update-Database
 /// </summary>
-public record Employee
+public record Employee : BaseEntity
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-
     [Required(ErrorMessage = "Enter the name")]
     public string? Name { get; set; }
 

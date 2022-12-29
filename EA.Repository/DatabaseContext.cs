@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EA.Repository.Entities;
+using Microsoft.EntityFrameworkCore;
 using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 
-namespace EA.Repository.Model;
+namespace EA.Repository;
 
 public class DatabaseContext : DbContext
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
-        
     }
 
     /// <summary>
@@ -16,5 +16,5 @@ public class DatabaseContext : DbContext
     /// </summary>
     public System.Data.Entity.DbSet<Employee>? Employee { get; set; }
 
-    public System.Data.Entity.DbSet<AdminModel>? Admin { get; set; }
+    public System.Data.Entity.DbSet<Administrator>? Administrator { get; set; }
 }

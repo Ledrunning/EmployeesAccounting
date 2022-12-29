@@ -1,5 +1,5 @@
-﻿using EA.Repository.Model;
-using EA.Repository.Repository;
+﻿using EA.Repository.Contracts;
+using EA.Repository.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers;
@@ -8,7 +8,6 @@ namespace EA.ServerGateway.Controllers;
 [Route("api/[controller]")]
 public class EmployeeController : Controller
 {
-
     private readonly IEmployeeRepository _employee;
 
     public EmployeeController(IEmployeeRepository employee)
@@ -26,8 +25,7 @@ public class EmployeeController : Controller
     {
         return _employee.GetAllEmployees();
     }
-
-
+    
     [HttpGet]
     [Route(nameof(GetEmployeeById))]
     public IActionResult GetEmployeeById(int id)

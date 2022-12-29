@@ -1,5 +1,7 @@
 using System.Diagnostics;
-using EA.Repository.Model;
+using EA.Repository;
+using EA.Repository.Contracts;
+using EA.Repository.Repository;
 using EA.ServerGateway.Extensions;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -8,7 +10,6 @@ using NLog.Web;
 const string loggerConfig = "NLog.config";
 var logger = NLogBuilder.ConfigureNLog(loggerConfig).GetCurrentClassLogger();
 const string ConnectionString = "DbConnection";
-
 
 try
 {
@@ -19,13 +20,12 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    //TODO con str needed
-    var connStr = builder.Configuration.GetConnectionString(ConnectionString);
+    var connectionString = builder.Configuration.GetConnectionString(ConnectionString);
 
     builder.Services.AddDbContext<DatabaseContext>(
-        options => options.UseSqlServer(connStr));
+        options => options.UseSqlServer(connectionString));
 
-    //builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+    builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 
     var app = builder.Build();
 
