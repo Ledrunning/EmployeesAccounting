@@ -1,6 +1,7 @@
 ﻿using EA.Repository.Contracts;
 using EA.Repository.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace EA.ServerGateway.Controllers;
 
@@ -21,69 +22,48 @@ public class EmployeeController : Controller
     /// <returns>IQueryable<Employee></returns>
     [HttpGet]
     [Route(nameof(GetAllEmployee))]
-    public IQueryable<Employee> GetAllEmployee()
+    public async Task<IReadOnlyList<Employee>> GetAllEmployee(CancellationToken cancellationToken)
     {
-        return _employee.GetAllEmployees();
+        return await _employee.ListAsync(cancellationToken);
     }
     
     [HttpGet]
     [Route(nameof(GetEmployeeById))]
-    public IActionResult GetEmployeeById(int id)
+    public async Task<Employee?> GetEmployeeById(int id, CancellationToken cancellationToken)
     {
-        var item = _employee.GetEmployeeById(id);
-        if (item == null)
-        {
-            return NotFound();
-        }
-
-        return new ObjectResult(item);
+        return await _employee.GetByIdAsync(id, cancellationToken);
     }
 
     [HttpPost]
     [Route(nameof(Create))]
-    public IActionResult Create([FromBody] Employee employee)
+    public async Task<Employee> Create([FromBody] Employee employee, CancellationToken cancellationToken)
     {
-        _employee.AddEmployee(employee);
-        return CreatedAtRoute("GetTodo", new { id = employee.Id }, employee);
+        return await _employee.AddAsync(employee, cancellationToken);
     }
 
     /// <summary>
     ///     Not used
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="employee"></param>
     /// <returns></returns>
-    [HttpPut]
+    [HttpPost]
     [Route(nameof(Update))]
-    public IActionResult Update(string id, [FromBody] Employee employee)
+    public async Task Update(Employee employee, CancellationToken cancellationToken)
     {
-        //if (employee == null || employee.Id != id)
-        //{
-        //    return BadRequest();
-        //}
-
-        //var todo = Employee.Find(id);
-        //if (todo == null)
-        //{
-        //    return NotFound();
-        //}
-
-        //Employee.UpdateEmployeeData(employee);
-        //return new NoContentResult();
-        return null;
+         await _employee.UpdateAsync(employee, cancellationToken);
     }
 
     [HttpDelete]
     [Route(nameof(Delete))]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
-        var todo = _employee.GetEmployeeById(id);
-        if (todo == null)
+        var employee = await _employee.GetByIdAsync(id, cancellationToken);
+        if (employee == null)
         {
             return NotFound();
         }
 
-        _employee.RemoveEmployeeById(id);
+        await _employee.DeleteAsync(id, cancellationToken);
         return new NoContentResult();
     }
 }

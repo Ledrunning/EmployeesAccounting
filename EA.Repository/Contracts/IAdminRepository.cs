@@ -2,6 +2,6 @@
 
 namespace EA.Repository.Contracts;
 
-public interface IEmployeeRepository : IAsyncRepository<Employee>
+public interface IAdminRepository : IAsyncRepository<Administrator>
 {
 }
