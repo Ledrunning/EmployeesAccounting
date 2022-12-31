@@ -6,6 +6,8 @@ using EA.ServerGateway.Extensions;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
+using AutoMapper;
+using EA.ServerGateway.Mapper;
 
 const string loggerConfig = "NLog.config";
 var logger = NLogBuilder.ConfigureNLog(loggerConfig).GetCurrentClassLogger();
@@ -24,6 +26,15 @@ try
 
     builder.Services.AddDbContext<DatabaseContext>(
         options => options.UseSqlServer(connectionString));
+
+    // Auto Mapper Configurations
+    var mapperConfig = new MapperConfiguration(mc =>
+    {
+        mc.AddProfile(new MappingProfile());
+    });
+
+    var mapper = mapperConfig.CreateMapper();
+    builder.Services.AddSingleton(mapper);
 
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 
