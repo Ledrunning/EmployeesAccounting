@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace EA.Repository.Entities;
+﻿namespace EA.Repository.Entities;
 
 /// <summary>
 ///     Add-Migration Initial
@@ -9,13 +6,10 @@ namespace EA.Repository.Entities;
 /// </summary>
 public record Employee : BaseEntity
 {
-    [Required(ErrorMessage = "Enter the name")]
     public string? Name { get; set; }
 
-    [Required(ErrorMessage = "Enter the last name")]
     public string? LastName { get; set; }
 
-    [Required(ErrorMessage = "Enter the department")]
     public string? Department { get; set; }
 
     public DateTimeOffset DateTime { get; set; }
