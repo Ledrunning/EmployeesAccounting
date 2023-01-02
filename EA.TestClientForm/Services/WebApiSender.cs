@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using EA.TestClientForm.Model;
 
-namespace EA.TestClientForm.Helpers
+namespace EA.TestClientForm.Services
 {
     public class WebApiSender
     {

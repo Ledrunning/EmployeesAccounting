@@ -2,14 +2,12 @@ using System.Diagnostics;
 using EA.Repository;
 using EA.Repository.Contracts;
 using EA.Repository.Repository;
+using EA.ServerGateway;
 using EA.ServerGateway.Extensions;
+using EA.ServerGateway.Services;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
-using AutoMapper;
-using EA.ServerGateway;
-using EA.ServerGateway.Mapper;
-using EA.ServerGateway.Services;
 
 const string loggerConfig = "NLog.config";
 var logger = NLogBuilder.ConfigureNLog(loggerConfig).GetCurrentClassLogger();

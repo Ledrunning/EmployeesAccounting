@@ -1,4 +1,4 @@
-﻿namespace EA.TestClientForm.Helpers
+﻿namespace EA.TestClientForm.Contracts
 {
     internal interface IDialogService
     {

@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using EA.TestClientForm.Helpers;
 using EA.TestClientForm.Model;
+using EA.TestClientForm.Services;
 
 namespace EA.TestClientForm
 {

@@ -1,7 +1,8 @@
 ﻿using System.Windows;
+using EA.TestClientForm.Contracts;
 using Microsoft.Win32;
 
-namespace EA.TestClientForm.Helpers
+namespace EA.TestClientForm.Services
 {
     internal class DialogService : IDialogService
     {
