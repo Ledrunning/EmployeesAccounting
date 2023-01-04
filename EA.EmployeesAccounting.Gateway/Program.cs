@@ -2,9 +2,10 @@ using System.Diagnostics;
 using EA.Repository;
 using EA.Repository.Contracts;
 using EA.Repository.Repository;
-using EA.ServerGateway;
 using EA.ServerGateway.Extensions;
-using EA.ServerGateway.Services;
+using EA.Services.Contracts;
+using EA.Services.GatewayServices;
+using EA.Services.Services;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -31,7 +32,7 @@ try
 
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
-
+   
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())

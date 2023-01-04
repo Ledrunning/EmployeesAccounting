@@ -17,13 +17,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EA.Repository\EA.Repository.csproj" />
+    <ProjectReference Include="..\EA.Services\EA.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Extensions\" />
     <Folder Include="Mapper\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

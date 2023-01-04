@@ -1,8 +1,6 @@
-﻿using EA.Repository.Contracts;
-using EA.Repository.Entities;
+﻿using EA.Services.Contracts;
+using EA.Services.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
-using EA.ServerGateway.Models;
 
 namespace EA.ServerGateway.Controllers;
 
@@ -20,26 +18,26 @@ public class EmployeeController : Controller
     /// <summary>
     ///     Get all employees from data base
     /// </summary>
-    /// <returns>IQueryable<Employee></returns>
+    /// <returns>IReadOnlyList<Employee></returns>
     [HttpGet]
     [Route(nameof(GetAllEmployee))]
     public async Task<IReadOnlyList<EmployeeDto>> GetAllEmployee(CancellationToken cancellationToken)
     {
-        return await _employee.GetAllEmployeeAsync(cancellationToken);
+        return await _employee.GetAllAsync(cancellationToken);
     }
-    
+
     [HttpGet]
     [Route(nameof(GetEmployeeById))]
     public async Task<EmployeeDto?> GetEmployeeById(int id, CancellationToken cancellationToken)
     {
-        return await _employee.GetEmployeeByIdAsync(id, cancellationToken);
+        return await _employee.GetByIdAsync(id, cancellationToken);
     }
 
     [HttpPost]
     [Route(nameof(Create))]
     public async Task<EmployeeDto?> Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
     {
-        return await _employee.AddEmployeeAsync(employee, cancellationToken);
+        return await _employee.AddAsync(employee, cancellationToken);
     }
 
     /// <summary>
@@ -52,20 +50,20 @@ public class EmployeeController : Controller
     [Route(nameof(Update))]
     public async Task Update(EmployeeDto employee, CancellationToken cancellationToken)
     {
-         await _employee.UpdateEmployeeAsync(employee, cancellationToken);
+        await _employee.UpdateAsync(employee, cancellationToken);
     }
 
     [HttpDelete]
     [Route(nameof(Delete))]
     public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
-        var employee = await _employee.GetEmployeeByIdAsync(id, cancellationToken);
+        var employee = await _employee.GetByIdAsync(id, cancellationToken);
         if (employee == null)
         {
             return NotFound();
         }
 
-        await _employee.DeleteEmployeeAsync(id, cancellationToken);
+        await _employee.DeleteAsync(id, cancellationToken);
         return new NoContentResult();
     }
 }
