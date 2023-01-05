@@ -310,14 +310,14 @@ namespace EA.DesktopApp.ViewModels
             var converter = new ImageConverter();
             var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 
-            var person = new Person
+            var person = new EmployeeModel
             {
                 Name = PersonName,
                 LastName = PersonLastName,
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
                 //Photo = Convert.ToBase64String(_picture)
-                Photo = Convert.ToBase64String(imageArray)
+                PhotoPath = Convert.ToBase64String(imageArray)
             };
 
             if (person.Name == null || person.LastName == null

@@ -1,5 +1,5 @@
-﻿using EA.Services.Contracts;
-using EA.Services.Models;
+﻿using EA.ServerGateway.Contracts;
+using EA.ServerGateway.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers;
@@ -21,7 +21,7 @@ public class EmployeeController : Controller
     /// <returns>IReadOnlyList<Employee></returns>
     [HttpGet]
     [Route(nameof(GetAllEmployee))]
-    public async Task<IReadOnlyList<EmployeeDto>> GetAllEmployee(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<EmployeeDto?>> GetAllEmployee(CancellationToken cancellationToken)
     {
         return await _employee.GetAllAsync(cancellationToken);
     }

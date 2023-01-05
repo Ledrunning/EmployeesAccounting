@@ -1,4 +1,4 @@
-﻿namespace EA.Services.Models
+﻿namespace EA.ServerGateway.Dto
 {
     public class BaseModelDto
     {

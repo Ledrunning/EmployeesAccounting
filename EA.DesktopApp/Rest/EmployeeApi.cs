@@ -32,7 +32,7 @@ namespace EA.DesktopApp.Rest
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Person> GetPersonAsync(Guid id)
+        public async Task<EmployeeModel> GetPersonAsync(Guid id)
         {
             using (var client = new HttpClient())
             {
@@ -45,7 +45,7 @@ namespace EA.DesktopApp.Rest
                     var response = await client.GetAsync($"{ApiName}{id}");
                     if (response.IsSuccessStatusCode)
                     {
-                        var person = await response.Content.ReadAsAsync<Person>();
+                        var person = await response.Content.ReadAsAsync<EmployeeModel>();
                         return person;
                     }
                 }
@@ -62,7 +62,7 @@ namespace EA.DesktopApp.Rest
         ///     Get all persons from data base
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Person>> GetAllAsync()
+        public async Task<IEnumerable<EmployeeModel>> GetAllAsync()
         {
             using (var client = new HttpClient())
             {
@@ -76,7 +76,7 @@ namespace EA.DesktopApp.Rest
                     var response = await client.GetAsync(ApiName);
                     if (response.IsSuccessStatusCode)
                     {
-                        var person = await response.Content.ReadAsAsync<IEnumerable<Person>>();
+                        var person = await response.Content.ReadAsAsync<IEnumerable<EmployeeModel>>();
                         return person;
                     }
                 }
@@ -93,7 +93,7 @@ namespace EA.DesktopApp.Rest
         ///     Method for adding person to data base
         /// </summary>
         /// <param name="person"></param>
-        public async void AddPerson(Person person)
+        public async void AddPerson(EmployeeModel person)
         {
             using (var client = new HttpClient())
             {
@@ -116,7 +116,7 @@ namespace EA.DesktopApp.Rest
             }
         }
 
-        public bool UpdatePerson(Person employee)
+        public bool UpdatePerson(EmployeeModel employee)
         {
             using (var client = new HttpClient())
             {

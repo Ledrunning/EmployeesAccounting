@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
-using EA.Services.Contracts;
-using EA.Services.Models;
+using EA.ServerGateway.Contracts;
+using EA.ServerGateway.Dto;
 
-namespace EA.Services.Services;
+namespace EA.ServerGateway.Services;
 
 public class EmployeeService : IEmployeeService
 {

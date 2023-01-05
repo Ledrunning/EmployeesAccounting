@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EA.Services.Models;
+namespace EA.ServerGateway.Dto;
 
 public class AdministratorDto : BaseModelDto
 {

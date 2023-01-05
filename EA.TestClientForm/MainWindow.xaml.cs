@@ -14,7 +14,7 @@ namespace EA.TestClientForm
     {
         private byte[] _image;
         private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-
+        
         public MainWindow()
         {
             InitializeComponent();

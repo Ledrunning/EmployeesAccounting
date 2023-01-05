@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using EA.Repository.Entities;
-using EA.Services.Models;
+using EA.ServerGateway.Dto;
 
 namespace EA.ServerGateway.Mapper;
 

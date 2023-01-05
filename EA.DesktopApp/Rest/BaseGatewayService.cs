@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using RestSharp;
 
-namespace EA.Services.GatewayServices;
-
-public class BaseGatewayService
+namespace EA.DesktopApp.Rest
+{
+    public class BaseGatewayService
 {
     private readonly int _timeout;
     protected readonly string BaseUrl;
@@ -70,4 +73,5 @@ public class BaseGatewayService
             MaxTimeout = _timeout
         };
     }
+}
 }
