@@ -22,11 +22,15 @@ namespace EA.DesktopApp.DiSetup
                 var builder = new ContainerBuilder();
 
                 var urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-                var employeeApi = new EmployeeApi(urlAddress);
-                builder.RegisterInstance(employeeApi).As<IEmployeeApi>().SingleInstance();
+                var timeOutConfig = ConfigurationManager.AppSettings["timeOut"];
+                int.TryParse(timeOutConfig, out var timeOut);
+
+                var employeeGatewayService = new EmployeeGatewayService(urlAddress, timeOut);
+
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
+                builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().InstancePerLifetimeScope();
 
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();

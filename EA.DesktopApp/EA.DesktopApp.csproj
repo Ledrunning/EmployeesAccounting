@@ -211,7 +211,6 @@
     </Compile>
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Services\SoundPlayerService.cs" />
-    <Compile Include="Rest\EmployeeApi.cs" />
     <Compile Include="Models\AdministratorModel.cs" />
     <Compile Include="Models\FaceModel.cs" />
     <Compile Include="Models\EmployeeModel.cs" />

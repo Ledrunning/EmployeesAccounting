@@ -20,6 +20,6 @@ namespace EA.DesktopApp.Models
 
         public DateTimeOffset DateTime { get; set; }
 
-        public string PhotoPath { get; set; }
+        public string Photo { get; set; }
     }
 }
