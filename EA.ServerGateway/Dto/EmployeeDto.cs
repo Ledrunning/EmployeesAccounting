@@ -16,4 +16,5 @@ public class EmployeeDto : BaseModelDto
     public DateTimeOffset DateTime { get; set; }
 
     public string? Photo { get; set; }
+    public string? PhotoName { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Globalization;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Input;
@@ -286,7 +287,9 @@ namespace EA.DesktopApp.ViewModels
                 LastName = PersonLastName,
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
-                Photo = Convert.ToBase64String(imageArray)
+                Photo = Convert.ToBase64String(imageArray),
+                PhotoName =
+                    $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
             };
 
             if (employeeModel.Name == null || employeeModel.LastName == null
