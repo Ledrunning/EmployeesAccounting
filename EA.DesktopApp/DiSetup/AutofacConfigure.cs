@@ -30,7 +30,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
-                builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().InstancePerLifetimeScope();
+                builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().SingleInstance();
 
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
