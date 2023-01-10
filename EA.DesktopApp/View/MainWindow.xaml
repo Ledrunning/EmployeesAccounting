@@ -8,11 +8,10 @@
         Icon="..\camera128x128.ico"
         Background="{StaticResource BackgroundKey}">
     <Window.Resources>
-        <viewModels:MainViewModel x:Key="MainViewModel" />
         <converters:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
     </Window.Resources>
     
-    <Grid DataContext="{StaticResource MainViewModel}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
             <RowDefinition Height="40"/>
@@ -26,7 +25,7 @@
         <Button Grid.Row="0" Margin="0,0,0,265" Height="45" Width="45"
                 Content="?" FontSize="20" Command="{Binding ToggleHelpCallCommand}" Grid.Column="1">
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetHelpTooltip}" />
+                <ToolTip HasDropShadow="True" Content="{Binding HelpHint}" />
             </Button.ToolTip>
             </Button>
 
@@ -54,7 +53,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetStarted}" />
+                <ToolTip HasDropShadow="True" Content="{Binding DetectionHint}" />
             </Button.ToolTip>
         </Button>
 
@@ -80,7 +79,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding GetPhoto}" />
+                <ToolTip HasDropShadow="True" Content="{Binding PhotoHint}" />
             </Button.ToolTip>
         </Button>
     </Grid>

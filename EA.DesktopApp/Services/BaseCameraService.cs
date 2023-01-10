@@ -1,22 +1,24 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Services
 {
-    public class BaseCameraService
+    public class BaseCameraService : IDisposable
     {
-        private readonly VideoCapture _videoCapture;
-        protected BackgroundWorker _webCamWorker;
+        private VideoCapture _videoCapture;
+        private CancellationTokenSource cancellationToken;
+        private CancellationToken token;
+        public bool IsRunning { get; set; }
 
-        public BaseCameraService()
+        public void Dispose()
         {
-            _videoCapture = new VideoCapture();
-            InitializeWorkers();
+            _videoCapture?.Dispose();
+            _videoCapture = null;
         }
-
-        public bool IsRunning => _webCamWorker?.IsBusy ?? false;
 
         public event ImageChangedEventHandler ImageChanged;
 
@@ -25,7 +27,11 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void RunServiceAsync()
         {
-            _webCamWorker.RunWorkerAsync();
+            cancellationToken = new CancellationTokenSource();
+            token = cancellationToken.Token;
+            IsRunning = true;
+            InitializeVideoCapture();
+            WebCameraWorker();
         }
 
         /// <summary>
@@ -33,37 +39,33 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void CancelServiceAsync()
         {
-            _webCamWorker?.CancelAsync();
+            IsRunning = false;
+            cancellationToken?.Cancel();
         }
 
         /// <summary>
-        ///     Method for background worker init
+        ///     Grab image processing method
         /// </summary>
-        private void InitializeWorkers()
+        private void WebCameraWorker()
         {
-            _webCamWorker = new BackgroundWorker();
-            _webCamWorker.WorkerSupportsCancellation = true;
-            _webCamWorker.DoWork += OnWebCamWorker;
-        }
-
-        /// <summary>
-        ///     Draw image method
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void OnWebCamWorker(object sender, DoWorkEventArgs e)
-        {
-            if (_webCamWorker.CancellationPending)
+            Task.Run(() =>
             {
-                e.Cancel = true;
+                while (!token.IsCancellationRequested)
+                {
+                    var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();
+                    ImageChanged?.Invoke(image);
+                }
+            }, token);
+        }
+
+        private void InitializeVideoCapture()
+        {
+            if (_videoCapture != null)
+            {
                 return;
             }
 
-            while (!_webCamWorker.CancellationPending)
-            {
-                var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();
-                ImageChanged?.Invoke(image);
-            }
+            _videoCapture = new VideoCapture();
         }
     }
 }

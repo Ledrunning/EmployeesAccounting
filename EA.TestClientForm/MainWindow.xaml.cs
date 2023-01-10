@@ -1,37 +1,34 @@
-﻿using EA.TestClientForm.Helpers;
-using EA.TestClientForm.Model;
-using System;
+﻿using System;
 using System.Configuration;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using EA.TestClientForm.Model;
+using EA.TestClientForm.Services;
 
 namespace EA.TestClientForm
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private byte[] _image;
-
+        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
+        
         public MainWindow()
         {
             InitializeComponent();
-            PrintAllEmployees();
+            GetAllEmployees();
         }
 
         //TODO баг со временем в БД.
-        private async void PrintAllEmployees()
+        private async void GetAllEmployees()
         {
             try
             {
                 var sender = new WebApiSender(_urlAddress);
-                var persons = await sender.GetAllPersonsAsync();
-                grdEmployee.ItemsSource = persons; // as IQueryable<Person>;
+                var persons = await sender.GetAllPersonsAsyncOrDefault();
+                grdEmployee.ItemsSource = persons; // as IQueryable<Employee>;
             }
             catch (Exception e)
             {
@@ -39,7 +36,7 @@ namespace EA.TestClientForm
             }
         }
 
-        private void DeleteUserClick(object sender, RoutedEventArgs e)
+        private async void OnUserDeleteClick(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -50,14 +47,15 @@ namespace EA.TestClientForm
                 // ДИЧЬ!!!!
                 var id = grdEmployee.SelectedItem;
 
-                var url = "api/employee/" + id.ToString();
+                var url = "api/employee/" + id;
 
-                using (HttpResponseMessage response = client.DeleteAsync(url).GetAwaiter().GetResult())
+                using (var response = await client.DeleteAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        MessageBox.Show("User Deleted");
-                        PrintAllEmployees();
+                        MessageBox.Show("User deleted");
+                        //Refresh grid
+                        GetAllEmployees();
                     }
                     else
                     {
@@ -71,16 +69,15 @@ namespace EA.TestClientForm
             }
         }
 
-        private void SearchUserClick(object sender, RoutedEventArgs e)
+        private void OnUserSearchClick(object sender, RoutedEventArgs e)
         {
             var id = txtId.Text.Trim();
         }
 
-        private void AddUserClick(object sender, RoutedEventArgs e)
+        private async void OnUserAddClick(object sender, RoutedEventArgs e)
         {
-            var fileModel = new Person
+            var fileModel = new Employee
             {
-                //Id = new Guid(),
                 Name = txtName.Text,
                 LastName = txtLastName.Text,
                 Department = txtDepartment.Text,
@@ -88,45 +85,45 @@ namespace EA.TestClientForm
                 Photo = Convert.ToBase64String(_image)
             };
 
-            var client = new WebApiSender(_urlAddress);
-            client.AddPerson(fileModel);
+            var webApiSender = new WebApiSender(_urlAddress);
+            await webApiSender.AddPerson(fileModel);
 
             MessageBox.Show("File has been uploaded");
         }
 
-        private void ShowAllAllUsersClick(object sender, RoutedEventArgs e)
+        private void OnAllUsersShowClick(object sender, RoutedEventArgs e)
         {
-            PrintAllEmployees();
+            GetAllEmployees();
         }
 
         private void OpenFileClick(object sender, RoutedEventArgs e)
         {
             var dialogService = new DialogService();
 
-            if (dialogService.OpenFileDialog())
+            if (!dialogService.IsDialogWindowOpened())
             {
-                try
-                {
-                    _image = File.ReadAllBytes(dialogService.FilePath);
-                    MessageBox.Show("File has been opened");
-                }
-                catch (IOException err)
-                {
-                    MessageBox.Show(err.Message);
-                }
+                return;
+            }
+
+            try
+            {
+                _image = File.ReadAllBytes(dialogService.FilePath);
+                MessageBox.Show("File has been opened");
+            }
+            catch (IOException err)
+            {
+                MessageBox.Show(err.Message);
             }
         }
 
         private async void GetUserByIdClick(object sender, RoutedEventArgs e)
         {
             var client = new WebApiSender(_urlAddress);
-            string[] formats = { "N", "D", "B", "P", "X" };
-            Guid result;
 
             try
             {
-                Guid.TryParseExact(txtId.Text, "D", out result);
-                var files = await client.GetPersonAsync(result);
+                Guid.TryParseExact(txtId.Text, "D", out var result);
+                var files = await client.GetPersonAsyncOrDefault(result);
                 var buffer = Convert.FromBase64String(files.Photo);
                 imgPhoto.Source = ByteToImage(buffer);
             }
@@ -137,22 +134,22 @@ namespace EA.TestClientForm
         }
 
         /// <summary>
-        /// Method for converting bytes array to
-        /// System.Windows.Media.ImageSource
+        ///     Method for converting bytes array to
+        ///     System.Windows.Media.ImageSource
         /// </summary>
         /// <param name="byteArrayIn"></param>
         /// <returns></returns>
-        private ImageSource ByteToImage(byte[] byteArrayIn)
+        private static ImageSource ByteToImage(byte[] byteArrayIn)
         {
-            var biImg = new BitmapImage();
+            var image = new BitmapImage();
             var ms = new MemoryStream(byteArrayIn);
-            biImg.BeginInit();
-            biImg.StreamSource = ms;
-            biImg.EndInit();
+            image.BeginInit();
+            image.StreamSource = ms;
+            image.EndInit();
 
-            var imgSrc = biImg as ImageSource;
+            var picture = (ImageSource)image;
 
-            return imgSrc;
+            return picture;
         }
     }
 }

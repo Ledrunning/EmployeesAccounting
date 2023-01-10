@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using EA.DesktopApp.Rest;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -21,27 +20,22 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        private const string GetPhotoTooltipMessage = "Нажмите, что бы сделать фотографию";
-        private const string StartDetectorTooltipMessage = "Нажмите для запуска детектора";
-        private const string HelpTooltipMessage = "Нажмите для справки";
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IFaceDetectionService _faceDetectionService;
+        private readonly ModalViewModel _modalWindow = new ModalViewModel();
+        private readonly ISoundPlayerService _soundPlayerHelper;
 
-        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private string _currentTimeDate;
 
-        private WebServerApi _dataStorage;
-        private FaceDetectionService _faceDetectionService;
+        private string _detectionHint;
+
         private Bitmap _frame;
-        private readonly ModalViewModel _modalWindow = new ModalViewModel();
 
         private bool _isRunning;
 
         private bool _isStreaming;
         private LoginWindow _loginForm;
-        private PhotoShootService _photoShootService;
-        private RegistrationForm _registrationFormPage;
-        private SoundPlayerService _soundPlayerHelper;
 
         /// <summary>
         ///     Timer
@@ -51,28 +45,40 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public MainViewModel()
+        public MainViewModel(
+            IFaceDetectionService faceDetectionService,
+            ISoundPlayerService soundPlayerHelper)
         {
+            _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            _dataStorage = new WebServerApi(_urlAddress);
+            _soundPlayerHelper = soundPlayerHelper;
+            DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
         /// <summary>
         ///     Get start tooltip
         /// </summary>
-        public string GetStarted => StartDetectorTooltipMessage;
+        public string DetectionHint
+        {
+            get => _detectionHint;
+            set
+            {
+                _detectionHint = value;
+                OnPropertyChanged(nameof(DetectionHint));
+            }
+        }
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string GetPhoto => GetPhotoTooltipMessage;
+        public string PhotoHint => ProgramResources.PhotoTooltipMessage;
 
         /// <summary>
         ///     Help tooltip message
         /// </summary>
-        public string GetHelpTooltip => HelpTooltipMessage;
+        public string HelpHint => ProgramResources.HelpTooltipMessage;
 
         /// <summary>
         ///     Current date binding property
@@ -133,30 +139,41 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeServices()
         {
             Logger.Info("Initialize of all services.....");
-            _photoShootService = new PhotoShootService();
-            _faceDetectionService = new FaceDetectionService();
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
         /// <summary>
         ///     Service From WebCamService
         /// </summary>
-        private void ToggleWebServiceExecute()
+        private void FaceDetectionServiceExecute()
         {
-            // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            DetectionHint = IsStreaming
+                ? ProgramResources.StartDetectorTooltipMessage
+                : ProgramResources.StopDetectorTooltipMessage;
 
-            if (!_faceDetectionService.IsRunning)
+            // Playing sound effect for button
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+
+            if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
+                _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
                 IsStreaming = true;
                 _faceDetectionService.RunServiceAsync();
+                Logger.Info("Face detection is started!");
             }
             else
             {
                 IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
+                StopFaceDetectionService();
             }
+        }
+
+        private void StopFaceDetectionService()
+        {
+            _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
+            _faceDetectionService.CancelServiceAsync();
+            Logger.Info("Face detection stopped!");
+            _faceDetectionService.Dispose();
         }
 
         /// <summary>
@@ -164,9 +181,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void TogglePhotoShootServiceExecute()
         {
-            // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             // True - button is pushed - Working!
             IsRunning = false;
@@ -174,28 +189,29 @@ namespace EA.DesktopApp.ViewModels
             if (_loginForm == null || _loginForm.IsClosed)
             {
                 _loginForm = new LoginWindow();
-                var loginFormViewModel = new LoginFormViewModel(_loginForm);
+                var loginFormViewModel = new LoginViewModel(_loginForm);
 
                 _loginForm.DataContext = loginFormViewModel;
                 _loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
                 _faceDetectionService.CancelServiceAsync();
-                loginFormViewModel.ShowWindow();
+                StopFaceDetectionService();
+                loginFormViewModel.ShowLoginWindow();
             }
 
 
-            if (_faceDetectionService.IsRunning)
+            if (_faceDetectionService != null && _faceDetectionService.IsRunning)
             {
                 return;
             }
 
             IsStreaming = true;
-            _faceDetectionService.RunServiceAsync();
+            _faceDetectionService?.RunServiceAsync();
         }
 
         /// <summary>
         ///     Execute method for relay command TODO: file does not exist
-        ///     TODO and will fix modal window NRE exception 
+        ///     TODO and will fix modal window NRE exception
         /// </summary>
         private void ToggleHelpServiceExecute()
         {
@@ -205,7 +221,7 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
-                Logger.Error(e, "An error occuried in opening Help file!");
+                Logger.Error("An error occuried in opening Help file! {e}", e);
                 _modalWindow.SetMessage("An error occuried in opening Help file!");
                 _modalWindow.ShowWindow();
             }
@@ -216,7 +232,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            ToggleWebServiceCommand = new RelayCommand(ToggleWebServiceExecute);
+            ToggleWebServiceCommand = new RelayCommand(FaceDetectionServiceExecute);
             TogglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
             ToggleHelpCallCommand = new RelayCommand(ToggleHelpServiceExecute);
         }

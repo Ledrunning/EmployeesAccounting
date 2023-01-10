@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using EA.DesktopApp.ViewModels;
+using System.Windows;
+using Autofac;
+using EA.DesktopApp.DiSetup;
 
 namespace EA.DesktopApp.View
 {
@@ -10,6 +13,7 @@ namespace EA.DesktopApp.View
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = AutofacConfigure.Container.Resolve<MainViewModel>();
         }
     }
 }
