@@ -1,4 +1,6 @@
 # EmployeesAccounting 
-# Application for recognition of employees by face and eyes
+# Client-server application for employee accounting by face detection. 
+## Used technologies:
+##.NET6, WPF(MVVM), REST, EF6, MSSQL, Nlog, WEB API, EMGU CV 4x, Autofac
 
 ## Application is under construction.
