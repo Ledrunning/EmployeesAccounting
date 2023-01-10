@@ -1,4 +1,4 @@
-﻿namespace EA.ServerGateway.Services
+﻿namespace EA.Services.Services
 {
     public class AdministratorService
     {

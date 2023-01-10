@@ -4,18 +4,18 @@ using System.Reflection;
 using AutoMapper;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
-using EA.ServerGateway.Contracts;
-using EA.ServerGateway.Dto;
+using EA.Services.Contracts;
+using EA.Services.Dto;
 
-namespace EA.ServerGateway.Services;
+namespace EA.Services.Services;
 
 public class EmployeeService : IEmployeeService
 {
     private const string FolderName = "EmployeePhoto";
 
-    private static readonly string TrainerDataPath = Path.GetDirectoryName(
-                                                         Assembly.GetExecutingAssembly().Location) +
-                                                     $"\\{FolderName}";
+    private static readonly string PhotoDataPath = Path.GetDirectoryName(
+                                                       Assembly.GetExecutingAssembly().Location) +
+                                                   $"\\{FolderName}";
 
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IMapper _mapper;
@@ -80,9 +80,9 @@ public class EmployeeService : IEmployeeService
     {
         try
         {
-            if (!Directory.Exists(TrainerDataPath))
+            if (!Directory.Exists(PhotoDataPath))
             {
-                Directory.CreateDirectory(FolderName);
+                Directory.CreateDirectory(PhotoDataPath);
             }
         }
         catch (Exception e)

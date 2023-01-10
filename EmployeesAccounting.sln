@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.DesktopApp", "EA.Desktop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.TestClientForm", "EA.TestClientForm\EA.TestClientForm.csproj", "{2BA67277-6ABD-468E-AEE3-34DABA91B469}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.ServerGateway", "EA.ServerGateway\EA.ServerGateway.csproj", "{0671F1AD-C5A0-4482-9660-C3E23E46B8B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.ServerGateway", "EA.ServerGateway\EA.ServerGateway.csproj", "{0671F1AD-C5A0-4482-9660-C3E23E46B8B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.Repository", "EA.Repository\EA.Repository.csproj", "{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.Repository", "EA.Repository\EA.Repository.csproj", "{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.Services", "EA.Services\EA.Services.csproj", "{4E73B5CD-0440-49D5-A002-D9811783371B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E73B5CD-0440-49D5-A002-D9811783371B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E73B5CD-0440-49D5-A002-D9811783371B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E73B5CD-0440-49D5-A002-D9811783371B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E73B5CD-0440-49D5-A002-D9811783371B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

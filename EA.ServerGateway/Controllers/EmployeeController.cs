@@ -1,5 +1,5 @@
-﻿using EA.ServerGateway.Contracts;
-using EA.ServerGateway.Dto;
+﻿using EA.Services.Contracts;
+using EA.Services.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers;

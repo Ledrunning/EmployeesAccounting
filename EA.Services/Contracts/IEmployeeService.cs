@@ -1,6 +1,6 @@
-﻿using EA.ServerGateway.Dto;
+﻿using EA.Services.Dto;
 
-namespace EA.ServerGateway.Contracts
+namespace EA.Services.Contracts
 {
     public interface IEmployeeService
     {
