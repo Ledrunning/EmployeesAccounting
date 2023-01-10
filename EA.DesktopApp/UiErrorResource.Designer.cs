@@ -22,14 +22,14 @@ namespace EA.DesktopApp {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ProgramResources {
+    internal class UiErrorResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ProgramResources() {
+        internal UiErrorResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace EA.DesktopApp {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.ProgramResources", typeof(ProgramResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.UiErrorResource", typeof(UiErrorResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,47 @@ namespace EA.DesktopApp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Press for clear.
+        ///   Looks up a localized string similar to Please, enter valid data.
         /// </summary>
-        internal static string CancelTooltipMessage {
+        internal static string DataError {
             get {
-                return ResourceManager.GetString("CancelTooltipMessage", resourceCulture);
+                return ResourceManager.GetString("DataError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Press to get a program help.
+        ///   Looks up a localized string similar to Enter the login!.
         /// </summary>
-        internal static string HelpTooltipMessage {
+        internal static string EmptyLogin {
             get {
-                return ResourceManager.GetString("HelpTooltipMessage", resourceCulture);
+                return ResourceManager.GetString("EmptyLogin", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the login.
+        ///   Looks up a localized string similar to Enter the password!.
         /// </summary>
-        internal static string LoginTooltipMessage {
+        internal static string EmptyPassword {
             get {
-                return ResourceManager.GetString("LoginTooltipMessage", resourceCulture);
+                return ResourceManager.GetString("EmptyPassword", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the password.
+        ///   Looks up a localized string similar to Login cannot contain a space.
         /// </summary>
-        internal static string PasswordTooltipMessage {
+        internal static string SpaceInlogin {
             get {
-                return ResourceManager.GetString("PasswordTooltipMessage", resourceCulture);
+                return ResourceManager.GetString("SpaceInlogin", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Press to take a photo and add a person details.
+        ///   Looks up a localized string similar to Password cannot contain a space.
         /// </summary>
-        internal static string PhotoTooltipMessage {
+        internal static string SpaceInPassword {
             get {
-                return ResourceManager.GetString("PhotoTooltipMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press to run facial detection.
-        /// </summary>
-        internal static string StartDetectorTooltipMessage {
-            get {
-                return ResourceManager.GetString("StartDetectorTooltipMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press to stop facial detection.
-        /// </summary>
-        internal static string StopDetectorTooltipMessage {
-            get {
-                return ResourceManager.GetString("StopDetectorTooltipMessage", resourceCulture);
+                return ResourceManager.GetString("SpaceInPassword", resourceCulture);
             }
         }
     }

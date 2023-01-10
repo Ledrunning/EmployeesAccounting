@@ -30,7 +30,6 @@ namespace EA.DesktopApp.ViewModels
 
         private string _detectionHint;
 
-        private IEmployeeApi _employeeApi;
         private Bitmap _frame;
 
         private bool _isRunning;
@@ -48,14 +47,12 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public MainViewModel(
             IFaceDetectionService faceDetectionService,
-            IEmployeeApi employeeApi,
             ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            _employeeApi = employeeApi;
             _soundPlayerHelper = soundPlayerHelper;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }

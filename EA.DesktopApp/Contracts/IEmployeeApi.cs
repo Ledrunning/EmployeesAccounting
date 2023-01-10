@@ -12,20 +12,20 @@ namespace EA.DesktopApp.Contracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Person> GetPersonAsync(Guid id);
+        Task<EmployeeModel> GetPersonAsync(Guid id);
 
         /// <summary>
         ///     Get all persons from data base
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<Person>> GetAllAsync();
+        Task<IEnumerable<EmployeeModel>> GetAllAsync();
 
         /// <summary>
         ///     Method for adding person to data base
         /// </summary>
         /// <param name="person"></param>
-        void AddPerson(Person person);
+        void AddPerson(EmployeeModel person);
 
-        bool UpdatePerson(Person employee);
+        bool UpdatePerson(EmployeeModel employee);
     }
 }

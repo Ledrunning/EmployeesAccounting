@@ -32,7 +32,7 @@
             <Label Content="Id" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="18,314,0,-176"  />
         </StackPanel>
         <StackPanel>
-            <Button Content="Delete" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="365,211,0,0" x:Name="btnDelete" Click="DeleteUserClick" />
+            <Button Content="Delete" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="365,211,0,0" x:Name="btnDelete" Click="OnUserDeleteClick" />
             <Button Content="Get image" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="365,20,0,0" x:Name="btnGetById" Click="GetUserByIdClick" />
         </StackPanel>
         <StackPanel>
@@ -48,11 +48,11 @@
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="125,316,0,-176" x:Name="txtId" />
         </StackPanel>
         <StackPanel>
-            <Button Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" x:Name="btnSearch" Click="SearchUserClick" Margin="268,211,0,0" Height="Auto"  />
+            <Button Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" x:Name="btnSearch" Click="OnUserSearchClick" Margin="268,211,0,0" Height="Auto"  />
             <Button Content="Open image" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" x:Name="btnOpenFile" Click="OpenFileClick" Margin="268,20,0,0" Height="Auto"  />
         </StackPanel>
         <StackPanel>
-            <Button Content="Add New" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" x:Name="btnAdd" Click="AddUserClick" Margin="125,363,0,-219" Height="Auto"/>
+            <Button Content="Add New" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" x:Name="btnAdd" Click="OnUserAddClick" Margin="125,363,0,-219" Height="Auto"/>
         </StackPanel>
         <StackPanel/>
     </Grid>

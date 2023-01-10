@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
@@ -14,12 +15,12 @@ namespace EA.DesktopApp.ViewModels
         private readonly LoginWindow _loginWindow;
         private bool _isReady;
         private bool _isRunning;
+        private string _login;
+
+        private string _password;
+        private IPhotoShootService _photoShootService;
         private RegistrationForm _registrationFormPage;
         private ISoundPlayerService _soundPlayerHelper;
-        private IPhotoShootService _photoShootService;
-        private string _loginValue;
-
-        private string _passwordValue;
 
 
         public LoginViewModel(ISoundPlayerService soundPlayerHelper, IPhotoShootService photoShootService)
@@ -31,7 +32,7 @@ namespace EA.DesktopApp.ViewModels
 
         public LoginViewModel(LoginWindow loginWindow)
         {
-            this._loginWindow = loginWindow;
+            _loginWindow = loginWindow;
             InitializeCommands();
         }
 
@@ -39,8 +40,9 @@ namespace EA.DesktopApp.ViewModels
         public ICommand CancelCommand { get; private set; }
         public ICommand AdminModeCommand { get; private set; }
 
-        public string Login { get; } = "Enter the password";
-        public string Cancel { get; } = "Press for clear";
+        public string LoginHint => ProgramResources.LoginTooltipMessage;
+        public string PasswordHint => ProgramResources.PasswordTooltipMessage;
+        public string CancelHint => ProgramResources.CancelTooltipMessage;
 
         /// <summary>
         ///     Start webCam service button toggle
@@ -68,13 +70,15 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        private string LocalPasswordDisplayed => new string('*', _password?.Length ?? 0);
+
         [Required(AllowEmptyStrings = false)]
         public string LoginField
         {
-            get => _loginValue;
+            get => _login;
             set
             {
-                _loginValue = value;
+                _login = value;
                 OnPropertyChanged();
             }
         }
@@ -82,10 +86,10 @@ namespace EA.DesktopApp.ViewModels
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
-            get => _passwordValue;
+            get => LocalPasswordDisplayed;
             set
             {
-                _passwordValue = value;
+                _password = value;
                 OnPropertyChanged();
             }
         }
@@ -103,26 +107,33 @@ namespace EA.DesktopApp.ViewModels
 
                 switch (columnName)
                 {
-                    case "LoginField":
+                    case nameof(LoginField):
                         if (string.IsNullOrEmpty(LoginField))
                         {
-                            error = "Введите логин!";
+                            error = UiErrorResource.EmptyLogin;
                         }
                         else if (LoginField.Contains(" "))
                         {
-                            error = "Пароль не может содержать пробел";
+                            error = UiErrorResource.SpaceInlogin;
                         }
 
                         break;
 
-                    case "PasswordField":
+                    case nameof(PasswordField):
                         if (string.IsNullOrEmpty(PasswordField))
                         {
-                            error = "Введите пароль!";
+                            error = UiErrorResource.EmptyPassword;
                         }
                         else if (PasswordField.Contains(" "))
                         {
-                            error = "Пароль не может содержать пробел";
+                            error = UiErrorResource.SpaceInPassword;
+                        }
+                        else
+                        {
+                            if (!IsPasswordChecked("111"))
+                            {
+                                error = "Password incorrect!";
+                            }
                         }
 
                         break;
@@ -135,7 +146,12 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Error exception throwing
         /// </summary>
-        public string Error => "Введите данные!";
+        public string Error => UiErrorResource.DataError;
+
+        private bool IsPasswordChecked(string password)
+        {
+            return string.Equals(PasswordField, password, StringComparison.CurrentCulture) ? true : false;
+        }
 
         private void InitializeCommands()
         {
@@ -143,6 +159,7 @@ namespace EA.DesktopApp.ViewModels
             CancelCommand = new RelayCommand(ToggleCancelExecute);
             AdminModeCommand = new RelayCommand(ToggleAdminWindowShowExecute);
         }
+
         //todo login check
         private void ToggleLoginExecute()
         {
@@ -150,14 +167,14 @@ namespace EA.DesktopApp.ViewModels
             _soundPlayerHelper = new SoundPlayerService();
             _soundPlayerHelper.PlaySound("button");
 
-            if (_registrationFormPage != null && !_registrationFormPage.IsClosed)
+            if (_registrationFormPage != null && !_registrationFormPage.IsClosed && !IsPasswordChecked("1"))
             {
                 return;
             }
 
             //var registrationFormViewModel = new RegistrationViewModel(_photoShootService);
 
-            _registrationFormPage = new RegistrationForm()
+            _registrationFormPage = new RegistrationForm
             {
                 //DataContext = registrationFormViewModel,
                 Owner = Application.Current.MainWindow

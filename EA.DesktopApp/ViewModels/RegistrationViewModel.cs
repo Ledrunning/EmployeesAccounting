@@ -1,17 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Reflection;
+using System.Globalization;
 using System.ServiceModel;
+using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
-using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -24,24 +21,17 @@ namespace EA.DesktopApp.ViewModels
 {
     /// <summary>
     ///     View model class for registration form
+    ///     Send employee data and photo to the server
     /// </summary>
     public class RegistrationViewModel : BaseViewModel, IDataErrorInfo
     {
-        /// <summary>
-        ///     Readonly fields
-        /// </summary>
-        private const string FileExtension = ".jpg";
-
-        private static readonly string TrainerDataPath = Path.GetDirectoryName(
-                                                             Assembly.GetExecutingAssembly().Location) +
-                                                         "\\Traineddata";
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IEmployeeGatewayService _employeeGatewayService;
 
         private readonly IPhotoShootService _photoShootService;
         private readonly ISoundPlayerService _soundPlayerService;
+        private readonly CancellationToken token;
 
-        private readonly string _urlAddress = ConfigurationManager.AppSettings["serverUriString"];
         private bool _isReady;
         private ModalViewModel _modalView;
         private bool _takePhotoFlag;
@@ -49,13 +39,15 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService)
+        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService,
+            IEmployeeGatewayService employeeGatewayService, CancellationToken token)
         {
             _photoShootService = photoShootService;
             _soundPlayerService = soundPlayerService;
+            _employeeGatewayService = employeeGatewayService;
+            this.token = token;
             InitializeServices();
             InitializeCommands();
-            CreateFolder();
         }
 
         /// <summary>
@@ -68,24 +60,6 @@ namespace EA.DesktopApp.ViewModels
             {
                 _isReady = value;
                 OnPropertyChanged();
-            }
-        }
-
-        private static void CreateFolder()
-        {
-            try
-            {
-                if (!Directory.Exists(TrainerDataPath))
-                {
-                    Directory.CreateDirectory("Traineddata");
-                }
-            }
-            catch (Exception e)
-            {
-                var modal = new ModalViewModel();
-                modal.SetMessage("Error to creating the folder");
-                modal.ShowWindow();
-                Logger.Error("Error to creating the folder {e}", e);
             }
         }
 
@@ -104,7 +78,6 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeCommands()
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            ToggleSavePhotoCommand = new RelayCommand(ToggleSaveImageExecute);
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
         }
 
@@ -297,31 +270,30 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Send image to Data base
         /// </summary>
-        private void ToggleAddImageToDataBase()
+        private async void ToggleAddImageToDataBase()
         {
             _modalView = new ModalViewModel(new ModalWindow());
             //_modalView.ShowLoginWindow();
 
             _soundPlayerService.PlaySound("button");
 
-            var picture = PhotoShootGray.Bytes;
-
             Image resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
             var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 
-            var person = new Person
+            var employeeModel = new EmployeeModel
             {
                 Name = PersonName,
                 LastName = PersonLastName,
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
-                //Photo = Convert.ToBase64String(_picture)
-                Photo = Convert.ToBase64String(imageArray)
+                Photo = Convert.ToBase64String(imageArray),
+                PhotoName =
+                    $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
             };
 
-            if (person.Name == null || person.LastName == null
-                                    || person.Department == null)
+            if (employeeModel.Name == null || employeeModel.LastName == null
+                                           || employeeModel.Department == null)
             {
                 _modalView.SetMessage("Enter the data");
                 _modalView.ShowWindow();
@@ -330,9 +302,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    var client = new EmployeeApi(_urlAddress);
-
-                    client.AddPerson(person);
+                    await _employeeGatewayService.CreateAsync(employeeModel, token);
                     _modalView.SetMessage("Data has been successfully loaded to database.");
                     _modalView.ShowWindow();
                 }
@@ -361,36 +331,6 @@ namespace EA.DesktopApp.ViewModels
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
             _takePhotoFlag = true;
-        }
-
-        /// <summary>
-        ///     Save grayscale image method
-        /// </summary>
-        private void ToggleSaveImageExecute()
-        {
-            var dialogService = new DialogService();
-
-            _modalView = new ModalViewModel(new ModalWindow());
-            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
-
-            if (_takePhotoFlag)
-            {
-                if (dialogService.SaveFileDialog())
-                {
-                    // New Bitmap and save to file
-                    PhotoShootFrame = new Bitmap(PhotoShootFrame,
-                        ImageProcessingConstants.PhotoWidth,
-                        ImageProcessingConstants.PhotoHeight);
-                    PhotoShootFrame.Save($"{dialogService.FilePath}{FileExtension}", ImageFormat.Jpeg);
-                }
-
-                _takePhotoFlag = false;
-            }
-            else
-            {
-                _modalView.SetMessage("Photo does not exist");
-                _modalView.ShowWindow();
-            }
         }
 
         #endregion Toggles Execute methods
