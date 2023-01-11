@@ -1,9 +1,5 @@
 ﻿namespace EA.Repository.Entities;
 
-/// <summary>
-///     Add-Migration Initial
-///     Update-Database
-/// </summary>
 public record Employee : BaseEntity
 {
     public string? Name { get; set; }
