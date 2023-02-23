@@ -11,4 +11,5 @@ public record Employee : BaseEntity
     public DateTimeOffset DateTime { get; set; }
 
     public string? PhotoPath { get; set; }
+    public string? PhotoName { get; set; }
 }

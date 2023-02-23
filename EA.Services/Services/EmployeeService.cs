@@ -28,21 +28,25 @@ public class EmployeeService : IEmployeeService
     }
 
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllWithPhotoAsync(CancellationToken cancellationToken)
-    {
+    { 
         var employees = await _employeeRepository.ListAsync(cancellationToken);
 
         foreach (var employee in employees)
         {
-            var path = employee.PhotoPath;
-            
-            using var fileStream = File.Open(path, FileMode.Open);
+            if (employee.PhotoPath != null)
             {
-                byte[] buffer = new byte[fileStream.Length];
-                var packedImage = Convert.ToBase64String(buffer);
+                await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
+                {
+                    var buffer = new byte[fileStream.Length];
+                    var packedImage = Convert.ToBase64String(buffer);
+
+                    //TODO: как тут быть?
+                }
             }
         }
 
-        return _mapper.Map<IReadOnlyList<EmployeeDto>>(employee);
+        //TODO: как тут быть?
+        return _mapper.Map<IReadOnlyList<EmployeeDto>>(employees);
     }
 
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllAsync(CancellationToken cancellationToken)
