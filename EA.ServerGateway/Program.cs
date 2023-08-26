@@ -24,14 +24,14 @@ try
 
     var connectionString = builder.Configuration.GetConnectionString(ConnectionString);
 
-    builder.Services.AddDbContext<DatabaseContext>(
-        options => options.UseSqlServer(connectionString));
+    builder.Services.AddDbContext<DatabaseContext>(options => { options.UseSqlServer(connectionString); });
+
 
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
-   
+
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())
