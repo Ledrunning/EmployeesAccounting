@@ -8,6 +8,11 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
-        throw new NotImplementedException();
+        builder.Property(employee => employee.Name).IsRequired();
+        builder.Property(employee => employee.LastName).HasMaxLength(150).IsRequired();
+        builder.Property(employee => employee.Department).HasMaxLength(50).IsRequired();
+        builder.Property(employee => employee.DateTime);
+        builder.Property(employee => employee.PhotoName);
+        builder.Property(employee => employee.PhotoPath);
     }
 }

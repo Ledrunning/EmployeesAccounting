@@ -15,10 +15,6 @@ public class EmployeeController : Controller
         _employee = employee;
     }
 
-    /// <summary>
-    ///     Get all employees from data base
-    /// </summary>
-    /// <returns>IReadOnlyList<Employee></returns>
     [HttpGet]
     [Route(nameof(GetAllEmployee))]
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllEmployee(CancellationToken cancellationToken)
@@ -40,12 +36,6 @@ public class EmployeeController : Controller
         return await _employee.AddAsync(employee, cancellationToken);
     }
 
-    /// <summary>
-    ///     Not used
-    /// </summary>
-    /// <param name="employee"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     [HttpPost]
     [Route(nameof(Update))]
     public async Task Update(EmployeeDto employee, CancellationToken cancellationToken)

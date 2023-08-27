@@ -8,6 +8,11 @@ public class AdministratorConfiguration : IEntityTypeConfiguration<Administrator
 {
     public void Configure(EntityTypeBuilder<Administrator> builder)
     {
-        throw new NotImplementedException();
+        builder.Property(administrator => administrator.Name).HasMaxLength(150).IsRequired();
+        builder.Property(administrator => administrator.LastName).HasMaxLength(150).IsRequired();
+        builder.Property(administrator => administrator.RegistrationTime);
+        builder.Property(administrator => administrator.Login).HasMaxLength(50).IsRequired();
+        builder.Property(administrator => administrator.Password).HasMaxLength(50).IsRequired();
+        builder.Property(administrator => administrator.OldPassword).HasMaxLength(50).IsRequired();
     }
 }
