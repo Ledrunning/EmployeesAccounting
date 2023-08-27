@@ -33,15 +33,17 @@ public class EmployeeService : IEmployeeService
 
         foreach (var employee in employees)
         {
-            if (employee.PhotoPath != null)
+            if (employee.PhotoPath == null)
             {
-                await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
-                {
-                    var buffer = new byte[fileStream.Length];
-                    var packedImage = Convert.ToBase64String(buffer);
+                continue;
+            }
 
-                    //TODO: как тут быть?
-                }
+            await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
+            {
+                var buffer = new byte[fileStream.Length];
+                var packedImage = Convert.ToBase64String(buffer);
+
+                //TODO: как тут быть?
             }
         }
 
@@ -86,6 +88,11 @@ public class EmployeeService : IEmployeeService
     {
         try
         {
+            if (employee.Photo == null)
+            {
+                throw new ApplicationException("Error while saving image file into server folder!");
+            }
+
             var buffer = Convert.FromBase64String(employee.Photo);
 
             using var ms = new MemoryStream(buffer);
