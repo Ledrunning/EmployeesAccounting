@@ -1,21 +1,28 @@
-﻿using EA.Repository.Contracts;
-using EA.Repository.Entities;
+﻿using System.Data;
+using EA.Repository.Configurations;
+using EA.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
-using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 
 namespace EA.Repository;
 
-public class DatabaseContext : DbContext, IUnitOfWork
+/// <summary>
+///     dotnet tool install --global dotnet-ef
+///     dotnet ef migrations add InitialCreate
+///     dotnet ef database update
+/// </summary>
+public sealed class DatabaseContext : DbContext, IUnitOfWork
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
+        Database.Migrate();
     }
 
-    /// <summary>
-    ///     Database table name
-    /// </summary>
-    public System.Data.Entity.DbSet<Employee>? Employee { get; set; }
+    public IDbConnection Connection => Database.GetDbConnection();
 
-    public System.Data.Entity.DbSet<Administrator>? Administrator { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new AdministratorConfiguration());
+    }
 }

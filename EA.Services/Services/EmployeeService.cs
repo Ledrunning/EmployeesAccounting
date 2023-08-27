@@ -27,6 +27,30 @@ public class EmployeeService : IEmployeeService
         CreateFolder();
     }
 
+    public async Task<IReadOnlyList<EmployeeDto?>> GetAllWithPhotoAsync(CancellationToken cancellationToken)
+    { 
+        var employees = await _employeeRepository.ListAsync(cancellationToken);
+
+        foreach (var employee in employees)
+        {
+            if (employee.PhotoPath == null)
+            {
+                continue;
+            }
+
+            await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
+            {
+                var buffer = new byte[fileStream.Length];
+                var packedImage = Convert.ToBase64String(buffer);
+
+                //TODO: как тут быть?
+            }
+        }
+
+        //TODO: как тут быть?
+        return _mapper.Map<IReadOnlyList<EmployeeDto>>(employees);
+    }
+
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllAsync(CancellationToken cancellationToken)
     {
         var employee = await _employeeRepository.ListAsync(cancellationToken);
@@ -64,6 +88,11 @@ public class EmployeeService : IEmployeeService
     {
         try
         {
+            if (employee.Photo == null)
+            {
+                throw new ApplicationException("Error while saving image file into server folder!");
+            }
+
             var buffer = Convert.FromBase64String(employee.Photo);
 
             using var ms = new MemoryStream(buffer);

@@ -268,7 +268,7 @@ namespace EA.DesktopApp.ViewModels
         #region Toggles Execute methods
 
         /// <summary>
-        ///     Send image to Data base
+        ///     Send image into Data base
         /// </summary>
         private async void ToggleAddImageToDataBase()
         {
