@@ -31,9 +31,9 @@ public class EmployeeController : Controller
 
     [HttpPost]
     [Route(nameof(Create))]
-    public async Task<EmployeeDto?> Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
+    public async Task Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
     {
-        return await _employee.AddAsync(employee, cancellationToken);
+        await _employee.AddAsync(employee, cancellationToken);
     }
 
     [HttpPost]

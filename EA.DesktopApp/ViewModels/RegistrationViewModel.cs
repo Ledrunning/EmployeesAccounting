@@ -287,7 +287,7 @@ namespace EA.DesktopApp.ViewModels
                 LastName = PersonLastName,
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
-                Photo = Convert.ToBase64String(imageArray),
+                Photo = imageArray,
                 PhotoName =
                     $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
             };

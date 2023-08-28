@@ -5,7 +5,7 @@ namespace EA.Repository.Repository;
 
 public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 {
-    public EmployeeRepository(IUnitOfWork employeeContext) : base(employeeContext)
+    public EmployeeRepository(DatabaseContext employeeContext) : base(employeeContext)
     {
     }
 }
