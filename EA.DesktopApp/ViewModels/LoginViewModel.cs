@@ -23,19 +23,14 @@ namespace EA.DesktopApp.ViewModels
         private ISoundPlayerService _soundPlayerHelper;
 
 
-        public LoginViewModel(ISoundPlayerService soundPlayerHelper, IPhotoShootService photoShootService)
+        public LoginViewModel(LoginWindow loginWindow, ISoundPlayerService soundPlayerHelper, IPhotoShootService photoShootService)
         {
+            _loginWindow = loginWindow;
             _soundPlayerHelper = soundPlayerHelper;
             _photoShootService = photoShootService;
             InitializeCommands();
         }
-
-        public LoginViewModel(LoginWindow loginWindow)
-        {
-            _loginWindow = loginWindow;
-            InitializeCommands();
-        }
-
+        
         public ICommand LoginCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
         public ICommand AdminModeCommand { get; private set; }

@@ -22,6 +22,7 @@ namespace EA.DesktopApp.ViewModels
     {
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly LoginViewModel _loginViewModel;
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
         private readonly ISoundPlayerService _soundPlayerHelper;
@@ -46,9 +47,11 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public MainViewModel(
+            LoginViewModel loginViewModel,
             IFaceDetectionService faceDetectionService,
             ISoundPlayerService soundPlayerHelper)
         {
+            _loginViewModel = loginViewModel;
             _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
@@ -188,15 +191,16 @@ namespace EA.DesktopApp.ViewModels
 
             if (_loginForm == null || _loginForm.IsClosed)
             {
-                _loginForm = new LoginWindow();
-                var loginFormViewModel = new LoginViewModel(_loginForm);
+                if (_loginForm != null)
+                {
+                    _loginForm.DataContext = _loginViewModel;
+                    _loginForm.Owner = Application.Current.MainWindow;
+                }
 
-                _loginForm.DataContext = loginFormViewModel;
-                _loginForm.Owner = Application.Current.MainWindow;
                 IsStreaming = false;
                 _faceDetectionService.CancelServiceAsync();
                 StopFaceDetectionService();
-                loginFormViewModel.ShowLoginWindow();
+                _loginViewModel.ShowLoginWindow();
             }
 
 
