@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
@@ -22,10 +21,11 @@ namespace EA.DesktopApp.ViewModels
     {
         private const int OneSecond = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly LoginViewModel _loginViewModel;
         private readonly IFaceDetectionService _faceDetectionService;
+        private readonly LoginViewModel _loginViewModel;
+
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
-        private readonly ISoundPlayerService _soundPlayerHelper;
+        //private readonly ISoundPlayerService _soundPlayerHelper;
 
         private string _currentTimeDate;
 
@@ -36,7 +36,6 @@ namespace EA.DesktopApp.ViewModels
         private bool _isRunning;
 
         private bool _isStreaming;
-        private LoginWindow _loginForm;
 
         /// <summary>
         ///     Timer
@@ -56,8 +55,8 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            _soundPlayerHelper = soundPlayerHelper;
-            DetectionHint = ProgramResources.StartDetectorTooltipMessage;
+            //_soundPlayerHelper = soundPlayerHelper;
+            //DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
         /// <summary>
@@ -155,7 +154,7 @@ namespace EA.DesktopApp.ViewModels
                 : ProgramResources.StopDetectorTooltipMessage;
 
             // Playing sound effect for button
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+           // _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
@@ -184,24 +183,24 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void TogglePhotoShootServiceExecute()
         {
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            //_soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             // True - button is pushed - Working!
             IsRunning = false;
 
-            if (_loginForm == null || _loginForm.IsClosed)
-            {
-                if (_loginForm != null)
-                {
-                    _loginForm.DataContext = _loginViewModel;
-                    _loginForm.Owner = Application.Current.MainWindow;
-                }
+            // if (_loginForm == null || _loginForm.IsClosed)
+            // {
+            //     if (_loginForm != null)
+            //     {
+            //         _loginForm.DataContext = _loginViewModel;
+            //         _loginForm.Owner = Application.Current.MainWindow;
+            //     }
 
-                IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
-                StopFaceDetectionService();
-                _loginViewModel.ShowLoginWindow();
-            }
+            IsStreaming = false;
+            _faceDetectionService.CancelServiceAsync();
+            StopFaceDetectionService();
+            _loginViewModel.ShowLoginWindow();
+            //}
 
 
             if (_faceDetectionService != null && _faceDetectionService.IsRunning)

@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
@@ -12,25 +14,25 @@ namespace EA.DesktopApp.ViewModels
 {
     public class LoginViewModel : BaseViewModel, IDataErrorInfo
     {
-        private readonly LoginWindow _loginWindow;
         private bool _isReady;
         private bool _isRunning;
         private string _login;
 
         private string _password;
-        private IPhotoShootService _photoShootService;
         private RegistrationForm _registrationFormPage;
         private ISoundPlayerService _soundPlayerHelper;
+        private readonly ILoginFormService _loginFormService;
 
 
-        public LoginViewModel(LoginWindow loginWindow, ISoundPlayerService soundPlayerHelper, IPhotoShootService photoShootService)
+        public LoginViewModel(ISoundPlayerService soundPlayerHelper, 
+            ILoginFormService loginFormService,
+            IPhotoShootService photoShootService)
         {
-            _loginWindow = loginWindow;
             _soundPlayerHelper = soundPlayerHelper;
-            _photoShootService = photoShootService;
+            _loginFormService = loginFormService;
             InitializeCommands();
         }
-        
+
         public ICommand LoginCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
         public ICommand AdminModeCommand { get; private set; }
@@ -145,7 +147,7 @@ namespace EA.DesktopApp.ViewModels
 
         private bool IsPasswordChecked(string password)
         {
-            return string.Equals(PasswordField, password, StringComparison.CurrentCulture) ? true : false;
+            return string.Equals(PasswordField, password, StringComparison.CurrentCulture);
         }
 
         private void InitializeCommands()
@@ -175,7 +177,7 @@ namespace EA.DesktopApp.ViewModels
                 Owner = Application.Current.MainWindow
             };
 
-            _loginWindow.Close();
+            _loginFormService.Close();
             _registrationFormPage.ShowDialog();
         }
 
@@ -201,7 +203,7 @@ namespace EA.DesktopApp.ViewModels
 
         public void ShowLoginWindow()
         {
-            _loginWindow.ShowDialog();
+            _loginFormService.ShowLoginWindow();
         }
     }
 }

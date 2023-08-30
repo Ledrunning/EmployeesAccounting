@@ -3,8 +3,10 @@ using System.Configuration;
 using System.Threading;
 using Autofac;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels;
 using NLog;
@@ -33,10 +35,13 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
                 builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().SingleInstance();
 
-                builder.RegisterType<LoginWindow>().InstancePerLifetimeScope();
+                builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
+
+                builder.RegisterType<LoginFormService>().As<ILoginFormService>().SingleInstance();
                 builder.RegisterType<LoginViewModel>().InstancePerLifetimeScope();
+
                 builder.RegisterType<RedactorViewModel>().InstancePerLifetimeScope();
                 builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
 
