@@ -21,15 +21,15 @@ namespace EA.DesktopApp.ViewModels
         private string _password;
         private RegistrationForm _registrationFormPage;
         private ISoundPlayerService _soundPlayerHelper;
-        private readonly ILoginFormService _loginFormService;
+        private readonly IWindowFactory _windowFactory;
 
 
-        public LoginViewModel(ISoundPlayerService soundPlayerHelper, 
-            ILoginFormService loginFormService,
+        public LoginViewModel(ISoundPlayerService soundPlayerHelper,
+            IWindowFactory windowFactory,
             IPhotoShootService photoShootService)
         {
             _soundPlayerHelper = soundPlayerHelper;
-            _loginFormService = loginFormService;
+            _windowFactory = windowFactory;
             InitializeCommands();
         }
 
@@ -177,7 +177,7 @@ namespace EA.DesktopApp.ViewModels
                 Owner = Application.Current.MainWindow
             };
 
-            _loginFormService.Close();
+            _windowFactory.CreateLoginWindow().Close();
             _registrationFormPage.ShowDialog();
         }
 
@@ -203,7 +203,8 @@ namespace EA.DesktopApp.ViewModels
 
         public void ShowLoginWindow()
         {
-            _loginFormService.ShowLoginWindow();
+            _windowFactory.CreateModalWindow().Owner = Application.Current.MainWindow;
+            _windowFactory.CreateLoginWindow().Show();
         }
     }
 }

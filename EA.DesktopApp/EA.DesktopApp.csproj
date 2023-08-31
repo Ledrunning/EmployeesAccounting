@@ -189,7 +189,7 @@
     <Compile Include="Contracts\IFaceDetectionService.cs" />
     <Compile Include="Contracts\IPhotoShootService.cs" />
     <Compile Include="Contracts\IEmployeeApi.cs" />
-    <Compile Include="Contracts\ViewContracts\ILoginFormService.cs" />
+    <Compile Include="Contracts\ViewContracts\IWindowFactory.cs" />
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
@@ -205,7 +205,7 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayerService.cs" />
-    <Compile Include="Services\ViewServices\LoginFormService.cs" />
+    <Compile Include="Services\ViewServices\WindowFactory.cs" />
     <Compile Include="UiErrorResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -233,8 +233,8 @@
     <Compile Include="View\ModalWindow.xaml.cs">
       <DependentUpon>ModalWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\AdminForm.xaml.cs">
-      <DependentUpon>AdminForm.xaml</DependentUpon>
+    <Compile Include="View\AdminWindow.xaml.cs">
+      <DependentUpon>AdminWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RedactorForm.xaml.cs">
       <DependentUpon>RedactorForm.xaml</DependentUpon>
@@ -361,7 +361,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\AdminForm.xaml">
+    <Page Include="View\AdminWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -39,12 +39,19 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
 
-                builder.RegisterType<LoginFormService>().As<ILoginFormService>().SingleInstance();
-                builder.RegisterType<LoginViewModel>().InstancePerLifetimeScope();
+                builder.RegisterType<ModalWindow>().InstancePerDependency(); // Or per your desired lifetime.
+                builder.RegisterType<ModalViewModel>().InstancePerDependency(); // Or per your desired lifetime.
+
+                builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
+                builder.RegisterType<LoginWindow>().InstancePerDependency(); // Or per your desired lifetime.
+                builder.RegisterType<LoginViewModel>().InstancePerDependency(); // Or per your desired lifetime.
 
                 builder.RegisterType<RedactorViewModel>().InstancePerLifetimeScope();
-                builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
 
+
+                builder.RegisterType<RegistrationForm>().InstancePerLifetimeScope();
+                builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
+                
                 Container = builder.Build();
             }
             catch (Exception e)

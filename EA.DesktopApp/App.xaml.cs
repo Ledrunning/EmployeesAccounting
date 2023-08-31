@@ -1,7 +1,5 @@
 ﻿using System.Windows;
-using Autofac;
 using EA.DesktopApp.DiSetup;
-using EA.DesktopApp.View;
 
 namespace EA.DesktopApp
 {

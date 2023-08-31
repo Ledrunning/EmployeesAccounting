@@ -272,7 +272,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private async void ToggleAddImageToDataBase()
         {
-            _modalView = new ModalViewModel(new ModalWindow());
+            //_modalView = new ModalViewModel(new ModalWindow());
             //_modalView.ShowLoginWindow();
 
             _soundPlayerService.PlaySound("button");

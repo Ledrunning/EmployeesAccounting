@@ -1,18 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     internal class ModalViewModel : BaseViewModel
     {
-        private readonly ModalWindow _modalWindow;
-        private RegistrationForm _registrationForm;
-
-        private ICommand _toggleOkButtonCommand;
-
+        private readonly IWindowFactory _windowFactory;
         private string _warningText;
 
         //private ModalWindow _modelWindow;
@@ -28,10 +24,10 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        /// <param name="modalWindow"></param>
-        public ModalViewModel(ModalWindow modalWindow)
+        /// <param name="windowFactory"></param>
+        public ModalViewModel(IWindowFactory windowFactory)
         {
-            this._modalWindow = modalWindow;
+            _windowFactory = windowFactory;
             InitializeCommands();
         }
 
@@ -52,18 +48,14 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Relay command for OK button execute
         /// </summary>
-        public ICommand ToggleOkButtonCommand
-        {
-            get => _toggleOkButtonCommand;
-            set => _toggleOkButtonCommand = value;
-        }
+        public ICommand ToggleOkButtonCommand { get; set; }
 
         /// <summary>
         ///     Initialize relay command
         /// </summary>
         private void InitializeCommands()
         {
-            _toggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
+            ToggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
         }
 
         /// <summary>
@@ -73,17 +65,17 @@ namespace EA.DesktopApp.ViewModels
         {
             var soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound("button");
-            _modalWindow.Close();
+            _windowFactory.CreateModalWindow().Close();
         }
 
         /// <summary>
-        ///     Show modal windoww
+        ///     Show modal window
         /// </summary>
         public void ShowWindow()
         {
-            _modalWindow.DataContext = this;
-            _modalWindow.Owner = Application.Current.MainWindow;
-            _modalWindow.ShowDialog();
+            _windowFactory.CreateModalWindow().DataContext = this;
+            _windowFactory.CreateModalWindow().Owner = Application.Current.MainWindow;
+            _windowFactory.CreateModalWindow().ShowDialog();
         }
 
         /// <summary>

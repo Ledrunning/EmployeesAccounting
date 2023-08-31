@@ -25,7 +25,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly LoginViewModel _loginViewModel;
 
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
-        //private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly ISoundPlayerService _soundPlayerHelper;
 
         private string _currentTimeDate;
 
@@ -55,8 +55,8 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             TimeTicker();
-            //_soundPlayerHelper = soundPlayerHelper;
-            //DetectionHint = ProgramResources.StartDetectorTooltipMessage;
+            _soundPlayerHelper = soundPlayerHelper;
+            DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
         /// <summary>
