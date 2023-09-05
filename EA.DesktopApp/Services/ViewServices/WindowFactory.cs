@@ -23,5 +23,10 @@ namespace EA.DesktopApp.Services.ViewServices
         {
             return _scope.Resolve<ModalWindow>();
         }
+
+        public Window CreateAdminWindow()
+        {
+            return _scope.Resolve<AdminForm>();
+        }
     }
 }

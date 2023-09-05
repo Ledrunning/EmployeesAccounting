@@ -37,6 +37,8 @@ namespace EA.DesktopApp.DiSetup
 
                 builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
                 builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
+
+                builder.RegisterType<AdminForm>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
 
                 builder.RegisterType<ModalWindow>().InstancePerDependency(); // Or per your desired lifetime.

@@ -6,7 +6,6 @@ using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
@@ -14,6 +13,7 @@ namespace EA.DesktopApp.ViewModels
 {
     public class LoginViewModel : BaseViewModel, IDataErrorInfo
     {
+        private readonly IWindowFactory _windowFactory;
         private bool _isReady;
         private bool _isRunning;
         private string _login;
@@ -21,7 +21,6 @@ namespace EA.DesktopApp.ViewModels
         private string _password;
         private RegistrationForm _registrationFormPage;
         private ISoundPlayerService _soundPlayerHelper;
-        private readonly IWindowFactory _windowFactory;
 
 
         public LoginViewModel(ISoundPlayerService soundPlayerHelper,
@@ -127,10 +126,10 @@ namespace EA.DesktopApp.ViewModels
                         }
                         else
                         {
-                            if (!IsPasswordChecked("111"))
-                            {
-                                error = "Password incorrect!";
-                            }
+                            //if (!IsPasswordChecked("111")) //TODO: Hardcoded!
+                            //{
+                            //    error = "Password incorrect!";
+                            //}
                         }
 
                         break;
@@ -157,25 +156,16 @@ namespace EA.DesktopApp.ViewModels
             AdminModeCommand = new RelayCommand(ToggleAdminWindowShowExecute);
         }
 
-        //todo login check
+        //todo login check // And add registration form bitte!
         private void ToggleLoginExecute()
         {
             // Playing sound effect for button
-            _soundPlayerHelper = new SoundPlayerService();
             _soundPlayerHelper.PlaySound("button");
 
-            if (_registrationFormPage != null && !_registrationFormPage.IsClosed && !IsPasswordChecked("1"))
+            if (_registrationFormPage == null)
             {
                 return;
             }
-
-            //var registrationFormViewModel = new RegistrationViewModel(_photoShootService);
-
-            _registrationFormPage = new RegistrationForm
-            {
-                //DataContext = registrationFormViewModel,
-                Owner = Application.Current.MainWindow
-            };
 
             _windowFactory.CreateLoginWindow().Close();
             _registrationFormPage.ShowDialog();
@@ -194,11 +184,8 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerHelper = new SoundPlayerService();
             _soundPlayerHelper.PlaySound("button");
-            var adminForm = new AdminForm
-            {
-                Owner = Application.Current.MainWindow
-            };
-            adminForm.ShowDialog();
+            _windowFactory.CreateAdminWindow().Owner = Application.Current.MainWindow;
+            _windowFactory.CreateAdminWindow().Show();
         }
 
         public void ShowLoginWindow()

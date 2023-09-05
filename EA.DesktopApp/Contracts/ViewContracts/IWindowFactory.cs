@@ -6,5 +6,6 @@ namespace EA.DesktopApp.Contracts.ViewContracts
     {
         Window CreateLoginWindow();
         Window CreateModalWindow();
+        Window CreateAdminWindow();
     }
 }

@@ -106,7 +106,7 @@
                         </Style>
                     </Button.Style>
                     <Button.ToolTip>
-                        <ToolTip HasDropShadow="True" Content="{Binding Cancel}" />
+                        <ToolTip HasDropShadow="True" Content="{Binding CancelHint}" />
                     </Button.ToolTip>
                 </Button>
             </StackPanel>
@@ -127,7 +127,7 @@
                         </Style>
                     </Button.Style>
                     <Button.ToolTip>
-                        <ToolTip HasDropShadow="True" Content="{Binding Login}" />
+                        <ToolTip HasDropShadow="True" Content="{Binding LoginHint}" />
                     </Button.ToolTip>
                 </Button>
             </StackPanel>
