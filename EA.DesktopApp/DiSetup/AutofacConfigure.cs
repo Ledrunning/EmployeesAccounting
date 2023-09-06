@@ -49,11 +49,16 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<LoginViewModel>().InstancePerDependency(); // Or per your desired lifetime.
 
                 builder.RegisterType<RedactorViewModel>().InstancePerLifetimeScope();
-
-
+                
                 builder.RegisterType<RegistrationForm>().InstancePerLifetimeScope();
                 builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
-                
+
+                // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
+                builder.RegisterInstance(new CancellationTokenSource()).AsSelf();
+
+                // Register a factory to get the CancellationToken from the source.
+                builder.Register(c => c.Resolve<CancellationTokenSource>().Token).As<CancellationToken>();
+
                 Container = builder.Build();
             }
             catch (Exception e)

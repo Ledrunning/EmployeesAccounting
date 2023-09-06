@@ -14,18 +14,15 @@ namespace EA.DesktopApp.ViewModels
     public class LoginViewModel : BaseViewModel, IDataErrorInfo
     {
         private readonly IWindowFactory _windowFactory;
-        private bool _isReady;
-        private bool _isRunning;
         private string _login;
+        private Window loginWindow;
 
         private string _password;
-        private RegistrationForm _registrationFormPage;
         private ISoundPlayerService _soundPlayerHelper;
 
 
         public LoginViewModel(ISoundPlayerService soundPlayerHelper,
-            IWindowFactory windowFactory,
-            IPhotoShootService photoShootService)
+            IWindowFactory windowFactory)
         {
             _soundPlayerHelper = soundPlayerHelper;
             _windowFactory = windowFactory;
@@ -39,32 +36,6 @@ namespace EA.DesktopApp.ViewModels
         public string LoginHint => ProgramResources.LoginTooltipMessage;
         public string PasswordHint => ProgramResources.PasswordTooltipMessage;
         public string CancelHint => ProgramResources.CancelTooltipMessage;
-
-        /// <summary>
-        ///     Start webCam service button toggle
-        /// </summary>
-        public bool IsRunning
-        {
-            get => _isRunning;
-            set
-            {
-                _isRunning = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Button state
-        /// </summary>
-        public bool IsReady
-        {
-            get => _isReady;
-            set
-            {
-                _isReady = value;
-                OnPropertyChanged();
-            }
-        }
 
         private string LocalPasswordDisplayed => new string('*', _password?.Length ?? 0);
 
@@ -159,39 +130,33 @@ namespace EA.DesktopApp.ViewModels
         //todo login check // And add registration form bitte!
         private void ToggleLoginExecute()
         {
-            // Playing sound effect for button
-            _soundPlayerHelper.PlaySound("button");
-
-            if (_registrationFormPage == null)
-            {
-                return;
-            }
-
-            _windowFactory.CreateLoginWindow().Close();
-            _registrationFormPage.ShowDialog();
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            loginWindow.Close();
+            var registrationForm = _windowFactory.CreateRegistrationForm();
+            registrationForm.Owner = Application.Current.MainWindow;
+            registrationForm.Show();
         }
 
         private void ToggleCancelExecute()
         {
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
-
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             LoginField = string.Empty;
             PasswordField = string.Empty;
         }
 
         private void ToggleAdminWindowShowExecute()
         {
-            _soundPlayerHelper = new SoundPlayerService();
-            _soundPlayerHelper.PlaySound("button");
-            _windowFactory.CreateAdminWindow().Owner = Application.Current.MainWindow;
-            _windowFactory.CreateAdminWindow().Show();
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            var adminForm = _windowFactory.CreateAdminForm();
+            adminForm.Owner = Application.Current.MainWindow;
+            adminForm.Show();
         }
 
         public void ShowLoginWindow()
         {
-            _windowFactory.CreateModalWindow().Owner = Application.Current.MainWindow;
-            _windowFactory.CreateLoginWindow().Show();
+            loginWindow = _windowFactory.CreateLoginWindow();
+            loginWindow.Owner = Application.Current.MainWindow;
+            loginWindow.Show();
         }
     }
 }
