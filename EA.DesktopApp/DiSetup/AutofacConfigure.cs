@@ -30,6 +30,14 @@ namespace EA.DesktopApp.DiSetup
 
                 var employeeGatewayService = new EmployeeGatewayService(urlAddress, timeOut);
 
+                // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
+                builder.RegisterInstance(new CancellationTokenSource()).AsSelf();
+                // Register a factory to get the CancellationToken from the source.
+                builder.Register(c => c.Resolve<CancellationTokenSource>().Token).As<CancellationToken>();
+
+                builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
+                builder.RegisterType<WindowManager>().As<IWindowManager>().InstancePerLifetimeScope();
+
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
@@ -44,7 +52,6 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<ModalWindow>().InstancePerDependency(); // Or per your desired lifetime.
                 builder.RegisterType<ModalViewModel>().InstancePerDependency(); // Or per your desired lifetime.
 
-                builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
                 builder.RegisterType<LoginWindow>().InstancePerDependency(); // Or per your desired lifetime.
                 builder.RegisterType<LoginViewModel>().InstancePerDependency(); // Or per your desired lifetime.
 
@@ -52,12 +59,6 @@ namespace EA.DesktopApp.DiSetup
                 
                 builder.RegisterType<RegistrationForm>().InstancePerLifetimeScope();
                 builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
-
-                // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
-                builder.RegisterInstance(new CancellationTokenSource()).AsSelf();
-
-                // Register a factory to get the CancellationToken from the source.
-                builder.Register(c => c.Resolve<CancellationTokenSource>().Token).As<CancellationToken>();
 
                 Container = builder.Build();
             }

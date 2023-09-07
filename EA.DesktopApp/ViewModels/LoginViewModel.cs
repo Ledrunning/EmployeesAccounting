@@ -1,31 +1,27 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     public class LoginViewModel : BaseViewModel, IDataErrorInfo
     {
-        private readonly IWindowFactory _windowFactory;
+        private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly IWindowManager _windowManager;
         private string _login;
-        private Window loginWindow;
 
         private string _password;
-        private ISoundPlayerService _soundPlayerHelper;
 
 
-        public LoginViewModel(ISoundPlayerService soundPlayerHelper,
-            IWindowFactory windowFactory)
+        public LoginViewModel(ISoundPlayerService soundPlayerHelper, IWindowManager windowManager)
         {
             _soundPlayerHelper = soundPlayerHelper;
-            _windowFactory = windowFactory;
+            _windowManager = windowManager;
             InitializeCommands();
         }
 
@@ -95,13 +91,6 @@ namespace EA.DesktopApp.ViewModels
                         {
                             error = UiErrorResource.SpaceInPassword;
                         }
-                        else
-                        {
-                            //if (!IsPasswordChecked("111")) //TODO: Hardcoded!
-                            //{
-                            //    error = "Password incorrect!";
-                            //}
-                        }
 
                         break;
                 }
@@ -131,10 +120,8 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleLoginExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            loginWindow.Close();
-            var registrationForm = _windowFactory.CreateRegistrationForm();
-            registrationForm.Owner = Application.Current.MainWindow;
-            registrationForm.Show();
+            _windowManager.CloseLoginWindow();
+            _windowManager.ShowRegistrationWindow();
         }
 
         private void ToggleCancelExecute()
@@ -147,16 +134,12 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleAdminWindowShowExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            var adminForm = _windowFactory.CreateAdminForm();
-            adminForm.Owner = Application.Current.MainWindow;
-            adminForm.Show();
+            _windowManager.ShowAdminWindow();
         }
 
         public void ShowLoginWindow()
         {
-            loginWindow = _windowFactory.CreateLoginWindow();
-            loginWindow.Owner = Application.Current.MainWindow;
-            loginWindow.Show();
+            _windowManager.ShowLoginWindow();
         }
     }
 }
