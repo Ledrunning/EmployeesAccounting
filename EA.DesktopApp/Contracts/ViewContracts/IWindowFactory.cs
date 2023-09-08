@@ -4,9 +4,6 @@ namespace EA.DesktopApp.Contracts.ViewContracts
 {
     public interface IWindowFactory
     {
-        Window CreateLoginWindow();
-        Window CreateModalWindow();
-        Window CreateAdminForm();
-        Window CreateRegistrationForm();
+        Window GetWindow<TWindow>() where TWindow : Window;
     }
 }

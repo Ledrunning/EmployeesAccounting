@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using Autofac;
 using EA.DesktopApp.Contracts.ViewContracts;
-using EA.DesktopApp.View;
 
 namespace EA.DesktopApp.Services.ViewServices
 {
@@ -14,24 +13,9 @@ namespace EA.DesktopApp.Services.ViewServices
             _scope = scope;
         }
 
-        public Window CreateLoginWindow()
+        public Window GetWindow<TWindow>() where TWindow : Window
         {
-            return _scope.Resolve<LoginWindow>();
-        }
-
-        public Window CreateModalWindow()
-        {
-            return _scope.Resolve<ModalWindow>();
-        }
-
-        public Window CreateAdminForm()
-        {
-            return _scope.Resolve<AdminForm>();
-        }
-
-        public Window CreateRegistrationForm()
-        {
-            return _scope.Resolve<RegistrationForm>();
+            return _scope.Resolve<TWindow>();
         }
     }
 }

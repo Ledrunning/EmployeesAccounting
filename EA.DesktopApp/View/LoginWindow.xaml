@@ -2,11 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:EA.DesktopApp.ViewModels"
+        xmlns:helpers="clr-namespace:EA.DesktopApp.Helpers"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
         Title="Employees Accounting" Height="300" Width="535" MinHeight="300" MaxHeight="200" MinWidth="535"
-        MaxWidth="535" ResizeMode="NoResize">
-
+        MaxWidth="535" ResizeMode="NoResize"
+        helpers:WindowClosingBehavior.HandleClosing="True">
     <Window.Resources>
         <!-- IData Error style  -->
 

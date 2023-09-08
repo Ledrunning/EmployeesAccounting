@@ -1,17 +1,15 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
     internal class ModalViewModel : BaseViewModel
     {
-        private readonly IWindowFactory _windowFactory;
+        private readonly IWindowManager _windowManager;
         private string _warningText;
-
-        //private ModalWindow _modelWindow;
 
         /// <summary>
         ///     .ctor
@@ -24,10 +22,10 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        /// <param name="windowFactory"></param>
-        public ModalViewModel(IWindowFactory windowFactory)
+        /// <param name="windowManager"></param>
+        public ModalViewModel(IWindowManager windowManager)
         {
-            _windowFactory = windowFactory;
+            _windowManager = windowManager;
             InitializeCommands();
         }
 
@@ -64,8 +62,8 @@ namespace EA.DesktopApp.ViewModels
         private void CloseWindowExecute()
         {
             var soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
-            _windowFactory.CreateModalWindow().Close();
+            soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _windowManager.CloseModalWindow();
         }
 
         /// <summary>
@@ -73,15 +71,13 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public void ShowWindow()
         {
-            _windowFactory.CreateModalWindow().DataContext = this;
-            _windowFactory.CreateModalWindow().Owner = Application.Current.MainWindow;
-            _windowFactory.CreateModalWindow().ShowDialog();
+            _windowManager.ShowModalWindow();
         }
 
         /// <summary>
-        ///     Messge set method
+        ///     Set text for message
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Your text for message</param>
         public void SetMessage(string message)
         {
             WarningText = message;

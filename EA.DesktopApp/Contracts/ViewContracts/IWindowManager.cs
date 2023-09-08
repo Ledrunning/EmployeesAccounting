@@ -2,6 +2,8 @@
 {
     public interface IWindowManager
     {
+        void ShowModalWindow();
+        void CloseModalWindow();
         void ShowLoginWindow();
         void CloseLoginWindow();
         void ShowRegistrationWindow();

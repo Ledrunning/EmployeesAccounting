@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -48,6 +49,7 @@ namespace EA.DesktopApp.ViewModels
             this.token = token;
             InitializeServices();
             InitializeCommands();
+            WindowClosingBehavior.
         }
 
         /// <summary>

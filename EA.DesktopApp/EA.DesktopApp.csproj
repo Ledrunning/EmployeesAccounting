@@ -195,6 +195,7 @@
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />
+    <Compile Include="Helpers\WindowClosingBehavior.cs" />
     <Compile Include="ProgramResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -207,7 +208,7 @@
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayerService.cs" />
     <Compile Include="Services\ViewServices\WindowFactory.cs" />
-    <Compile Include="Services\WindowManager.cs" />
+    <Compile Include="Services\ViewServices\WindowManager.cs" />
     <Compile Include="UiErrorResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
