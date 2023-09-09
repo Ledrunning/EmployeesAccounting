@@ -11,7 +11,6 @@ using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -49,7 +48,13 @@ namespace EA.DesktopApp.ViewModels
             this.token = token;
             InitializeServices();
             InitializeCommands();
-            WindowClosingBehavior.
+            WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
+        }
+
+        private void OnWindowClosingBehavior(object sender, EventArgs e)
+        {
+            _photoShootService?.CancelServiceAsync();
+            _photoShootService?.Dispose();
         }
 
         /// <summary>
