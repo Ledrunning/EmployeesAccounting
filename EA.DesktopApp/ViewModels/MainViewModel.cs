@@ -18,7 +18,7 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        private const int OneSecond = 1;
+        private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly LoginViewModel _loginViewModel;
@@ -245,7 +245,7 @@ namespace EA.DesktopApp.ViewModels
         {
             Timer = new DispatcherTimer(DispatcherPriority.Render)
             {
-                Interval = TimeSpan.FromSeconds(OneSecond)
+                Interval = TimeSpan.FromSeconds(OneSecondForTimeSpan)
             };
             Timer.Tick += (sender, args) => { CurrentTimeDate = DateTime.Now.ToString(CultureInfo.CurrentCulture); };
             Timer.Start();
