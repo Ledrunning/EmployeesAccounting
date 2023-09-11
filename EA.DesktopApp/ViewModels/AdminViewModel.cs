@@ -1,29 +1,27 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    internal class AdminViewModel : BaseViewModel, IDataErrorInfo
+    internal class AdminViewModel : BaseViewModel
     {
+        private readonly ISoundPlayerService _soundPlayer;
         private bool _isReady;
         private bool _isRunning;
-
-        private string _loginValue;
         private string _oldPasswordValue;
-
-        private string _passwordValue;
         private string _userMessage;
 
-        public AdminViewModel()
+        public AdminViewModel(ISoundPlayerService soundPlayer)
         {
+            _soundPlayer = soundPlayer;
             InitializeCommands();
         }
 
-        public string Registration => "Нажмите для регистрации";
-        public string ClearFields => "Нажмите для очистки полей";
+        public string RegistrationHint => UiErrorResource.RegisterButtonHint;
+        public string ClearFieldsHint => UiErrorResource.RegisterClearFieldsHint;
 
         public ICommand ClearFieldsCommand { get; set; }
         public ICommand RegistrationCommand { get; set; }
@@ -65,28 +63,6 @@ namespace EA.DesktopApp.ViewModels
         }
 
         [Required(AllowEmptyStrings = false)]
-        public string LoginField
-        {
-            get => _loginValue;
-            set
-            {
-                _loginValue = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [Required(AllowEmptyStrings = false)]
-        public string PasswordField
-        {
-            get => _passwordValue;
-            set
-            {
-                _passwordValue = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [Required(AllowEmptyStrings = false)]
         public string OldPasswordField
         {
             get => _oldPasswordValue;
@@ -102,45 +78,44 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public string this[string columnName]
+        protected override string ValidateProperty(string columnName)
         {
-            get
             {
                 var error = string.Empty;
 
                 switch (columnName)
                 {
-                    case "LoginField":
+                    case nameof(LoginField):
                         if (string.IsNullOrEmpty(LoginField))
                         {
-                            error = "Введите логин!";
+                            error = UiErrorResource.EmptyLogin;
                         }
                         else if (LoginField.Contains(" "))
                         {
-                            error = "Логин не может содержать пробел";
+                            error = UiErrorResource.SpaceInlogin;
                         }
 
                         break;
 
-                    case "PasswordField":
+                    case nameof(PasswordField):
                         if (string.IsNullOrEmpty(PasswordField))
                         {
-                            error = "Введите пароль!";
+                            error = UiErrorResource.EmptyPassword;
                         }
                         else if (PasswordField.Contains(" "))
                         {
-                            error = "Пароль не может содержать пробел";
+                            error = UiErrorResource.SpaceInPassword;
                         }
 
                         break;
-                    case "OldPasswordField":
+                    case nameof(OldPasswordField):
                         if (string.IsNullOrEmpty(PasswordField))
                         {
-                            error = "Введите старый пароль!";
+                            error = UiErrorResource.OldPassword;
                         }
                         else if (OldPasswordField.Contains(" "))
                         {
-                            error = "Пароль не может содержать пробел";
+                            error = UiErrorResource.EmptyPassword;
                         }
 
                         break;
@@ -149,11 +124,6 @@ namespace EA.DesktopApp.ViewModels
                 return error;
             }
         }
-
-        /// <summary>
-        ///     Error exception throwing
-        /// </summary>
-        public string Error => "Введите данные!";
 
         private void InitializeCommands()
         {
@@ -167,9 +137,7 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToggleClearFieldsExecute()
         {
-            var soundHelper = new SoundPlayerService();
-            soundHelper.PlaySound("button");
-
+            _soundPlayer.PlaySound(SoundPlayerService.ButtonSound);
             LoginField = string.Empty;
             PasswordField = string.Empty;
             OldPasswordField = string.Empty;

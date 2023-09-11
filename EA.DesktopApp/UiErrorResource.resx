@@ -121,10 +121,28 @@
     <value>Please, enter valid data</value>
   </data>
   <data name="EmptyLogin" xml:space="preserve">
-    <value>Enter the login!</value>
+    <value>Enter the login</value>
   </data>
   <data name="EmptyPassword" xml:space="preserve">
-    <value>Enter the password!</value>
+    <value>Enter the password</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Enter old password</value>
+  </data>
+  <data name="RegisterButtonHint" xml:space="preserve">
+    <value>Click to register</value>
+  </data>
+  <data name="RegisterClearFieldsHint" xml:space="preserve">
+    <value>Click to clear the fields</value>
+  </data>
+  <data name="RegistrationDepartment" xml:space="preserve">
+    <value>Enter the department name</value>
+  </data>
+  <data name="RegistrationLastName" xml:space="preserve">
+    <value>Enter the last name</value>
+  </data>
+  <data name="RegistrationName" xml:space="preserve">
+    <value>Enter the name</value>
   </data>
   <data name="SpaceInlogin" xml:space="preserve">
     <value>Login cannot contain a space</value>

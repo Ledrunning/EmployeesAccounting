@@ -33,7 +33,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding Registration}" />
+                <ToolTip HasDropShadow="True" Content="{Binding RegistrationHint}" />
             </Button.ToolTip>
         </Button>
         <!--DB buttons-->
@@ -102,7 +102,7 @@
                     </Style>
                 </Button.Style>
                 <Button.ToolTip>
-                    <ToolTip HasDropShadow="True" Content="{Binding ClearFields}" />
+                    <ToolTip HasDropShadow="True" Content="{Binding ClearFieldsHint}" />
                 </Button.ToolTip>
             </Button>
         </StackPanel>

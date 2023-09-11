@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
@@ -23,7 +22,7 @@ namespace EA.DesktopApp.ViewModels
     ///     View model class for registration form
     ///     Send employee data and photo to the server
     /// </summary>
-    public class RegistrationViewModel : BaseViewModel, IDataErrorInfo
+    public class RegistrationViewModel : BaseViewModel
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeGatewayService;
@@ -51,12 +50,6 @@ namespace EA.DesktopApp.ViewModels
             WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
         }
 
-        private void OnWindowClosingBehavior(object sender, EventArgs e)
-        {
-            _photoShootService?.CancelServiceAsync();
-            _photoShootService?.Dispose();
-        }
-
         /// <summary>
         ///     Start webCam service button toggle
         /// </summary>
@@ -68,6 +61,12 @@ namespace EA.DesktopApp.ViewModels
                 _isReady = value;
                 OnPropertyChanged();
             }
+        }
+
+        private void OnWindowClosingBehavior(object sender, EventArgs e)
+        {
+            _photoShootService?.CancelServiceAsync();
+            _photoShootService?.Dispose();
         }
 
         /// <summary>
@@ -164,34 +163,33 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public string this[string columnName]
+        protected override string ValidateProperty(string columnName)
         {
-            get
             {
                 var error = string.Empty;
 
                 switch (columnName)
                 {
-                    case "PersonName":
+                    case nameof(PersonName):
                         if (string.IsNullOrEmpty(PersonName))
                         {
-                            error = "Enter the name!";
+                            error = UiErrorResource.RegistrationName;
                         }
 
                         break;
 
-                    case "PersonLastName":
+                    case nameof(PersonLastName):
                         if (string.IsNullOrEmpty(PersonLastName))
                         {
-                            error = "Enter the last name";
+                            error = UiErrorResource.RegistrationLastName;
                         }
 
                         break;
 
-                    case "PersonDepartment":
+                    case nameof(PersonDepartment):
                         if (string.IsNullOrEmpty(PersonDepartment))
                         {
-                            error = "Enter the department name";
+                            error = UiErrorResource.RegistrationDepartment;
                         }
 
                         break;
@@ -200,11 +198,6 @@ namespace EA.DesktopApp.ViewModels
                 return error;
             }
         }
-
-        /// <summary>
-        ///     Error exception throwing
-        /// </summary>
-        public string Error => "Enter the data!";
 
         #endregion TextBox properties
 

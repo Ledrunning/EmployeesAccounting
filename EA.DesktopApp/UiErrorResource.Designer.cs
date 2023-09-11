@@ -70,7 +70,7 @@ namespace EA.DesktopApp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the login!.
+        ///   Looks up a localized string similar to Enter the login.
         /// </summary>
         internal static string EmptyLogin {
             get {
@@ -79,11 +79,65 @@ namespace EA.DesktopApp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the password!.
+        ///   Looks up a localized string similar to Enter the password.
         /// </summary>
         internal static string EmptyPassword {
             get {
                 return ResourceManager.GetString("EmptyPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter old password.
+        /// </summary>
+        internal static string OldPassword {
+            get {
+                return ResourceManager.GetString("OldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to register.
+        /// </summary>
+        internal static string RegisterButtonHint {
+            get {
+                return ResourceManager.GetString("RegisterButtonHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to clear the fields.
+        /// </summary>
+        internal static string RegisterClearFieldsHint {
+            get {
+                return ResourceManager.GetString("RegisterClearFieldsHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the department name.
+        /// </summary>
+        internal static string RegistrationDepartment {
+            get {
+                return ResourceManager.GetString("RegistrationDepartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the last name.
+        /// </summary>
+        internal static string RegistrationLastName {
+            get {
+                return ResourceManager.GetString("RegistrationLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name.
+        /// </summary>
+        internal static string RegistrationName {
+            get {
+                return ResourceManager.GetString("RegistrationName", resourceCulture);
             }
         }
         

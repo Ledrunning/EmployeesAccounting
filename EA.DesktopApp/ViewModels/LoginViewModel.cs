@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -9,14 +7,10 @@ using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    public class LoginViewModel : BaseViewModel, IDataErrorInfo
+    public class LoginViewModel : BaseViewModel
     {
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly IWindowManager _windowManager;
-        private string _login;
-
-        private string _password;
-
 
         public LoginViewModel(ISoundPlayerService soundPlayerHelper, IWindowManager windowManager)
         {
@@ -33,38 +27,18 @@ namespace EA.DesktopApp.ViewModels
         public string PasswordHint => ProgramResources.PasswordTooltipMessage;
         public string CancelHint => ProgramResources.CancelTooltipMessage;
 
-        private string LocalPasswordDisplayed => new string('*', _password?.Length ?? 0);
-
-        [Required(AllowEmptyStrings = false)]
-        public string LoginField
-        {
-            get => _login;
-            set
-            {
-                _login = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [Required(AllowEmptyStrings = false)]
-        public string PasswordField
-        {
-            get => LocalPasswordDisplayed;
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-            }
-        }
+        /// <summary>
+        ///     Error exception throwing
+        /// </summary>
+        public string Error => UiErrorResource.DataError;
 
         /// <summary>
         ///     Error indexer
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public string this[string columnName]
+        protected override string ValidateProperty(string columnName)
         {
-            get
             {
                 var error = string.Empty;
 
@@ -75,7 +49,7 @@ namespace EA.DesktopApp.ViewModels
                         {
                             error = UiErrorResource.EmptyLogin;
                         }
-                        else if (LoginField.Contains(" "))
+                        else if (string.IsNullOrWhiteSpace(LoginField))
                         {
                             error = UiErrorResource.SpaceInlogin;
                         }
@@ -87,7 +61,7 @@ namespace EA.DesktopApp.ViewModels
                         {
                             error = UiErrorResource.EmptyPassword;
                         }
-                        else if (PasswordField.Contains(" "))
+                        else if (string.IsNullOrWhiteSpace(PasswordField))
                         {
                             error = UiErrorResource.SpaceInPassword;
                         }
@@ -98,11 +72,6 @@ namespace EA.DesktopApp.ViewModels
                 return error;
             }
         }
-
-        /// <summary>
-        ///     Error exception throwing
-        /// </summary>
-        public string Error => UiErrorResource.DataError;
 
         private bool IsPasswordChecked(string password)
         {
