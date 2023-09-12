@@ -9,6 +9,7 @@ using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
@@ -104,37 +105,37 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     For main xaml take a photo
         /// </summary>
-        public string TakePicture => "Take a photo";
+        public string TakePicture => UiErrorResource.TakePhoto;
 
         /// <summary>
         ///     For main xaml add person from DB tooltip message
         /// </summary>
-        public string AddPerson => "Press to add an employee";
+        public string AddPerson => UiErrorResource.AddPerson;
 
         /// <summary>
         ///     For main xaml delete person from DB tooltip message
         /// </summary>
-        public string DeletePerson => "Press to delete employee";
+        public string DeletePerson => UiErrorResource.DeletePerson;
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string SavePicture => "Press to save photo";
+        public string SavePicture => UiErrorResource.SavePicture;
 
         /// <summary>
         ///     For main xaml enter name tooltip message
         /// </summary>
-        public string EnterPersonName => "Enter an employee name";
+        public string EnterPersonName => UiErrorResource.EnterPersonName;
 
         /// <summary>
         ///     For main xaml enter last name tooltip message
         /// </summary>
-        public string EnterPersonLastName => "Enter an employee last name";
+        public string EnterPersonLastName => UiErrorResource.EnterPersonLastName;
 
         /// <summary>
         ///     For main xaml enter department tooltip message
         /// </summary>
-        public string EnterPersonDepartment => "Enter the department name";
+        public string EnterPersonDepartment => UiErrorResource.EnterPersonDepartment;
 
         #endregion ToolTip properties
 
@@ -272,10 +273,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private async void ToggleAddImageToDataBase()
         {
-            //_modalView = new ModalViewModel(new ModalWindow());
-            //_modalView.ShowLoginWindow();
-
-            _soundPlayerService.PlaySound("button");
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             Image resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();

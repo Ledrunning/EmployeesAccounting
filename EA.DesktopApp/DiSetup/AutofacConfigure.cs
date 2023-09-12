@@ -49,11 +49,11 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<AdminForm>().InstancePerLifetimeScope();
                 builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
 
-                builder.RegisterType<ModalWindow>().InstancePerDependency(); // Or per your desired lifetime.
-                builder.RegisterType<ModalViewModel>().InstancePerDependency(); // Or per your desired lifetime.
+                builder.RegisterType<ModalWindow>().InstancePerDependency(); 
+                builder.RegisterType<ModalViewModel>().InstancePerDependency(); 
 
-                builder.RegisterType<LoginWindow>().InstancePerDependency(); // Or per your desired lifetime.
-                builder.RegisterType<LoginViewModel>().InstancePerDependency(); // Or per your desired lifetime.
+                builder.RegisterType<LoginWindow>().InstancePerDependency(); 
+                builder.RegisterType<LoginViewModel>().InstancePerDependency();
 
                 builder.RegisterType<RedactorViewModel>().InstancePerLifetimeScope();
                 

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;

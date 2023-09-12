@@ -25,8 +25,8 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public SoundPlayerService()
         {
-            _sounds.Add(ButtonSound, Resources.button);
-            _sounds.Add(CameraSound, Resources.camera);
+            _sounds.Add(ButtonSound, Properties.Resources.button);
+            _sounds.Add(CameraSound, Properties.Resources.camera);
             player = new SoundPlayer();
         }
 

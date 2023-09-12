@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EA.DesktopApp {
+namespace EA.DesktopApp.Resources.Messages {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace EA.DesktopApp {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.UiErrorResource", typeof(UiErrorResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.Resources.Messages.UiErrorResource", typeof(UiErrorResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,29 @@ namespace EA.DesktopApp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press to add an employee.
+        /// </summary>
+        internal static string AddPerson {
+            get {
+                return ResourceManager.GetString("AddPerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please, enter valid data.
         /// </summary>
         internal static string DataError {
             get {
                 return ResourceManager.GetString("DataError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to delete employee.
+        /// </summary>
+        internal static string DeletePerson {
+            get {
+                return ResourceManager.GetString("DeletePerson", resourceCulture);
             }
         }
         
@@ -84,6 +102,33 @@ namespace EA.DesktopApp {
         internal static string EmptyPassword {
             get {
                 return ResourceManager.GetString("EmptyPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the department name.
+        /// </summary>
+        internal static string EnterPersonDepartment {
+            get {
+                return ResourceManager.GetString("EnterPersonDepartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an employee last name.
+        /// </summary>
+        internal static string EnterPersonLastName {
+            get {
+                return ResourceManager.GetString("EnterPersonLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an employee name.
+        /// </summary>
+        internal static string EnterPersonName {
+            get {
+                return ResourceManager.GetString("EnterPersonName", resourceCulture);
             }
         }
         
@@ -142,6 +187,15 @@ namespace EA.DesktopApp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press to save photo.
+        /// </summary>
+        internal static string SavePicture {
+            get {
+                return ResourceManager.GetString("SavePicture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login cannot contain a space.
         /// </summary>
         internal static string SpaceInlogin {
@@ -156,6 +210,15 @@ namespace EA.DesktopApp {
         internal static string SpaceInPassword {
             get {
                 return ResourceManager.GetString("SpaceInPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Take a photo.
+        /// </summary>
+        internal static string TakePhoto {
+            get {
+                return ResourceManager.GetString("TakePhoto", resourceCulture);
             }
         }
     }

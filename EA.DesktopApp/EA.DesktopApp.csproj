@@ -196,7 +196,7 @@
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
-    <Compile Include="ProgramResources.Designer.cs">
+    <Compile Include="Resources\Messages\ProgramResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ProgramResources.resx</DependentUpon>
@@ -209,7 +209,7 @@
     <Compile Include="Contracts\ISoundPlayerService.cs" />
     <Compile Include="Services\ViewServices\WindowFactory.cs" />
     <Compile Include="Services\ViewServices\WindowManager.cs" />
-    <Compile Include="UiErrorResource.Designer.cs">
+    <Compile Include="Resources\Messages\UiErrorResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UiErrorResource.resx</DependentUpon>
@@ -402,7 +402,7 @@
     <Content Include="version_string.inc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="ProgramResources.resx">
+    <EmbeddedResource Include="Resources\Messages\ProgramResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ProgramResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
@@ -411,7 +411,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="UiErrorResource.resx">
+    <EmbeddedResource Include="Resources\Messages\UiErrorResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>UiErrorResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
