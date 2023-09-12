@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -8,14 +8,8 @@ namespace EA.DesktopApp.ViewModels
 {
     internal class ModalViewModel : BaseViewModel
     {
-        private readonly ModalWindow _modalWindow;
-        private RegistrationForm _registrationForm;
-
-        private ICommand _toggleOkButtonCommand;
-
+        private readonly IWindowManager _windowManager;
         private string _warningText;
-
-        //private ModalWindow _modelWindow;
 
         /// <summary>
         ///     .ctor
@@ -28,10 +22,10 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        /// <param name="modalWindow"></param>
-        public ModalViewModel(ModalWindow modalWindow)
+        /// <param name="windowManager"></param>
+        public ModalViewModel(IWindowManager windowManager)
         {
-            this._modalWindow = modalWindow;
+            _windowManager = windowManager;
             InitializeCommands();
         }
 
@@ -52,18 +46,14 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Relay command for OK button execute
         /// </summary>
-        public ICommand ToggleOkButtonCommand
-        {
-            get => _toggleOkButtonCommand;
-            set => _toggleOkButtonCommand = value;
-        }
+        public ICommand ToggleOkButtonCommand { get; set; }
 
         /// <summary>
         ///     Initialize relay command
         /// </summary>
         private void InitializeCommands()
         {
-            _toggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
+            ToggleOkButtonCommand = new RelayCommand(CloseWindowExecute);
         }
 
         /// <summary>
@@ -72,24 +62,22 @@ namespace EA.DesktopApp.ViewModels
         private void CloseWindowExecute()
         {
             var soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound("button");
-            _modalWindow.Close();
+            soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _windowManager.CloseModalWindow();
         }
 
         /// <summary>
-        ///     Show modal windoww
+        ///     Show modal window
         /// </summary>
         public void ShowWindow()
         {
-            _modalWindow.DataContext = this;
-            _modalWindow.Owner = Application.Current.MainWindow;
-            _modalWindow.ShowDialog();
+            _windowManager.ShowModalWindow();
         }
 
         /// <summary>
-        ///     Messge set method
+        ///     Set text for message
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Your text for message</param>
         public void SetMessage(string message)
         {
             WarningText = message;

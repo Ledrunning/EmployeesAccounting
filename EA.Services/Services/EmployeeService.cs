@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Reflection;
 using AutoMapper;
+using EA.Common.Exceptions;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
 using EA.Services.Contracts;
@@ -40,9 +41,6 @@ public class EmployeeService : IEmployeeService
 
             await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
             {
-                var buffer = new byte[fileStream.Length];
-                var packedImage = Convert.ToBase64String(buffer);
-
                 //TODO: как тут быть?
             }
         }
@@ -64,13 +62,18 @@ public class EmployeeService : IEmployeeService
     }
 
     //TODO need to test
-    public async Task<EmployeeDto?> AddAsync(EmployeeDto employee, CancellationToken cancellationToken)
+    public async Task AddAsync(EmployeeDto employee, CancellationToken cancellationToken)
     {
-        SaveImage(employee);
-        var entity = _mapper.Map<Employee>(employee);
-        var addedEmployee = await _employeeRepository.AddAsync(entity, cancellationToken);
-
-        return _mapper.Map<EmployeeDto>(addedEmployee);
+        try
+        {
+            var entity = _mapper.Map<Employee>(employee);
+            await _employeeRepository.AddAsync(entity, cancellationToken);
+            SaveImage(employee);
+        }
+        catch (Exception e)
+        {
+            throw new EmployeeAccountingException("Failed to add employee into database!", e);
+        }
     }
 
     public async Task UpdateAsync(EmployeeDto employee, CancellationToken cancellationToken)
@@ -90,18 +93,16 @@ public class EmployeeService : IEmployeeService
         {
             if (employee.Photo == null)
             {
-                throw new ApplicationException("Error while saving image file into server folder!");
+                throw new EmployeeAccountingException("Error while saving image file into server folder!");
             }
 
-            var buffer = Convert.FromBase64String(employee.Photo);
-
-            using var ms = new MemoryStream(buffer);
-            var image = Image.FromStream(ms);
-            image.Save($"{employee.PhotoName}.png", ImageFormat.Png);
+            using var memoryStream = new MemoryStream(employee.Photo);
+            var image = Image.FromStream(memoryStream);
+            image.Save($"{PhotoDataPath}\\{employee.Name}", ImageFormat.Jpeg);
         }
         catch (Exception e)
         {
-            throw new ApplicationException("Error while saving image file into server folder!", e);
+            throw new EmployeeAccountingException("Error while saving image file into server folder!", e);
         }
     }
 
@@ -116,7 +117,7 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
-            throw new ApplicationException("Error while creating the folder", e);
+            throw new EmployeeAccountingException("Error while creating the folder", e);
         }
     }
 }

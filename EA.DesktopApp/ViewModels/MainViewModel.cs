@@ -2,12 +2,11 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -20,9 +19,11 @@ namespace EA.DesktopApp.ViewModels
     /// </summary>
     public class MainViewModel : BaseViewModel
     {
-        private const int OneSecond = 1;
+        private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFaceDetectionService _faceDetectionService;
+        private readonly LoginViewModel _loginViewModel;
+
         private readonly ModalViewModel _modalWindow = new ModalViewModel();
         private readonly ISoundPlayerService _soundPlayerHelper;
 
@@ -35,7 +36,6 @@ namespace EA.DesktopApp.ViewModels
         private bool _isRunning;
 
         private bool _isStreaming;
-        private LoginWindow _loginForm;
 
         /// <summary>
         ///     Timer
@@ -46,9 +46,11 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public MainViewModel(
+            LoginViewModel loginViewModel,
             IFaceDetectionService faceDetectionService,
             ISoundPlayerService soundPlayerHelper)
         {
+            _loginViewModel = loginViewModel;
             _faceDetectionService = faceDetectionService;
             InitializeServices();
             InitializeCommands();
@@ -152,7 +154,7 @@ namespace EA.DesktopApp.ViewModels
                 : ProgramResources.StopDetectorTooltipMessage;
 
             // Playing sound effect for button
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            // _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
@@ -173,7 +175,7 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
             _faceDetectionService.CancelServiceAsync();
             Logger.Info("Face detection stopped!");
-            _faceDetectionService.Dispose();
+            //_faceDetectionService.Dispose();
         }
 
         /// <summary>
@@ -186,21 +188,21 @@ namespace EA.DesktopApp.ViewModels
             // True - button is pushed - Working!
             IsRunning = false;
 
-            if (_loginForm == null || _loginForm.IsClosed)
-            {
-                _loginForm = new LoginWindow();
-                var loginFormViewModel = new LoginViewModel(_loginForm);
+            // if (_loginForm == null || _loginForm.IsClosed)
+            // {
+            //     if (_loginForm != null)
+            //     {
+            //         _loginForm.DataContext = _loginViewModel;
+            //         _loginForm.Owner = Application.Current.MainWindow;
+            //     }
 
-                _loginForm.DataContext = loginFormViewModel;
-                _loginForm.Owner = Application.Current.MainWindow;
-                IsStreaming = false;
-                _faceDetectionService.CancelServiceAsync();
-                StopFaceDetectionService();
-                loginFormViewModel.ShowLoginWindow();
-            }
+            IsStreaming = false;
+            StopFaceDetectionService();
+            _loginViewModel.ShowLoginWindow();
+            //}
 
 
-            if (_faceDetectionService != null && _faceDetectionService.IsRunning)
+            if (!_faceDetectionService.IsRunning)
             {
                 return;
             }
@@ -222,7 +224,7 @@ namespace EA.DesktopApp.ViewModels
             catch (Exception e)
             {
                 Logger.Error("An error occuried in opening Help file! {e}", e);
-                _modalWindow.SetMessage("An error occuried in opening Help file!");
+                _modalWindow.SetMessage("An error occurred in opening the Help file!");
                 _modalWindow.ShowWindow();
             }
         }
@@ -244,7 +246,7 @@ namespace EA.DesktopApp.ViewModels
         {
             Timer = new DispatcherTimer(DispatcherPriority.Render)
             {
-                Interval = TimeSpan.FromSeconds(OneSecond)
+                Interval = TimeSpan.FromSeconds(OneSecondForTimeSpan)
             };
             Timer.Tick += (sender, args) => { CurrentTimeDate = DateTime.Now.ToString(CultureInfo.CurrentCulture); };
             Timer.Start();
