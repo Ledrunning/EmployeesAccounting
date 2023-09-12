@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EA.DesktopApp {
+namespace EA.DesktopApp.Resources.Messages {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace EA.DesktopApp {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.ProgramResources", typeof(ProgramResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EA.DesktopApp.Resources.Messages.ProgramResources", typeof(ProgramResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

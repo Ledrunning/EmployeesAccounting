@@ -12,6 +12,7 @@ namespace EA.DesktopApp.Services
         private VideoCapture _videoCapture;
         private CancellationTokenSource cancellationToken;
         private CancellationToken token;
+
         public bool IsRunning { get; set; }
 
         public void Dispose()

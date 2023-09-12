@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EA.Common.Enum;
 
 namespace EA.Services.Dto;
 
@@ -15,6 +16,7 @@ public class EmployeeDto : BaseModelDto
 
     public DateTimeOffset DateTime { get; set; }
 
-    public string? Photo { get; set; }
+    public byte[]? Photo { get; set; }
     public string? PhotoName { get; set; }
+    public FileUpdate FileUpdate { get; set; }
 }

@@ -1,11 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace EA.DesktopApp.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
+        private string _login;
+        private string _password;
+
+        [Required(AllowEmptyStrings = false)]
+        public string LoginField
+        {
+            get => _login;
+            set
+            {
+                _login = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Required(AllowEmptyStrings = false)]
+        public string PasswordField
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Error => "Enter the data!";
+
+        public string this[string columnName] => ValidateProperty(columnName);
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -22,6 +50,11 @@ namespace EA.DesktopApp.ViewModels
 
             field = value;
             OnPropertyChanged(propertyName);
+        }
+
+        protected virtual string ValidateProperty(string columnName)
+        {
+            return string.Empty;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels;
 using Microsoft.Win32;
@@ -10,14 +11,14 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class DialogService : IDialogService
     {
+        private readonly IWindowFactory _windowFactory;
         private const string MessageBoxTitle = "Оповещение";
-        private readonly ModalViewModel _modalWindow;
         private const string PhotoNonSave = "Фото не сохранено!";
         private const string PhotoSaveDone = "Фото сделано и сохранено!";
 
-        public DialogService()
+        public DialogService(IWindowFactory windowFactory)
         {
-            _modalWindow = new ModalViewModel(new ModalWindow());
+            _windowFactory = windowFactory;
         }
 
         /// <summary>
@@ -70,8 +71,8 @@ namespace EA.DesktopApp.Services
         /// <param name="message"></param>
         public void ShowMessage(string message)
         {
-            _modalWindow.SetMessage(message);
-            _modalWindow.ShowWindow();
+            // _modalWindow.SetMessage(message);
+            // _modalWindow.ShowWindow();
         }
     }
 }

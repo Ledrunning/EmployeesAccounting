@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.ServerGateway", "EA.Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.Repository", "EA.Repository\EA.Repository.csproj", "{0EA7E61A-DD23-4EBB-B842-E43BC5D99DB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.Services", "EA.Services\EA.Services.csproj", "{4E73B5CD-0440-49D5-A002-D9811783371B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EA.Services", "EA.Services\EA.Services.csproj", "{4E73B5CD-0440-49D5-A002-D9811783371B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EA.Common", "EA.Common\EA.Common.csproj", "{DEDF2911-9CF8-472E-A346-FC7B6A027238}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{4E73B5CD-0440-49D5-A002-D9811783371B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E73B5CD-0440-49D5-A002-D9811783371B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E73B5CD-0440-49D5-A002-D9811783371B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEDF2911-9CF8-472E-A346-FC7B6A027238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEDF2911-9CF8-472E-A346-FC7B6A027238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEDF2911-9CF8-472E-A346-FC7B6A027238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEDF2911-9CF8-472E-A346-FC7B6A027238}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

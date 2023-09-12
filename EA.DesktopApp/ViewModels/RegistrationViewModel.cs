@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
@@ -8,9 +7,10 @@ using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -23,7 +23,7 @@ namespace EA.DesktopApp.ViewModels
     ///     View model class for registration form
     ///     Send employee data and photo to the server
     /// </summary>
-    public class RegistrationViewModel : BaseViewModel, IDataErrorInfo
+    public class RegistrationViewModel : BaseViewModel
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeGatewayService;
@@ -48,6 +48,7 @@ namespace EA.DesktopApp.ViewModels
             this.token = token;
             InitializeServices();
             InitializeCommands();
+            WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
         }
 
         /// <summary>
@@ -61,6 +62,12 @@ namespace EA.DesktopApp.ViewModels
                 _isReady = value;
                 OnPropertyChanged();
             }
+        }
+
+        private void OnWindowClosingBehavior(object sender, EventArgs e)
+        {
+            _photoShootService?.CancelServiceAsync();
+            _photoShootService?.Dispose();
         }
 
         /// <summary>
@@ -98,37 +105,37 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     For main xaml take a photo
         /// </summary>
-        public string TakePicture => "Take a photo";
+        public string TakePicture => UiErrorResource.TakePhoto;
 
         /// <summary>
         ///     For main xaml add person from DB tooltip message
         /// </summary>
-        public string AddPerson => "Press to add an employee";
+        public string AddPerson => UiErrorResource.AddPerson;
 
         /// <summary>
         ///     For main xaml delete person from DB tooltip message
         /// </summary>
-        public string DeletePerson => "Press to delete employee";
+        public string DeletePerson => UiErrorResource.DeletePerson;
 
         /// <summary>
         ///     For main xaml Take a photo tooltip message
         /// </summary>
-        public string SavePicture => "Press to save photo";
+        public string SavePicture => UiErrorResource.SavePicture;
 
         /// <summary>
         ///     For main xaml enter name tooltip message
         /// </summary>
-        public string EnterPersonName => "Enter an employee name";
+        public string EnterPersonName => UiErrorResource.EnterPersonName;
 
         /// <summary>
         ///     For main xaml enter last name tooltip message
         /// </summary>
-        public string EnterPersonLastName => "Enter an employee last name";
+        public string EnterPersonLastName => UiErrorResource.EnterPersonLastName;
 
         /// <summary>
         ///     For main xaml enter department tooltip message
         /// </summary>
-        public string EnterPersonDepartment => "Enter the department name";
+        public string EnterPersonDepartment => UiErrorResource.EnterPersonDepartment;
 
         #endregion ToolTip properties
 
@@ -157,34 +164,33 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public string this[string columnName]
+        protected override string ValidateProperty(string columnName)
         {
-            get
             {
                 var error = string.Empty;
 
                 switch (columnName)
                 {
-                    case "PersonName":
+                    case nameof(PersonName):
                         if (string.IsNullOrEmpty(PersonName))
                         {
-                            error = "Enter the name!";
+                            error = UiErrorResource.RegistrationName;
                         }
 
                         break;
 
-                    case "PersonLastName":
+                    case nameof(PersonLastName):
                         if (string.IsNullOrEmpty(PersonLastName))
                         {
-                            error = "Enter the last name";
+                            error = UiErrorResource.RegistrationLastName;
                         }
 
                         break;
 
-                    case "PersonDepartment":
+                    case nameof(PersonDepartment):
                         if (string.IsNullOrEmpty(PersonDepartment))
                         {
-                            error = "Enter the department name";
+                            error = UiErrorResource.RegistrationDepartment;
                         }
 
                         break;
@@ -193,11 +199,6 @@ namespace EA.DesktopApp.ViewModels
                 return error;
             }
         }
-
-        /// <summary>
-        ///     Error exception throwing
-        /// </summary>
-        public string Error => "Enter the data!";
 
         #endregion TextBox properties
 
@@ -272,10 +273,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private async void ToggleAddImageToDataBase()
         {
-            _modalView = new ModalViewModel(new ModalWindow());
-            //_modalView.ShowLoginWindow();
-
-            _soundPlayerService.PlaySound("button");
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             Image resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
@@ -287,7 +285,7 @@ namespace EA.DesktopApp.ViewModels
                 LastName = PersonLastName,
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
-                Photo = Convert.ToBase64String(imageArray),
+                Photo = imageArray,
                 PhotoName =
                     $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
             };
