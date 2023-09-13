@@ -63,7 +63,7 @@ namespace EA.DesktopApp.ViewModels
         {
             var soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            _windowManager.CloseModalWindow();
+            _windowManager.CloseWindow<ModalWindow>();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public void ShowWindow()
         {
-            _windowManager.ShowModalWindow();
+            _windowManager.ShowWindow<ModalWindow>();
         }
 
         /// <summary>

@@ -175,7 +175,7 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
             _faceDetectionService.CancelServiceAsync();
             Logger.Info("Face detection stopped!");
-            //_faceDetectionService.Dispose();
+            _faceDetectionService.Dispose();
         }
 
         /// <summary>
@@ -187,20 +187,9 @@ namespace EA.DesktopApp.ViewModels
 
             // True - button is pushed - Working!
             IsRunning = false;
-
-            // if (_loginForm == null || _loginForm.IsClosed)
-            // {
-            //     if (_loginForm != null)
-            //     {
-            //         _loginForm.DataContext = _loginViewModel;
-            //         _loginForm.Owner = Application.Current.MainWindow;
-            //     }
-
             IsStreaming = false;
             StopFaceDetectionService();
             _loginViewModel.ShowLoginWindow();
-            //}
-
 
             if (!_faceDetectionService.IsRunning)
             {
@@ -208,7 +197,7 @@ namespace EA.DesktopApp.ViewModels
             }
 
             IsStreaming = true;
-            _faceDetectionService?.RunServiceAsync();
+            //_faceDetectionService?.RunServiceAsync();
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
@@ -90,8 +91,8 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleLoginExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            _windowManager.CloseLoginWindow();
-            _windowManager.ShowRegistrationWindow();
+            _windowManager.CloseWindow<LoginWindow>();
+            _windowManager.ShowWindow<RegistrationForm>();
         }
 
         private void ToggleCancelExecute()
@@ -104,12 +105,12 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleAdminWindowShowExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            _windowManager.ShowAdminWindow();
+            _windowManager.ShowWindow<AdminForm>();
         }
 
         public void ShowLoginWindow()
         {
-            _windowManager.ShowLoginWindow();
+            _windowManager.ShowWindow<LoginWindow>();
         }
     }
 }
