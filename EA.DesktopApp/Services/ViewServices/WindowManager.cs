@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -7,7 +8,9 @@ namespace EA.DesktopApp.Services.ViewServices
 {
     public class WindowManager : IWindowManager
     {
-        private readonly Dictionary<Window, bool> _windowClosedFlags = new Dictionary<Window, bool>();
+        private readonly Dictionary<(Type, Window), bool> _windowClosedFlags = new Dictionary<(Type, Window), bool>();
+
+
         private readonly IWindowFactory _windowFactory;
 
         public WindowManager(IWindowFactory windowFactory)
@@ -19,19 +22,19 @@ namespace EA.DesktopApp.Services.ViewServices
         {
             T windowInstance;
 
-            var existingWindow = _windowClosedFlags.Keys.OfType<T>().FirstOrDefault();
+            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
 
-            if (existingWindow == null || _windowClosedFlags[existingWindow])
+            if (existingWindow == null)
             {
                 windowInstance = (T)_windowFactory.GetWindow<T>();
                 windowInstance.Closed += (sender, e) =>
                 {
-                    if (sender is Window win)
+                    if (sender is Window window)
                     {
-                        _windowClosedFlags[win] = true;
+                        _windowClosedFlags[(typeof(T), window)] = true;
                     }
                 };
-                _windowClosedFlags[windowInstance] = false;
+                _windowClosedFlags[(typeof(T), windowInstance)] = false;
             }
             else
             {
@@ -44,15 +47,16 @@ namespace EA.DesktopApp.Services.ViewServices
 
         public void CloseWindow<T>() where T : Window
         {
-            var existingWindow = _windowClosedFlags.Keys.OfType<T>().FirstOrDefault();
+            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
 
-            if (existingWindow == null || _windowClosedFlags[existingWindow])
+            if (existingWindow == null)
             {
                 return;
             }
 
             existingWindow.Close();
-            _windowClosedFlags[existingWindow] = true;
+            _windowClosedFlags[(typeof(T), existingWindow)] = true;
         }
+
     }
 }

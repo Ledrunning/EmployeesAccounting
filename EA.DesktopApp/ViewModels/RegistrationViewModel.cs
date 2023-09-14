@@ -7,10 +7,12 @@ using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -27,6 +29,7 @@ namespace EA.DesktopApp.ViewModels
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeGatewayService;
+        private readonly IWindowManager _windowManager;
 
         private readonly IPhotoShootService _photoShootService;
         private readonly ISoundPlayerService _soundPlayerService;
@@ -40,11 +43,12 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService,
-            IEmployeeGatewayService employeeGatewayService, CancellationToken token)
+            IEmployeeGatewayService employeeGatewayService, IWindowManager windowManager, CancellationToken token)
         {
             _photoShootService = photoShootService;
             _soundPlayerService = soundPlayerService;
             _employeeGatewayService = employeeGatewayService;
+            _windowManager = windowManager;
             this.token = token;
             InitializeServices();
             InitializeCommands();
