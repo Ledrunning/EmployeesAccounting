@@ -23,9 +23,11 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         /// <param name="windowManager"></param>
-        public ModalViewModel(IWindowManager windowManager)
+        /// <param name="initialMessage"></param>
+        public ModalViewModel(IWindowManager windowManager, string initialMessage)
         {
             _windowManager = windowManager;
+            WarningText = initialMessage;
             InitializeCommands();
         }
 
@@ -64,23 +66,6 @@ namespace EA.DesktopApp.ViewModels
             var soundPlayerHelper = new SoundPlayerService();
             soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             _windowManager.CloseWindow<ModalWindow>();
-        }
-
-        /// <summary>
-        ///     Show modal window
-        /// </summary>
-        public void ShowWindow()
-        {
-            _windowManager.ShowWindow<ModalWindow>();
-        }
-
-        /// <summary>
-        ///     Set text for message
-        /// </summary>
-        /// <param name="message">Your text for message</param>
-        public void SetMessage(string message)
-        {
-            WarningText = message;
         }
     }
 }

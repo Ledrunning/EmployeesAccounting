@@ -5,8 +5,10 @@ using System.Globalization;
 using System.Windows.Input;
 using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -22,10 +24,8 @@ namespace EA.DesktopApp.ViewModels
         private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFaceDetectionService _faceDetectionService;
-        private readonly LoginViewModel _loginViewModel;
-
-        private readonly ModalViewModel _modalWindow = new ModalViewModel();
         private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly IWindowManager _windowManager;
 
         private string _currentTimeDate;
 
@@ -46,12 +46,11 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public MainViewModel(
-            LoginViewModel loginViewModel,
-            IFaceDetectionService faceDetectionService,
+            IFaceDetectionService faceDetectionService, IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper)
         {
-            _loginViewModel = loginViewModel;
             _faceDetectionService = faceDetectionService;
+            _windowManager = windowManager;
             InitializeServices();
             InitializeCommands();
             TimeTicker();
@@ -175,7 +174,6 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.FaceDetectionImageChanged -= OnImageChanged;
             _faceDetectionService.CancelServiceAsync();
             Logger.Info("Face detection stopped!");
-            _faceDetectionService.Dispose();
         }
 
         /// <summary>
@@ -189,7 +187,7 @@ namespace EA.DesktopApp.ViewModels
             IsRunning = false;
             IsStreaming = false;
             StopFaceDetectionService();
-            _loginViewModel.ShowLoginWindow();
+            _windowManager.ShowWindow<LoginWindow>();
 
             if (!_faceDetectionService.IsRunning)
             {
@@ -213,8 +211,7 @@ namespace EA.DesktopApp.ViewModels
             catch (Exception e)
             {
                 Logger.Error("An error occuried in opening Help file! {e}", e);
-                _modalWindow.SetMessage("An error occurred in opening the Help file!");
-                _modalWindow.ShowWindow();
+                _windowManager.ShowModalWindow("An error occurred in opening the Help file!");
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using EA.DesktopApp.Contracts.ViewContracts;
+using EA.DesktopApp.View;
 
 namespace EA.DesktopApp.Services.ViewServices
 {
@@ -58,5 +59,11 @@ namespace EA.DesktopApp.Services.ViewServices
             _windowClosedFlags[(typeof(T), existingWindow)] = true;
         }
 
+        public void ShowModalWindow(string message)
+        {
+            var modalWindow = _windowFactory.GetWindow<ModalWindow>(message);
+            modalWindow.Owner = Application.Current.MainWindow;
+            modalWindow.Show();
+        }
     }
 }

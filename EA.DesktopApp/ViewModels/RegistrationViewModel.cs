@@ -12,7 +12,6 @@ using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -29,14 +28,13 @@ namespace EA.DesktopApp.ViewModels
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeGatewayService;
-        private readonly IWindowManager _windowManager;
 
         private readonly IPhotoShootService _photoShootService;
         private readonly ISoundPlayerService _soundPlayerService;
-        private readonly CancellationToken token;
+        private readonly IWindowManager _windowManager;
+        private readonly CancellationToken _token;
 
         private bool _isReady;
-        private ModalViewModel _modalView;
         private bool _takePhotoFlag;
 
         /// <summary>
@@ -49,7 +47,7 @@ namespace EA.DesktopApp.ViewModels
             _soundPlayerService = soundPlayerService;
             _employeeGatewayService = employeeGatewayService;
             _windowManager = windowManager;
-            this.token = token;
+            _token = token;
             InitializeServices();
             InitializeCommands();
             WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
@@ -71,7 +69,6 @@ namespace EA.DesktopApp.ViewModels
         private void OnWindowClosingBehavior(object sender, EventArgs e)
         {
             _photoShootService?.CancelServiceAsync();
-            _photoShootService?.Dispose();
         }
 
         /// <summary>
@@ -297,27 +294,23 @@ namespace EA.DesktopApp.ViewModels
             if (employeeModel.Name == null || employeeModel.LastName == null
                                            || employeeModel.Department == null)
             {
-                _modalView.SetMessage("Enter the data");
-                _modalView.ShowWindow();
+                _windowManager.ShowModalWindow("Enter the data");
             }
             else
             {
                 try
                 {
-                    await _employeeGatewayService.CreateAsync(employeeModel, token);
-                    _modalView.SetMessage("Data has been successfully loaded to database.");
-                    _modalView.ShowWindow();
+                    await _employeeGatewayService.CreateAsync(employeeModel, _token);
+                    _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
                 }
                 catch (CommunicationException e)
                 {
-                    _modalView.SetMessage("Error database connection.");
-                    _modalView.ShowWindow();
+                    _windowManager.ShowModalWindow("Error database connection.");
                     Logger.Error("Error database connection. {e}", e);
                 }
                 catch (Exception e)
                 {
-                    _modalView.SetMessage("Error to save data into database");
-                    _modalView.ShowWindow();
+                    _windowManager.ShowModalWindow("Error to save data into database");
                     Logger.Error("Error to save data into database {e}", e);
                 }
             }
