@@ -1,9 +1,11 @@
-﻿using EA.Services.Contracts;
+﻿using EA.ServerGateway.Attributes;
+using EA.Services.Contracts;
 using EA.Services.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers;
 
+[BasicAuthorization]
 [ApiController]
 [Route("api/[controller]")]
 public class EmployeeController : Controller

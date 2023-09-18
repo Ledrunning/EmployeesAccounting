@@ -2,9 +2,12 @@ using System.Diagnostics;
 using EA.Repository;
 using EA.Repository.Contracts;
 using EA.Repository.Repository;
+using EA.ServerGateway.Authentication;
 using EA.ServerGateway.Extensions;
 using EA.Services.Contracts;
 using EA.Services.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -25,14 +28,21 @@ try
     var connectionString = builder.Configuration.GetConnectionString(ConnectionString);
 
     builder.Services.AddDbContext<DatabaseContext>(options => { options.UseSqlServer(connectionString); });
-
-
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 
+    builder.Services.AddAuthentication()
+        .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build());
+    });
+
     var app = builder.Build();
+
+    app.UseAuthorization();
 
     if (app.Environment.IsDevelopment())
     {
