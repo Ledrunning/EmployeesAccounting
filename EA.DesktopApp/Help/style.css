@@ -1,0 +1,71 @@
+/*
+  style.css
+  (C) Ivan Cherednichenko, 2007. All Rights Reserved.
+  http://www.chpas.narod.ru
+*/
+
+/* Стандартные ссылки */
+a:link, a:visited {
+  color:green;
+  text-decoration=underline }
+a:hover {
+  color:red }
+
+/* Стиль тела и таблиц документа */
+BODY, TABLE,  {
+  font-family: "Verdana", "Arial";
+  font-size=12px;
+  color=black
+}
+
+UL, P {
+  line-height : 22px;
+}
+
+/* Логотип продукта */
+#Logo {
+  font-family: "Calibri", "Verdana", "Arial";
+  color:#365F91;
+  font-weight=bold;
+  font-style=italic }
+
+/* Web-ссылки */
+  /* Непосещенная и посещенная ссылки имеют один стиль */
+  #WebLink:visited, #WebLink:link {
+    border-bottom-style: dotted;
+    border-bottom-width: 1;
+    border-bottom-color: blue;
+    text-decoration: none;
+    font-style: normal;
+    font-weight: normal;
+    color: blue }
+  /* Ссылка в момент наведения */
+  #WebLink:hover {
+    border-bottom-style: groove;
+    border-bottom-width: 1;
+    border-bottom-color: red;
+    text-decoration: none;
+    font-style: normal;
+    font-weight: normal;
+    color: red }
+
+/* Стиль навигационных ссылок индексных файлов *.index.html */
+#IndexNav:visited, #IndexNav:link, #IndexNav:hover {
+  color: lightsteelblue;
+  font-weight: bold;
+  text-decoration: none;
+  font-size:16px }
+/* Стиль индексного текста */
+#IndexText {
+  color: lightsteelblue;
+  font-weight: normal;
+  text-decoration: none;
+  font-size:12px }
+
+/* Стиль названий кнопок, объектов и компонентов */
+#hint{
+  color : black;
+  font-weight: bold;
+  text-decoration: none;
+  font-size:8pt;
+  font-family: "Verdana", "Arial" }

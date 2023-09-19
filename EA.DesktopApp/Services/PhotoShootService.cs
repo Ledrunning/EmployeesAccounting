@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using EA.DesktopApp.Contracts;
+﻿using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;

@@ -42,6 +42,7 @@ namespace EA.DesktopApp.Services
         {
             IsRunning = false;
             cancellationToken?.Cancel();
+            Dispose();
         }
 
         /// <summary>
@@ -53,10 +54,10 @@ namespace EA.DesktopApp.Services
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var image = _videoCapture.QueryFrame().ToImage<Bgr, byte>();
+                    var image = _videoCapture?.QueryFrame().ToImage<Bgr, byte>();
                     ImageChanged?.Invoke(image);
                 }
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         private void InitializeVideoCapture()
