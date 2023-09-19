@@ -50,8 +50,8 @@ namespace EA.DesktopApp.Helpers
             }
 
             WindowClose?.Invoke(sender, e);
-            e.Cancel = true;
-            window.Hide();
+            // e.Cancel = true;
+            // window.Hide();
         }
     }
 }

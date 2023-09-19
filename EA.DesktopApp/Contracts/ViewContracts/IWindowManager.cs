@@ -1,14 +1,11 @@
-﻿namespace EA.DesktopApp.Contracts.ViewContracts
+﻿using System.Windows;
+
+namespace EA.DesktopApp.Contracts.ViewContracts
 {
     public interface IWindowManager
     {
-        void ShowModalWindow();
-        void CloseModalWindow();
-        void ShowLoginWindow();
-        void CloseLoginWindow();
-        void ShowRegistrationWindow();
-        void CloseRegistrationWindow();
-        void ShowAdminWindow();
-        void CloseAdminWindow();
+        void ShowWindow<T>() where T : Window, new();
+        void CloseWindow<T>() where T : Window;
+        void ShowModalWindow(string message);
     }
 }

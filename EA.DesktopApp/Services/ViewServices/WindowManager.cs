@@ -1,5 +1,7 @@
-﻿using System.Windows;
-using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.View;
 
@@ -7,79 +9,61 @@ namespace EA.DesktopApp.Services.ViewServices
 {
     public class WindowManager : IWindowManager
     {
+        private readonly Dictionary<(Type, Window), bool> _windowClosedFlags = new Dictionary<(Type, Window), bool>();
+
+
         private readonly IWindowFactory _windowFactory;
-        private Window _adminWindow;
-        private Window _modalWindow;
-        private Window _loginWindow;
-        private Window _registrationWindow;
 
         public WindowManager(IWindowFactory windowFactory)
         {
             _windowFactory = windowFactory;
         }
 
-        public void ShowModalWindow()
+        public void ShowWindow<T>() where T : Window, new()
         {
-            if (_modalWindow == null || !_modalWindow.IsLoaded)
+            T windowInstance;
+
+            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
+
+            if (existingWindow == null)
             {
-                _modalWindow = _modalWindow ?? _windowFactory.GetWindow<ModalWindow>();
+                windowInstance = (T)_windowFactory.GetWindow<T>();
+                windowInstance.Closed += (sender, e) =>
+                {
+                    if (sender is Window window)
+                    {
+                        _windowClosedFlags[(typeof(T), window)] = true;
+                    }
+                };
+                _windowClosedFlags[(typeof(T), windowInstance)] = false;
+            }
+            else
+            {
+                windowInstance = existingWindow;
             }
 
-            _modalWindow.Owner = Application.Current.MainWindow;
-            _modalWindow.Show();
+            windowInstance.Owner = Application.Current.MainWindow;
+            windowInstance.Show();
         }
 
-        public void CloseModalWindow()
+        public void CloseWindow<T>() where T : Window
         {
-            _modalWindow?.Close();
-            _modalWindow = null;
-        }
+            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
 
-        public void ShowLoginWindow()
-        {
-            if (_loginWindow == null || !_loginWindow.IsLoaded)
+            if (existingWindow == null)
             {
-                _loginWindow = _loginWindow ?? _windowFactory.GetWindow<LoginWindow>();
+                return;
             }
 
-            _loginWindow.Owner = Application.Current.MainWindow;
-            _loginWindow.Show();
+            existingWindow.Close();
+            _windowClosedFlags[(typeof(T), existingWindow)] = true;
         }
 
-        public void CloseLoginWindow()
+        public void ShowModalWindow(string message)
         {
-            _loginWindow?.Close();
-            _loginWindow = null;
-        }
-
-        public void ShowRegistrationWindow()
-        {
-            if (_registrationWindow == null || !_registrationWindow.IsLoaded)
-            {
-                _registrationWindow = _registrationWindow ?? _windowFactory.GetWindow<RegistrationForm>();
-            }
-
-            _registrationWindow.Owner = Application.Current.MainWindow;
-            _registrationWindow.Show();
-        }
-
-        public void CloseRegistrationWindow()
-        {
-            _registrationWindow?.Close();
-            _registrationWindow = null;
-        }
-
-        public void ShowAdminWindow()
-        {
-            _adminWindow = _adminWindow ?? _windowFactory.GetWindow<AdminForm>();
-            _adminWindow.Owner = Application.Current.MainWindow;
-            _adminWindow.Show();
-        }
-
-        public void CloseAdminWindow()
-        {
-            _adminWindow?.Close();
-            _adminWindow = null;
+            var modalWindow = _windowFactory.GetWindow<ModalWindow>(message);
+            modalWindow.Owner = Application.Current.MainWindow;
+            modalWindow.Show();
         }
     }
 }

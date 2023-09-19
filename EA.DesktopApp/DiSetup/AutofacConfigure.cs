@@ -36,18 +36,18 @@ namespace EA.DesktopApp.DiSetup
                 builder.Register(c => c.Resolve<CancellationTokenSource>().Token).As<CancellationToken>();
 
                 builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
-                builder.RegisterType<WindowManager>().As<IWindowManager>().InstancePerLifetimeScope();
+                builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
                 builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().SingleInstance();
 
-                builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
-                builder.RegisterType<MainViewModel>().InstancePerLifetimeScope();
+                builder.RegisterType<MainWindow>().InstancePerDependency();
+                builder.RegisterType<MainViewModel>().InstancePerDependency();
 
-                builder.RegisterType<AdminForm>().InstancePerLifetimeScope();
-                builder.RegisterType<AdminViewModel>().InstancePerLifetimeScope();
+                builder.RegisterType<AdminForm>().InstancePerDependency();
+                builder.RegisterType<AdminViewModel>().InstancePerDependency();
 
                 builder.RegisterType<ModalWindow>().InstancePerDependency(); 
                 builder.RegisterType<ModalViewModel>().InstancePerDependency(); 
@@ -55,10 +55,10 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<LoginWindow>().InstancePerDependency(); 
                 builder.RegisterType<LoginViewModel>().InstancePerDependency();
 
-                builder.RegisterType<RedactorViewModel>().InstancePerLifetimeScope();
+                builder.RegisterType<RedactorViewModel>().InstancePerDependency();
                 
-                builder.RegisterType<RegistrationForm>().InstancePerLifetimeScope();
-                builder.RegisterType<RegistrationViewModel>().InstancePerLifetimeScope();
+                builder.RegisterType<RegistrationForm>().InstancePerDependency();
+                builder.RegisterType<RegistrationViewModel>().InstancePerDependency();
 
                 Container = builder.Build();
             }
