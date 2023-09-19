@@ -11,11 +11,12 @@ namespace EA.ServerGateway.Authentication;
 
 public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private readonly IOptionsMonitor<AuthenticationSchemeOptions> _options;
     private readonly EaConfiguration _configuration;
+    private readonly IOptionsMonitor<AuthenticationSchemeOptions> _options;
 
     public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger,
-        UrlEncoder encoder, ISystemClock clock, IOptions<EaConfiguration> configuration) : base(options, logger, encoder, clock)
+        UrlEncoder encoder, ISystemClock clock, IOptions<EaConfiguration> configuration) : base(options, logger,
+        encoder, clock)
     {
         _options = options;
         _configuration = configuration.Value;
@@ -47,7 +48,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         if (authUsername != _configuration.Login ||
             authPassword != _configuration.Password)
         {
-            return Task.FromResult(AuthenticateResult.Fail("The username or password is not correct."));
+            return Task.FromResult(AuthenticateResult.Fail("Invalid Username or Password."));
         }
 
         var authenticatedUser =

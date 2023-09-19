@@ -1,9 +1,9 @@
-﻿using EA.ServerGateway.Attributes;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EA.ServerGateway.Controllers
 {
-    [BasicAuthorization]
+    [Authorize]
     public class AdministratorController : Controller
     {
         public IActionResult Index()
