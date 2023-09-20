@@ -4,14 +4,17 @@ using System.Threading.Tasks;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using NLog;
 
 namespace EA.DesktopApp.Services
 {
     public class BaseCameraService : IDisposable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ManualResetEvent _resetEvent = new ManualResetEvent(true);
         private VideoCapture _videoCapture;
-        private CancellationTokenSource cancellationToken;
-        private CancellationToken token;
+        private CancellationTokenSource _cancellationToken;
+        private CancellationToken _token;
 
         public bool IsRunning { get; set; }
 
@@ -28,8 +31,8 @@ namespace EA.DesktopApp.Services
         /// </summary>
         public void RunServiceAsync()
         {
-            cancellationToken = new CancellationTokenSource();
-            token = cancellationToken.Token;
+            _cancellationToken = new CancellationTokenSource();
+            _token = _cancellationToken.Token;
             IsRunning = true;
             InitializeVideoCapture();
             WebCameraWorker();
@@ -41,24 +44,44 @@ namespace EA.DesktopApp.Services
         public void CancelServiceAsync()
         {
             IsRunning = false;
-            cancellationToken?.Cancel();
+            _cancellationToken?.Cancel();
+
+            // Wait for WebCameraWorker to finish its operation
+            _resetEvent.WaitOne();
+
             Dispose();
         }
+
 
         /// <summary>
         ///     Grab image processing method
         /// </summary>
         private void WebCameraWorker()
         {
+            _resetEvent.Reset();
+
             Task.Run(() =>
             {
-                while (!token.IsCancellationRequested)
+                try
                 {
-                    var image = _videoCapture?.QueryFrame().ToImage<Bgr, byte>();
-                    ImageChanged?.Invoke(image);
+                    while (!_token.IsCancellationRequested)
+                    {
+                        var image = _videoCapture?.QueryFrame().ToImage<Bgr, byte>();
+                        ImageChanged?.Invoke(image);
+                    }
                 }
-            }, token).ConfigureAwait(false);
+                catch (Exception ex)
+                {
+                    Logger.Error("Web camera worker error {ex}", ex);
+                    throw;
+                }
+                finally
+                {
+                    _resetEvent.Set();
+                }
+            }, _token).ConfigureAwait(false);
         }
+
 
         private void InitializeVideoCapture()
         {
