@@ -13,24 +13,31 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300*" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="45" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="74" />
+            <ColumnDefinition Width="150" />
         </Grid.ColumnDefinitions>
         <Image Grid.Row="0" Grid.Column="0" Name="v_Image_Frame"
                Source="{Binding Frame, Converter={StaticResource BitmapToImageSourceConverter}}" Stretch="Uniform"
                Margin="0,0,50,10" />
 
-        <Button Grid.Row="0" Margin="0,0,0,265" Height="45" Width="45"
-                Content="?" Foreground="#FF00AADE" FontSize="20" Command="{Binding ToggleHelpCallCommand}"
+        <Button Grid.Row="0" Margin="19,16,86,283" Height="45" Width="45"
+                Content="?" Foreground="#FF00AADE" FontSize="20" 
+                BorderThickness="0" Command="{Binding ToggleHelpCallCommand}"
                 Grid.Column="1">
             <Button.ToolTip>
                 <ToolTip HasDropShadow="True" Content="{Binding HelpHint}" />
             </Button.ToolTip>
         </Button>
 
+        <ComboBox Grid.Column="1" Name="cameraComboBox" 
+                  ItemsSource="{Binding AvailableCameras}" 
+                  SelectedItem="{Binding SelectedCamera}" 
+                  HorizontalAlignment="Left" 
+                  VerticalAlignment="Top" 
+                  Width="82" Margin="22,85,0,0"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="12"
                    Text="{Binding CurrentTimeDate}" Margin="10,9,327,7" />
