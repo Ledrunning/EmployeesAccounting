@@ -29,8 +29,6 @@ namespace EA.DesktopApp.ViewModels
         private readonly IWindowManager _windowManager;
 
         private string _currentTimeDate;
-
-        private string _selectedCamera;
         private string _detectionHint;
 
         private Bitmap _frame;
@@ -38,6 +36,8 @@ namespace EA.DesktopApp.ViewModels
         private bool _isRunning;
 
         private bool _isStreaming;
+
+        private string _selectedCamera;
 
         /// <summary>
         ///     Timer
@@ -48,7 +48,8 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public MainViewModel(
-            IFaceDetectionService faceDetectionService, IWindowManager windowManager,
+            IFaceDetectionService faceDetectionService,
+            IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
@@ -156,7 +157,7 @@ namespace EA.DesktopApp.ViewModels
 
         private void LoadAvailableCameras()
         {
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < BaseCameraService.CamerasQuantity; i++)
             {
                 try
                 {
@@ -178,7 +179,8 @@ namespace EA.DesktopApp.ViewModels
                 }
                 catch
                 {
-                    // Handle exceptions as necessary
+                    Logger.Info("Failed to load cameras");
+                    _windowManager.ShowModalWindow("Failed to load cameras");
                 }
             }
         }

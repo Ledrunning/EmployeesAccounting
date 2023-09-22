@@ -15,6 +15,7 @@ namespace EA.DesktopApp.Services
         private VideoCapture _videoCapture;
         private CancellationTokenSource _cancellationToken;
         private CancellationToken _token;
+        public const int CamerasQuantity = 10;
 
         public bool IsRunning { get; set; }
 
