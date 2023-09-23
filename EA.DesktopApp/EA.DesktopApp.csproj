@@ -485,7 +485,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\EA.RecognizerEngine\EA.RecognizerEngine.csproj">
+      <Project>{576b2cc4-6441-496f-87bd-1e127251dde5}</Project>
+      <Name>EA.RecognizerEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
