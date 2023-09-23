@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -28,7 +29,6 @@ namespace EA.DesktopApp.ViewModels
         private readonly IWindowManager _windowManager;
 
         private string _currentTimeDate;
-
         private string _detectionHint;
 
         private Bitmap _frame;
@@ -36,6 +36,8 @@ namespace EA.DesktopApp.ViewModels
         private bool _isRunning;
 
         private bool _isStreaming;
+
+        private string _selectedCamera;
 
         /// <summary>
         ///     Timer
@@ -46,16 +48,26 @@ namespace EA.DesktopApp.ViewModels
         ///     .ctor
         /// </summary>
         public MainViewModel(
-            IFaceDetectionService faceDetectionService, IWindowManager windowManager,
+            IFaceDetectionService faceDetectionService,
+            IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
             _windowManager = windowManager;
             InitializeServices();
+            LoadAvailableCameras();
             InitializeCommands();
             TimeTicker();
             _soundPlayerHelper = soundPlayerHelper;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
+        }
+
+        public ObservableCollection<string> AvailableCameras { get; } = new ObservableCollection<string>();
+
+        public string SelectedCamera
+        {
+            get => _selectedCamera;
+            set => SetField(ref _selectedCamera, value);
         }
 
         /// <summary>
@@ -143,6 +155,36 @@ namespace EA.DesktopApp.ViewModels
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
         }
 
+        private void LoadAvailableCameras()
+        {
+            for (var i = 0; i < BaseCameraService.CamerasQuantity; i++)
+            {
+                try
+                {
+                    using (var tempCapture = new VideoCapture(i))
+                    {
+                        if (tempCapture.IsOpened)
+                        {
+                            AvailableCameras.Add(i.ToString());
+                        }
+                    }
+
+                    // Set the first available camera as selected
+                    if (AvailableCameras.Count <= 0)
+                    {
+                        continue;
+                    }
+
+                    SelectedCamera = AvailableCameras[0];
+                }
+                catch
+                {
+                    Logger.Info("Failed to load cameras");
+                    _windowManager.ShowModalWindow("Failed to load cameras");
+                }
+            }
+        }
+
         /// <summary>
         ///     Service From WebCamService
         /// </summary>
@@ -159,7 +201,10 @@ namespace EA.DesktopApp.ViewModels
             {
                 _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
                 IsStreaming = true;
-                _faceDetectionService.RunServiceAsync();
+
+                var cameraIndex = int.Parse(SelectedCamera);
+
+                _faceDetectionService.RunServiceAsync(cameraIndex);
                 Logger.Info("Face detection is started!");
             }
             else
@@ -199,8 +244,7 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Execute method for relay command TODO: file does not exist
-        ///     TODO and will fix modal window NRE exception
+        ///     Execute User Help method
         /// </summary>
         private void ToggleHelpServiceExecute()
         {

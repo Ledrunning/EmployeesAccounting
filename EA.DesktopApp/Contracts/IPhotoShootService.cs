@@ -11,7 +11,7 @@ namespace EA.DesktopApp.Contracts
         /// <summary>
         ///     Async method for background work
         /// </summary>
-        void RunServiceAsync();
+        void RunServiceAsync(int cameraIndex = 0);
 
         /// <summary>
         ///     Cancel Async method for background work

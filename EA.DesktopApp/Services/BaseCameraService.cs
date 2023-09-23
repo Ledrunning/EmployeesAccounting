@@ -15,6 +15,7 @@ namespace EA.DesktopApp.Services
         private VideoCapture _videoCapture;
         private CancellationTokenSource _cancellationToken;
         private CancellationToken _token;
+        public const int CamerasQuantity = 10;
 
         public bool IsRunning { get; set; }
 
@@ -29,12 +30,12 @@ namespace EA.DesktopApp.Services
         /// <summary>
         ///     Async method for background work
         /// </summary>
-        public void RunServiceAsync()
+        public void RunServiceAsync(int cameraIndex = 0)
         {
             _cancellationToken = new CancellationTokenSource();
             _token = _cancellationToken.Token;
             IsRunning = true;
-            InitializeVideoCapture();
+            InitializeVideoCapture(cameraIndex);
             WebCameraWorker();
         }
 
@@ -83,14 +84,14 @@ namespace EA.DesktopApp.Services
         }
 
 
-        private void InitializeVideoCapture()
+        private void InitializeVideoCapture(int cameraIndex)
         {
             if (_videoCapture != null)
             {
                 return;
             }
 
-            _videoCapture = new VideoCapture();
+            _videoCapture = new VideoCapture(cameraIndex);
         }
     }
 }
