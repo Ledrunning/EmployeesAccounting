@@ -10,10 +10,8 @@ using EA.Services.Contracts;
 using EA.Services.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using NLog;
 using NLog.Web;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 const string loggerConfig = "NLog.config";
 var logger = NLogBuilder.ConfigureNLog(loggerConfig).GetCurrentClassLogger();
@@ -31,10 +29,10 @@ try
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddSwaggerGenWithOptions();
-    
+
     builder.Services.AddDbContext<DatabaseContext>(options => { options.UseSqlServer(connectionString); });
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-    
+
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 
