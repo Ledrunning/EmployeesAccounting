@@ -11,6 +11,7 @@ using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
+using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using NLog;
@@ -25,6 +26,7 @@ namespace EA.DesktopApp.ViewModels
         private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFaceDetectionService _faceDetectionService;
+        private readonly ILbphFaceRecognition _faceRecognitionService;
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly IWindowManager _windowManager;
 
@@ -49,10 +51,12 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public MainViewModel(
             IFaceDetectionService faceDetectionService,
+            ILbphFaceRecognition faceRecognitionService,
             IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
+            _faceRecognitionService = faceRecognitionService;
             _windowManager = windowManager;
             InitializeServices();
             LoadAvailableCameras();
