@@ -5,8 +5,8 @@ namespace EA.RecognizerEngine.Contracts
 {
     public interface ILbphFaceRecognition
     {
-        void AddTrainingImage(Image<Gray, byte> image, int label);
+        void AddTrainingImage(Image<Gray, byte> image, long label);
         void Train();
-        int Predict(Image<Gray, byte> queryImage);
+        long Predict(Image<Gray, byte> queryImage);
     }
 }

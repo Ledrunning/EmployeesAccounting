@@ -7,7 +7,7 @@ namespace EA.DesktopApp.Models
     ///     Model for Web Api client
     ///     Need to point to System.ComponentModel.DataAnnotations;
     /// </summary>
-    public class EmployeeModel
+    public class EmployeeModel : BaseModel
     {
         [Required(ErrorMessage = "Enter the name")]
         public string Name { get; set; }

@@ -3,11 +3,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Threading;
+using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Resources.Messages;
+using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -27,6 +33,7 @@ namespace EA.DesktopApp.ViewModels
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly ILbphFaceRecognition _faceRecognitionService;
+        private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly IWindowManager _windowManager;
 
@@ -52,11 +59,13 @@ namespace EA.DesktopApp.ViewModels
         public MainViewModel(
             IFaceDetectionService faceDetectionService,
             ILbphFaceRecognition faceRecognitionService,
+            IEmployeeGatewayService employeeGatewayService,
             IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper)
         {
             _faceDetectionService = faceDetectionService;
             _faceRecognitionService = faceRecognitionService;
+            _employeeGatewayService = employeeGatewayService;
             _windowManager = windowManager;
             InitializeServices();
             LoadAvailableCameras();
@@ -189,6 +198,28 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        private async Task FetchFacesFromDbAndTrain()
+        {
+            try
+            {
+                var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth, ImageProcessingConstants.GrayPhotoHeight);
+                var employees = await  _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
+                
+                foreach (var employee in employees)
+                {
+                    depthImage.Bytes = employee.Photo;
+
+                    _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                }
+
+                _faceRecognitionService.Train();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
         /// <summary>
         ///     Service From WebCamService
         /// </summary>
@@ -293,6 +324,8 @@ namespace EA.DesktopApp.ViewModels
         private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
+            var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
+            _employeeGatewayService.GetByIdAsync(idPredict, CancellationToken.None);
         }
     }
 }

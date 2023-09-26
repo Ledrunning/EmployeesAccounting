@@ -196,6 +196,7 @@
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Resources\Messages\ProgramResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -217,7 +218,6 @@
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Services\SoundPlayerService.cs" />
     <Compile Include="Models\AdministratorModel.cs" />
-    <Compile Include="Models\FaceModel.cs" />
     <Compile Include="Models\EmployeeModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

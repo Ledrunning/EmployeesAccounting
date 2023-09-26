@@ -276,7 +276,7 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
-            Image resultImage = PhotoShootGray.ToBitmap();
+            var resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
             var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 

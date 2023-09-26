@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using EA.RecognizerEngine.Contracts;
+using EA.RecognizerEngine.Exceptions;
 using Emgu.CV;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
@@ -8,9 +8,12 @@ using Emgu.CV.Util;
 
 namespace EA.RecognizerEngine.Engines
 {
+    /// <summary>
+    ///     Load data -> 2. Add to training set -> 3. Train -> 4. Predict.
+    /// </summary>
     public class LbphFaceRecognition : ILbphFaceRecognition
     {
-        private readonly List<int> _labels;
+        private readonly List<long> _labels = new List<long>();
         private readonly LBPHFaceRecognizer _recognizer;
         private readonly List<Image<Gray, byte>> _trainingImages;
 
@@ -18,10 +21,9 @@ namespace EA.RecognizerEngine.Engines
         {
             _recognizer = new LBPHFaceRecognizer();
             _trainingImages = new List<Image<Gray, byte>>();
-            _labels = new List<int>();
         }
 
-        public void AddTrainingImage(Image<Gray, byte> image, int label)
+        public void AddTrainingImage(Image<Gray, byte> image, long label)
         {
             _trainingImages.Add(image);
             _labels.Add(label);
@@ -31,11 +33,11 @@ namespace EA.RecognizerEngine.Engines
         {
             if (_trainingImages.Count == 0)
             {
-                throw new Exception("No training images provided.");
+                throw new RecognizerEngineException("No training images provided.");
             }
 
             using (var vm = new VectorOfMat())
-            using (var labelsMatrix = new Matrix<int>(_labels.ToArray()))
+            using (var labelsMatrix = new Matrix<long>(_labels.ToArray()))
             {
                 foreach (var img in _trainingImages)
                 {
@@ -46,7 +48,7 @@ namespace EA.RecognizerEngine.Engines
             }
         }
 
-        public int Predict(Image<Gray, byte> queryImage)
+        public long Predict(Image<Gray, byte> queryImage)
         {
             var result = _recognizer.Predict(queryImage);
             return result.Label;
