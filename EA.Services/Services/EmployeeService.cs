@@ -61,7 +61,6 @@ public class EmployeeService : IEmployeeService
         return _mapper.Map<EmployeeDto>(employee);
     }
 
-    //TODO need to test
     public async Task AddAsync(EmployeeDto employee, CancellationToken cancellationToken)
     {
         try

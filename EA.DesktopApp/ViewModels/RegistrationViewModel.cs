@@ -34,9 +34,6 @@ namespace EA.DesktopApp.ViewModels
         private readonly IWindowManager _windowManager;
         private readonly CancellationToken _token;
 
-        private bool _isReady;
-        private bool _takePhotoFlag;
-
         /// <summary>
         ///     .ctor
         /// </summary>
@@ -51,19 +48,6 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
-        }
-
-        /// <summary>
-        ///     Start webCam service button toggle
-        /// </summary>
-        public bool IsReady
-        {
-            get => _isReady;
-            set
-            {
-                _isReady = value;
-                OnPropertyChanged();
-            }
         }
 
         private void OnWindowClosingBehavior(object sender, EventArgs e)
@@ -251,11 +235,6 @@ namespace EA.DesktopApp.ViewModels
         public ICommand ToggleCameraCaptureCommand { get; private set; }
 
         /// <summary>
-        ///     Toogle to photoshoot save by open file dialog
-        /// </summary>
-        public ICommand ToggleSavePhotoCommand { get; private set; }
-
-        /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
         public ICommand ToggleAddToDbCommand { get; private set; }
@@ -325,7 +304,6 @@ namespace EA.DesktopApp.ViewModels
 
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
-            _takePhotoFlag = true;
         }
 
         #endregion Toggles Execute methods
