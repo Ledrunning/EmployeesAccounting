@@ -21,7 +21,7 @@ namespace EA.DesktopApp.Rest
             return GetContent<IReadOnlyList<EmployeeModel>>(response, url.AbsoluteUri);
         }
 
-        public async Task<EmployeeModel> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<EmployeeModel> GetByIdAsync(long id, CancellationToken cancellationToken)
         {
             var url = new Uri($"{BaseUrl}/api/Employee/GetEmployeeById?id={id}");
             var response = await CreateRestClient(url, cancellationToken);

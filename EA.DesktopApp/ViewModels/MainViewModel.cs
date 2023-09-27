@@ -3,17 +3,14 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Threading;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Resources.Messages;
-using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
@@ -31,9 +28,9 @@ namespace EA.DesktopApp.ViewModels
     {
         private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly ILbphFaceRecognition _faceRecognitionService;
-        private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly IWindowManager _windowManager;
 
@@ -198,26 +195,24 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        /// <summary>
+        ///     TODO: Fetch data and train recognizer when app is starts
+        /// </summary>
+        /// <returns></returns>
         private async Task FetchFacesFromDbAndTrain()
         {
-            try
-            {
-                var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth, ImageProcessingConstants.GrayPhotoHeight);
-                var employees = await  _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
-                
-                foreach (var employee in employees)
-                {
-                    depthImage.Bytes = employee.Photo;
+            var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth,
+                ImageProcessingConstants.GrayPhotoHeight);
+            var employees = await _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
 
-                    _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
-                }
-
-                _faceRecognitionService.Train();
-            }
-            catch (Exception e)
+            foreach (var employee in employees)
             {
-                throw;
+                depthImage.Bytes = employee.Photo;
+
+                _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
             }
+
+            _faceRecognitionService.Train();
         }
 
         /// <summary>
@@ -229,8 +224,7 @@ namespace EA.DesktopApp.ViewModels
                 ? ProgramResources.StartDetectorTooltipMessage
                 : ProgramResources.StopDetectorTooltipMessage;
 
-            // Playing sound effect for button
-            // _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
@@ -268,14 +262,6 @@ namespace EA.DesktopApp.ViewModels
             IsStreaming = false;
             StopFaceDetectionService();
             _windowManager.ShowWindow<LoginWindow>();
-
-            if (!_faceDetectionService.IsRunning)
-            {
-                return;
-            }
-
-            IsStreaming = true;
-            //_faceDetectionService?.RunServiceAsync();
         }
 
         /// <summary>
@@ -319,13 +305,15 @@ namespace EA.DesktopApp.ViewModels
 
         /// <summary>
         ///     Draw the bitmap on control
+        ///     TODO: Uncomment recognizer after debugging
         /// </summary>
         /// <param name="image"></param>
         private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
-            var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            _employeeGatewayService.GetByIdAsync(idPredict, CancellationToken.None);
+            //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
+            //var recognizedEmployeeName = await _employeeGatewayService.GetByIdAsync(idPredict, CancellationToken.None);
+            //_faceDetectionService.EmployeeName = $"{recognizedEmployeeName.Name} {recognizedEmployeeName.LastName}";
         }
     }
 }
