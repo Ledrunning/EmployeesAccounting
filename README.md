@@ -4,3 +4,8 @@
 ## .NET6, WPF(MVVM), REST, EF6, MSSQL, Nlog, WEB API, EMGU CV 4x, Autofac
 
 ## Application is under construction.
+
+
+## UI layout
+
+ ![](facial.gif)
