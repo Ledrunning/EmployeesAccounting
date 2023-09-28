@@ -17,6 +17,13 @@ public class EmployeeController : Controller
         _employee = employee;
     }
 
+    [HttpPost]
+    [Route(nameof(Create))]
+    public async Task Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
+    {
+        await _employee.AddAsync(employee, cancellationToken);
+    }
+
     [HttpGet]
     [Route(nameof(GetAllEmployee))]
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllEmployee(CancellationToken cancellationToken)
@@ -31,11 +38,11 @@ public class EmployeeController : Controller
         return await _employee.GetByIdAsync(id, cancellationToken);
     }
 
-    [HttpPost]
-    [Route(nameof(Create))]
-    public async Task Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
+    [HttpGet]
+    [Route(nameof(GetEmployeeNameById))]
+    public async Task<string?> GetEmployeeNameById(int id, CancellationToken cancellationToken)
     {
-        await _employee.AddAsync(employee, cancellationToken);
+        return await _employee.GetNameByIdAsync(id, cancellationToken);
     }
 
     [HttpPost]

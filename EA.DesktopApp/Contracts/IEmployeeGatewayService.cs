@@ -9,6 +9,7 @@ namespace EA.DesktopApp.Contracts
     {
         Task<IReadOnlyList<EmployeeModel>> GetAllEmployeeAsync(CancellationToken cancellationToken);
         Task<EmployeeModel> GetByIdAsync(long id, CancellationToken cancellationToken);
+        Task<string> GetNameByIdAsync(long id, CancellationToken cancellationToken);
         Task<EmployeeModel> CreateAsync(EmployeeModel employee, CancellationToken cancellationToken);
         Task<EmployeeModel> UpdateAsync(EmployeeModel employee, CancellationToken cancellationToken);
         Task DeleteAsync(long id, CancellationToken cancellationToken);

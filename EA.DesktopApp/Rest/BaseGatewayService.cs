@@ -35,7 +35,7 @@ namespace EA.DesktopApp.Rest
             $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
     }
 
-    protected async Task<RestResponse> CreateRestClient(Uri url, CancellationToken cancellationToken)
+    protected async Task<RestResponse> CreateRestClientAsync(Uri url, CancellationToken cancellationToken)
     {
         var client = new RestClient(SetOptions(url));
         var request = new RestRequest();
@@ -49,7 +49,7 @@ namespace EA.DesktopApp.Rest
             $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
     }
 
-    protected async Task<RestResponse> CreateRestClient<T>(T entity, Uri url, CancellationToken cancellationToken)
+    protected async Task<RestResponse> CreateRestClientAsync<T>(T entity, Uri url, CancellationToken cancellationToken)
     {
         var client = new RestClient(SetOptions(url));
         var json = JsonConvert.SerializeObject(entity);

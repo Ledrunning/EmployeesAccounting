@@ -308,12 +308,11 @@ namespace EA.DesktopApp.ViewModels
         ///     TODO: Uncomment recognizer after debugging
         /// </summary>
         /// <param name="image"></param>
-        private void OnImageChanged(Image<Bgr, byte> image)
+        private async void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
             //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            //var recognizedEmployeeName = await _employeeGatewayService.GetByIdAsync(idPredict, CancellationToken.None);
-            //_faceDetectionService.EmployeeName = $"{recognizedEmployeeName.Name} {recognizedEmployeeName.LastName}";
+            //_faceDetectionService.EmployeeName = await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
         }
     }
 }
