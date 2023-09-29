@@ -112,7 +112,7 @@ public class EmployeeService : IEmployeeService
 
             using var memoryStream = new MemoryStream(employee.Photo);
             var image = Image.FromStream(memoryStream);
-            image.Save($"{PhotoDataPath}\\{employee.Name}", ImageFormat.Jpeg);
+            image.Save($"{PhotoDataPath}\\{employee.PhotoName}", ImageFormat.Jpeg);
         }
         catch (Exception e)
         {

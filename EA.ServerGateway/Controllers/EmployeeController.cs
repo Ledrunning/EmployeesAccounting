@@ -32,6 +32,13 @@ public class EmployeeController : Controller
     }
 
     [HttpGet]
+    [Route(nameof(GetAllWithPhoto))]
+    public async Task<IReadOnlyList<EmployeeDto?>> GetAllWithPhoto(CancellationToken cancellationToken)
+    {
+        return await _employee.GetAllWithPhotoAsync(cancellationToken);
+    }
+
+    [HttpGet]
     [Route(nameof(GetEmployeeById))]
     public async Task<EmployeeDto?> GetEmployeeById(int id, CancellationToken cancellationToken)
     {

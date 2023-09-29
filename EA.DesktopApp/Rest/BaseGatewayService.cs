@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -55,6 +56,13 @@ namespace EA.DesktopApp.Rest
         var json = JsonConvert.SerializeObject(entity);
         var request = new RestRequest(url, Method.Post);
         request.AddParameter("text/json", json, ParameterType.RequestBody);
+
+        // Basic Authorization
+        const string username = "Modern";
+        const string password = "Warfare";
+        var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+        request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+
         var response = await client.ExecuteAsync(request, cancellationToken);
         if (response.IsSuccessful)
         {

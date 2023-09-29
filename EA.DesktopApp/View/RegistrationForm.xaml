@@ -28,18 +28,12 @@
                Source="{Binding GrayScaleImage, Converter={StaticResource BitmapToImageSourceConverter}}"
                Stretch="Uniform" Margin="0,194,4,0" />
         <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleCameraCaptureCommand}"
-                VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10">
+                VerticalAlignment="Center" Content="Shoot" HorizontalAlignment="Left" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="#FF00AADE" />
                     <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Photo" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </Button.Style>
             <Button.ToolTip>
@@ -47,20 +41,13 @@
             </Button.ToolTip>
         </Button>
         <!--DB buttons-->
-        <Button Grid.Row="1" Height="24" Width="90" Command="{Binding ToggleAddToDbCommand}" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="10">
+        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleAddToDbCommand}" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Content="Add" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="#FF00AADE" />
                     <Setter Property="BorderThickness" Value="1" />
-                    <!--<Setter Property="BorderBrush" Value="Black"/>-->
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Add" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </Button.Style>
             <Button.ToolTip>
@@ -68,19 +55,13 @@
             </Button.ToolTip>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleEditFormCommand}"
-                VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10">
+        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleClearFormCommand}"
+                VerticalAlignment="Center" Content="Clear" HorizontalAlignment="Right" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="#FF00AADE" />
                     <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Edit" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </Button.Style>
             <Button.ToolTip>

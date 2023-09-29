@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Globalization;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Input;
@@ -31,8 +30,8 @@ namespace EA.DesktopApp.ViewModels
 
         private readonly IPhotoShootService _photoShootService;
         private readonly ISoundPlayerService _soundPlayerService;
-        private readonly IWindowManager _windowManager;
         private readonly CancellationToken _token;
+        private readonly IWindowManager _windowManager;
 
         /// <summary>
         ///     .ctor
@@ -71,6 +70,7 @@ namespace EA.DesktopApp.ViewModels
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
+            ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
         }
 
         /// <summary>
@@ -126,23 +126,41 @@ namespace EA.DesktopApp.ViewModels
 
         #region TextBox properties
 
+        private string _personName;
+
         /// <summary>
         ///     Binding person name to TextBox
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string PersonName { get; set; }
+        public string PersonName
+        {
+            get => _personName;
+            set => SetField(ref _personName, value, nameof(PersonName));
+        }
+
+        private string _personLastName;
 
         /// <summary>
         ///     Binding person last name TextBox
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string PersonLastName { get; set; }
+        public string PersonLastName
+        {
+            get => _personLastName;
+            set => SetField(ref _personLastName, value, nameof(PersonLastName));
+        }
+
+        private string _personDepartment;
 
         /// <summary>
         ///     Binding person department TextBox
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string PersonDepartment { get; set; }
+        public string PersonDepartment
+        {
+            get => _personDepartment;
+            set => SetField(ref _personDepartment, value, nameof(PersonDepartment));
+        }
 
         /// <summary>
         ///     Error indexer
@@ -240,13 +258,21 @@ namespace EA.DesktopApp.ViewModels
         public ICommand ToggleAddToDbCommand { get; private set; }
 
         /// <summary>
-        ///     Toogle to add image to data base
+        ///     Toogle clear fields
         /// </summary>
-        public ICommand ToggleEditFormCommand => null;
+        public ICommand ToggleClearFormCommand { get; private set; }
 
         #endregion Command properties
 
         #region Toggles Execute methods
+
+        private void ToggleClearFields()
+        {
+            PersonName = string.Empty;
+            PersonLastName = string.Empty;
+            PersonDepartment = string.Empty;
+            GrayScaleImage = null;
+        }
 
         /// <summary>
         ///     Send image into Data base
@@ -266,8 +292,7 @@ namespace EA.DesktopApp.ViewModels
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
                 Photo = imageArray,
-                PhotoName =
-                    $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
+                PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
             };
 
             if (employeeModel.Name == null || employeeModel.LastName == null
