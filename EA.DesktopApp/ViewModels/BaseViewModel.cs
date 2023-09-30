@@ -10,27 +10,56 @@ namespace EA.DesktopApp.ViewModels
         private string _login;
         private string _password;
 
+        private string _personDepartment;
+
+        private string _personLastName;
+
+        private string _personName;
+
         [Required(AllowEmptyStrings = false)]
         public string LoginField
         {
             get => _login;
-            set
-            {
-                _login = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _login, value, nameof(LoginField));
         }
 
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
             get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _password, value, nameof(PasswordField));
         }
+
+        /// <summary>
+        ///     Binding person name to TextBox
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string PersonName
+        {
+            get => _personName;
+            set => SetField(ref _personName, value, nameof(PersonName));
+        }
+
+        /// <summary>
+        ///     Binding person last name TextBox
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string PersonLastName
+        {
+            get => _personLastName;
+            set => SetField(ref _personLastName, value, nameof(PersonLastName));
+        }
+
+        /// <summary>
+        ///     Binding person department TextBox
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string PersonDepartment
+        {
+            get => _personDepartment;
+            set => SetField(ref _personDepartment, value, nameof(PersonDepartment));
+        }
+
         public string Error => "Enter the data!";
 
         public string this[string columnName] => ValidateProperty(columnName);

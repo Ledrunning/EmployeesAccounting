@@ -124,44 +124,6 @@ namespace EA.DesktopApp.ViewModels
 
         #endregion ToolTip properties
 
-        #region TextBox properties
-
-        private string _personName;
-
-        /// <summary>
-        ///     Binding person name to TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonName
-        {
-            get => _personName;
-            set => SetField(ref _personName, value, nameof(PersonName));
-        }
-
-        private string _personLastName;
-
-        /// <summary>
-        ///     Binding person last name TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonLastName
-        {
-            get => _personLastName;
-            set => SetField(ref _personLastName, value, nameof(PersonLastName));
-        }
-
-        private string _personDepartment;
-
-        /// <summary>
-        ///     Binding person department TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonDepartment
-        {
-            get => _personDepartment;
-            set => SetField(ref _personDepartment, value, nameof(PersonDepartment));
-        }
-
         /// <summary>
         ///     Error indexer
         /// </summary>
@@ -202,8 +164,6 @@ namespace EA.DesktopApp.ViewModels
                 return error;
             }
         }
-
-        #endregion TextBox properties
 
         #region Image fields
 

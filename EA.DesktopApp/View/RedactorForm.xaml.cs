@@ -1,8 +1,7 @@
-﻿using EA.DesktopApp.DiSetup;
-using EA.DesktopApp.ViewModels;
-using System;
-using System.Windows;
+﻿using System.Windows;
 using Autofac;
+using EA.DesktopApp.DiSetup;
+using EA.DesktopApp.ViewModels;
 
 namespace EA.DesktopApp.View
 {
@@ -15,22 +14,6 @@ namespace EA.DesktopApp.View
         {
             InitializeComponent();
             DataContext = AutofacConfigure.Container.Resolve<RedactorViewModel>();
-        }
-
-        public RedactorForm(bool test)
-        {
-            InitializeComponent();
-            Test = test;
-        }
-
-        private bool Test { get; }
-
-        public bool IsClosed { get; private set; }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            IsClosed = true;
         }
     }
 }

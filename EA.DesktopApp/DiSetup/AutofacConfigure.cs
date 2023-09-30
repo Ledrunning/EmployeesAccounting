@@ -58,6 +58,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<LoginWindow>().InstancePerDependency(); 
                 builder.RegisterType<LoginViewModel>().InstancePerDependency();
 
+                builder.RegisterType<RedactorForm>().InstancePerDependency();
                 builder.RegisterType<RedactorViewModel>().InstancePerDependency();
                 
                 builder.RegisterType<RegistrationForm>().InstancePerDependency();

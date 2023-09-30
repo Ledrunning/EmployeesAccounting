@@ -158,6 +158,7 @@ namespace EA.DesktopApp.ViewModels
         ///     Button for help
         /// </summary>
         public ICommand ToggleHelpCallCommand { get; private set; }
+        public ICommand ToggleOpenEditCommand { get; private set; }
 
         private void InitializeServices()
         {
@@ -280,6 +281,11 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        public void ToggleOpenEditExecute()
+        {
+            _windowManager.ShowWindow<RedactorForm>();
+        }
+
         /// <summary>
         ///     Initialize all commands from main view model
         /// </summary>
@@ -288,6 +294,7 @@ namespace EA.DesktopApp.ViewModels
             ToggleWebServiceCommand = new RelayCommand(FaceDetectionServiceExecute);
             TogglePhotoShootServiceCommand = new RelayCommand(TogglePhotoShootServiceExecute);
             ToggleHelpCallCommand = new RelayCommand(ToggleHelpServiceExecute);
+            ToggleOpenEditCommand = new RelayCommand(ToggleOpenEditExecute);
         }
 
         /// <summary>
