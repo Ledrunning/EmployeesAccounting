@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.ServiceModel;
 using System.Threading;
@@ -228,6 +227,11 @@ namespace EA.DesktopApp.ViewModels
 
         private void ToggleClearFields()
         {
+            ClearFields();
+        }
+
+        private void ClearFields()
+        {
             PersonName = string.Empty;
             PersonLastName = string.Empty;
             PersonDepartment = string.Empty;
@@ -266,6 +270,7 @@ namespace EA.DesktopApp.ViewModels
                 {
                     await _employeeGatewayService.CreateAsync(employeeModel, _token);
                     _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
+                    ClearFields();
                 }
                 catch (CommunicationException e)
                 {

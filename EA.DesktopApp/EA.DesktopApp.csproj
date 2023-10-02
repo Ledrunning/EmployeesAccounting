@@ -185,7 +185,6 @@
     <Compile Include="Contracts\IEmployeeGatewayService.cs" />
     <Compile Include="Contracts\IFaceDetectionService.cs" />
     <Compile Include="Contracts\IPhotoShootService.cs" />
-    <Compile Include="Contracts\IEmployeeApi.cs" />
     <Compile Include="Contracts\ViewContracts\IWindowFactory.cs" />
     <Compile Include="Contracts\ViewContracts\IWindowManager.cs" />
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />

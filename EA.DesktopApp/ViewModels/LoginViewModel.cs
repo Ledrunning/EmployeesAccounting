@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -34,47 +37,31 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string Error => UiErrorResource.DataError;
 
-        /// <summary>
-        ///     Error indexer
-        /// </summary>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
         protected override string ValidateProperty(string columnName)
         {
+            var error = string.Empty;
+            var validationErrors = new List<ValidationResult>();
+            var validationContext = new ValidationContext(this) { MemberName = columnName };
+
+            if (!Validator.TryValidateProperty(GetType().GetProperty(columnName)?.GetValue(this, null), validationContext, validationErrors) && validationErrors.Any())
             {
-                var error = string.Empty;
-
-                switch (columnName)
-                {
-                    case nameof(LoginField):
-                        if (string.IsNullOrEmpty(LoginField))
-                        {
-                            error = UiErrorResource.EmptyLogin;
-                        }
-                        else if (string.IsNullOrWhiteSpace(LoginField))
-                        {
-                            error = UiErrorResource.SpaceInlogin;
-                        }
-
-                        break;
-
-                    case nameof(PasswordField):
-                        if (string.IsNullOrEmpty(PasswordField))
-                        {
-                            error = UiErrorResource.EmptyPassword;
-                        }
-                        else if (string.IsNullOrWhiteSpace(PasswordField))
-                        {
-                            error = UiErrorResource.SpaceInPassword;
-                        }
-
-                        break;
-                }
-
-                return error;
+                return validationErrors.First().ErrorMessage;
             }
-        }
 
+            switch (columnName)
+            {
+                case nameof(LoginField):
+                    error = UiErrorResource.SpaceInlogin;
+                    break;
+
+                case nameof(PasswordField):
+                    error = UiErrorResource.SpaceInPassword;
+                    break;
+            }
+
+            return error;
+        }
+        
         private bool IsPasswordChecked(string password)
         {
             return string.Equals(PasswordField, password, StringComparison.CurrentCulture);

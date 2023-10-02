@@ -18,22 +18,33 @@ namespace EA.DesktopApp.Rest
         _timeout = timeout;
     }
 
-    protected T GetContent<T>(RestResponseBase response, string url)
+    protected T GetContent<T>(RestResponseBase response)
     {
-        if (response.IsSuccessful)
+        CheckResponse(response);
+
+        var model = JsonConvert.DeserializeObject<T>(response.Content);
+        if (model != null)
         {
-            if (response.Content != null)
-            {
-                var model = JsonConvert.DeserializeObject<T>(response.Content);
-                if (model != null)
-                {
-                    return model;
-                }
-            }
+            return model;
         }
 
         throw new ApplicationException(
             $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
+    }
+
+    protected void CheckResponse(RestResponseBase response)
+    {
+        if (!response.IsSuccessful)
+        {
+            throw new ApplicationException(
+                $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
+        }
+
+        if (response.Content == null)
+        {
+            throw new ApplicationException(
+                $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
+        }
     }
 
     protected async Task<RestResponse> CreateRestClientAsync(Uri url, CancellationToken cancellationToken)
