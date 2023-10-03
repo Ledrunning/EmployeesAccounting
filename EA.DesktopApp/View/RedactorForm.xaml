@@ -28,7 +28,7 @@
             <TextBlock Grid.Row="0" Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                        Text="Name" />
 
-            <TextBox Grid.Row="1" Background="Transparent" Height="30" Width="140"
+            <TextBox Grid.Row="1" Height="30" Width="140"
                      TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
                 <TextBox.Text>
                     <Binding Path="PersonName" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">

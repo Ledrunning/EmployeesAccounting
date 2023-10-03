@@ -20,14 +20,24 @@ namespace EA.DesktopApp.ViewModels
         public string LoginField
         {
             get => _login;
-            set => SetField(ref _login, value, nameof(LoginField));
+            //set => SetField(ref _login, value, nameof(LoginField));
+            set
+            {
+                _login = value;
+                OnPropertyChanged(nameof(LoginField));
+            }
         }
 
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
             get => _password;
-            set => SetField(ref _password, value, nameof(PasswordField));
+            //set => SetField(ref _password, value, nameof(PasswordField));
+            set
+            {
+                _password = value;
+                OnPropertyChanged(nameof(PasswordField));
+            }
         }
 
         /// <summary>

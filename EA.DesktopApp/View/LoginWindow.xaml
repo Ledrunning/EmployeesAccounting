@@ -19,24 +19,14 @@
         </Grid.RowDefinitions>
         <!--DB buttons-->
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,120,30,62">
-            <TextBox.Text>
-                <Binding Path="LoginField" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <ExceptionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+        <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
+                 Text="{Binding Path=LoginField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                 TextWrapping="Wrap" Margin="140,120,30,62">
         </TextBox>
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,174,30,10">
-            <TextBox.Text>
-                <Binding Path="PasswordField" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <ExceptionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+        <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
+                 Text="{Binding Path=PasswordField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                 TextWrapping="Wrap" Margin="140,174,30,10">
         </TextBox>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"

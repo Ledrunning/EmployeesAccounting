@@ -40,28 +40,25 @@ namespace EA.DesktopApp.ViewModels
         protected override string ValidateProperty(string columnName)
         {
             var error = string.Empty;
-            var validationErrors = new List<ValidationResult>();
-            var validationContext = new ValidationContext(this) { MemberName = columnName };
-
-            if (!Validator.TryValidateProperty(GetType().GetProperty(columnName)?.GetValue(this, null), validationContext, validationErrors) && validationErrors.Any())
-            {
-                return validationErrors.First().ErrorMessage;
-            }
-
             switch (columnName)
             {
                 case nameof(LoginField):
-                    error = UiErrorResource.SpaceInlogin;
+                    if (string.IsNullOrWhiteSpace(LoginField))
+                    {
+                        error = UiErrorResource.EmptyLogin;
+                    }
                     break;
-
                 case nameof(PasswordField):
-                    error = UiErrorResource.SpaceInPassword;
+                    if (string.IsNullOrWhiteSpace(PasswordField))
+                    {
+                        error = UiErrorResource.EmptyPassword;
+                    }
                     break;
             }
-
             return error;
         }
-        
+
+
         private bool IsPasswordChecked(string password)
         {
             return string.Equals(PasswordField, password, StringComparison.CurrentCulture);
