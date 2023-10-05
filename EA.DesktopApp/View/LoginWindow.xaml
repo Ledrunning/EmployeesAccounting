@@ -21,11 +21,13 @@
 
         <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
                  Text="{Binding Path=LoginField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                 Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
                  TextWrapping="Wrap" Margin="140,120,30,62">
         </TextBox>
 
         <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
                  Text="{Binding Path=PasswordField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                 Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
                  TextWrapping="Wrap" Margin="140,174,30,10">
         </TextBox>
 

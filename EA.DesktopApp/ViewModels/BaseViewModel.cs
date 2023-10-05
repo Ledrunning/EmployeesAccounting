@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EA.DesktopApp.Resources.Messages;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
@@ -20,24 +21,14 @@ namespace EA.DesktopApp.ViewModels
         public string LoginField
         {
             get => _login;
-            //set => SetField(ref _login, value, nameof(LoginField));
-            set
-            {
-                _login = value;
-                OnPropertyChanged(nameof(LoginField));
-            }
+            set => SetField(ref _login, value, nameof(LoginField));
         }
 
         [Required(AllowEmptyStrings = false)]
         public string PasswordField
         {
             get => _password;
-            //set => SetField(ref _password, value, nameof(PasswordField));
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(PasswordField));
-            }
+            set => SetField(ref _password, value, nameof(PasswordField));
         }
 
         /// <summary>
@@ -91,9 +82,45 @@ namespace EA.DesktopApp.ViewModels
             OnPropertyChanged(propertyName);
         }
 
+        /// <summary>
+        ///     Error indexer
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
         protected virtual string ValidateProperty(string columnName)
         {
-            return string.Empty;
+            {
+                var error = string.Empty;
+
+                switch (columnName)
+                {
+                    case nameof(PersonName):
+                        if (string.IsNullOrEmpty(PersonName))
+                        {
+                            error = UiErrorResource.RegistrationName;
+                        }
+
+                        break;
+
+                    case nameof(PersonLastName):
+                        if (string.IsNullOrEmpty(PersonLastName))
+                        {
+                            error = UiErrorResource.RegistrationLastName;
+                        }
+
+                        break;
+
+                    case nameof(PersonDepartment):
+                        if (string.IsNullOrEmpty(PersonDepartment))
+                        {
+                            error = UiErrorResource.RegistrationDepartment;
+                        }
+
+                        break;
+                }
+
+                return error;
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -47,17 +44,19 @@ namespace EA.DesktopApp.ViewModels
                     {
                         error = UiErrorResource.EmptyLogin;
                     }
+
                     break;
                 case nameof(PasswordField):
                     if (string.IsNullOrWhiteSpace(PasswordField))
                     {
                         error = UiErrorResource.EmptyPassword;
                     }
+
                     break;
             }
+
             return error;
         }
-
 
         private bool IsPasswordChecked(string password)
         {

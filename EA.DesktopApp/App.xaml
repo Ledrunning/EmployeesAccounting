@@ -24,7 +24,8 @@
                 <!-- Office2013 Theme -->
                 <!--<ResourceDictionary Source="Themes/Office2013/Office2013.MSControls.Core.Implicit.xaml" />
                 <ResourceDictionary Source="Themes/Office2013/Office2013.MSControls.Toolkit.Implicit.xaml" /> -->
-
+                <!-- Merge the external resource dictionary -->
+                <ResourceDictionary Source="View/ResourceDictionary/ValidationStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- <SolidColorBrush x:Key="BackgroundKey" Color="#FFFFFF" /> -->
@@ -45,14 +46,24 @@
             </Style>
 
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                <Setter Property="Background" Value="{StaticResource BackgroundKey}" />
                 <Style.Triggers>
                     <Trigger Property="Validation.HasError" Value="true">
                         <Setter Property="BorderBrush" Value="Red"/>
                         <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="Background" Value="Transparent" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            <ControlTemplate x:Key="BasicValidationErrorTemplate">
+                <StackPanel>
+                    <!-- Placeholder for the TextBox itself -->
+                    <AdornedElementPlaceholder/>
+                    <!-- Display error message as a tooltip -->
+                    <TextBlock Foreground="Red"
+                               Text="{Binding [0].ErrorContent}"
+                               ToolTip="{Binding [0].ErrorContent}"/>
+                </StackPanel>
+            </ControlTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

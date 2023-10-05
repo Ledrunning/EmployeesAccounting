@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTemplate x:Key="ValidationErrorTemplate">
+        <Grid>
+            <AdornedElementPlaceholder/>
+            <Border Background="#22FF0000" IsHitTestVisible="False">
+                <TextBlock Foreground="Red" 
+                           Text="{Binding [0].ErrorContent}" 
+                           Margin="5,0" 
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Opacity="0.7">
+                    <TextBlock.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                            <GradientStop Color="#00000000" Offset="0" />
+                            <GradientStop Color="#FF000000" Offset="0.1" />
+                            <GradientStop Color="#FF000000" Offset="0.9" />
+                            <GradientStop Color="#00000000" Offset="1" />
+                        </LinearGradientBrush>
+                    </TextBlock.OpacityMask>
+                </TextBlock>
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+</ResourceDictionary>

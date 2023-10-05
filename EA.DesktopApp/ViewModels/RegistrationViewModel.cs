@@ -123,47 +123,6 @@ namespace EA.DesktopApp.ViewModels
 
         #endregion ToolTip properties
 
-        /// <summary>
-        ///     Error indexer
-        /// </summary>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        protected override string ValidateProperty(string columnName)
-        {
-            {
-                var error = string.Empty;
-
-                switch (columnName)
-                {
-                    case nameof(PersonName):
-                        if (string.IsNullOrEmpty(PersonName))
-                        {
-                            error = UiErrorResource.RegistrationName;
-                        }
-
-                        break;
-
-                    case nameof(PersonLastName):
-                        if (string.IsNullOrEmpty(PersonLastName))
-                        {
-                            error = UiErrorResource.RegistrationLastName;
-                        }
-
-                        break;
-
-                    case nameof(PersonDepartment):
-                        if (string.IsNullOrEmpty(PersonDepartment))
-                        {
-                            error = UiErrorResource.RegistrationDepartment;
-                        }
-
-                        break;
-                }
-
-                return error;
-            }
-        }
-
         #region Image fields
 
         private Bitmap _grayScaleImage;
