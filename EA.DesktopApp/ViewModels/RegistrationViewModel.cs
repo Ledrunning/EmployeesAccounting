@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Globalization;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Input;
@@ -31,11 +29,8 @@ namespace EA.DesktopApp.ViewModels
 
         private readonly IPhotoShootService _photoShootService;
         private readonly ISoundPlayerService _soundPlayerService;
-        private readonly IWindowManager _windowManager;
         private readonly CancellationToken _token;
-
-        private bool _isReady;
-        private bool _takePhotoFlag;
+        private readonly IWindowManager _windowManager;
 
         /// <summary>
         ///     .ctor
@@ -51,19 +46,6 @@ namespace EA.DesktopApp.ViewModels
             InitializeServices();
             InitializeCommands();
             WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
-        }
-
-        /// <summary>
-        ///     Start webCam service button toggle
-        /// </summary>
-        public bool IsReady
-        {
-            get => _isReady;
-            set
-            {
-                _isReady = value;
-                OnPropertyChanged();
-            }
         }
 
         private void OnWindowClosingBehavior(object sender, EventArgs e)
@@ -87,6 +69,7 @@ namespace EA.DesktopApp.ViewModels
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
             ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
+            ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
         }
 
         /// <summary>
@@ -140,69 +123,6 @@ namespace EA.DesktopApp.ViewModels
 
         #endregion ToolTip properties
 
-        #region TextBox properties
-
-        /// <summary>
-        ///     Binding person name to TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonName { get; set; }
-
-        /// <summary>
-        ///     Binding person last name TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonLastName { get; set; }
-
-        /// <summary>
-        ///     Binding person department TextBox
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string PersonDepartment { get; set; }
-
-        /// <summary>
-        ///     Error indexer
-        /// </summary>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        protected override string ValidateProperty(string columnName)
-        {
-            {
-                var error = string.Empty;
-
-                switch (columnName)
-                {
-                    case nameof(PersonName):
-                        if (string.IsNullOrEmpty(PersonName))
-                        {
-                            error = UiErrorResource.RegistrationName;
-                        }
-
-                        break;
-
-                    case nameof(PersonLastName):
-                        if (string.IsNullOrEmpty(PersonLastName))
-                        {
-                            error = UiErrorResource.RegistrationLastName;
-                        }
-
-                        break;
-
-                    case nameof(PersonDepartment):
-                        if (string.IsNullOrEmpty(PersonDepartment))
-                        {
-                            error = UiErrorResource.RegistrationDepartment;
-                        }
-
-                        break;
-                }
-
-                return error;
-            }
-        }
-
-        #endregion TextBox properties
-
         #region Image fields
 
         private Bitmap _grayScaleImage;
@@ -251,23 +171,31 @@ namespace EA.DesktopApp.ViewModels
         public ICommand ToggleCameraCaptureCommand { get; private set; }
 
         /// <summary>
-        ///     Toogle to photoshoot save by open file dialog
-        /// </summary>
-        public ICommand ToggleSavePhotoCommand { get; private set; }
-
-        /// <summary>
         ///     Toogle to add image to data base
         /// </summary>
         public ICommand ToggleAddToDbCommand { get; private set; }
 
         /// <summary>
-        ///     Toogle to add image to data base
+        ///     Toogle clear fields
         /// </summary>
-        public ICommand ToggleEditFormCommand => null;
+        public ICommand ToggleClearFormCommand { get; private set; }
 
         #endregion Command properties
 
         #region Toggles Execute methods
+
+        private void ToggleClearFields()
+        {
+            ClearFields();
+        }
+
+        private void ClearFields()
+        {
+            PersonName = string.Empty;
+            PersonLastName = string.Empty;
+            PersonDepartment = string.Empty;
+            GrayScaleImage = null;
+        }
 
         /// <summary>
         ///     Send image into Data base
@@ -276,7 +204,7 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
-            Image resultImage = PhotoShootGray.ToBitmap();
+            var resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
             var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
 
@@ -287,8 +215,7 @@ namespace EA.DesktopApp.ViewModels
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.Now,
                 Photo = imageArray,
-                PhotoName =
-                    $"Employee_{PersonName}_{PersonLastName}{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}"
+                PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
             };
 
             if (employeeModel.Name == null || employeeModel.LastName == null
@@ -302,6 +229,7 @@ namespace EA.DesktopApp.ViewModels
                 {
                     await _employeeGatewayService.CreateAsync(employeeModel, _token);
                     _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
+                    ClearFields();
                 }
                 catch (CommunicationException e)
                 {
@@ -325,7 +253,6 @@ namespace EA.DesktopApp.ViewModels
 
             // Get grayscale and send into BitmapToImageSourceConverter
             GrayScaleImage = PhotoShootGray.ToBitmap();
-            _takePhotoFlag = true;
         }
 
         #endregion Toggles Execute methods

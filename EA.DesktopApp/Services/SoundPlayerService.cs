@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using EA.DesktopApp.Contracts;
-using EA.DesktopApp.Properties;
+using NLog;
 
 namespace EA.DesktopApp.Services
 {
     /// <summary>
     ///     Class for sound effects playing extends ISoundPlayerService
     /// </summary>
-    public class SoundPlayerService : ISoundPlayerService
+    public class SoundPlayerService : ISoundPlayerService, IDisposable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public const string ButtonSound = "button";
         public const string CameraSound = "camera";
 
@@ -41,10 +43,15 @@ namespace EA.DesktopApp.Services
                 player.Stream = _sounds[sound];
                 player.Play();
             }
-            finally
+            catch (Exception e)
             {
-                player?.Dispose();
+                Logger.Error("Sound player error {e}", e);
             }
+        }
+
+        public void Dispose()
+        {
+            player?.Dispose();
         }
     }
 }

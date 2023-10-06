@@ -9,6 +9,8 @@ using EA.DesktopApp.Services;
 using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels;
+using EA.RecognizerEngine.Contracts;
+using EA.RecognizerEngine.Engines;
 using NLog;
 
 namespace EA.DesktopApp.DiSetup
@@ -38,6 +40,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
                 builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
+                builder.RegisterType<LbphFaceRecognition>().As<ILbphFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
@@ -55,6 +58,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<LoginWindow>().InstancePerDependency(); 
                 builder.RegisterType<LoginViewModel>().InstancePerDependency();
 
+                builder.RegisterType<RedactorForm>().InstancePerDependency();
                 builder.RegisterType<RedactorViewModel>().InstancePerDependency();
                 
                 builder.RegisterType<RegistrationForm>().InstancePerDependency();

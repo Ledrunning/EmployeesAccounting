@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
-using EA.DesktopApp.Helpers;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -35,45 +34,29 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string Error => UiErrorResource.DataError;
 
-        /// <summary>
-        ///     Error indexer
-        /// </summary>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
         protected override string ValidateProperty(string columnName)
         {
+            var error = string.Empty;
+            switch (columnName)
             {
-                var error = string.Empty;
+                case nameof(LoginField):
+                    if (string.IsNullOrWhiteSpace(LoginField))
+                    {
+                        error = UiErrorResource.EmptyLogin;
+                    }
 
-                switch (columnName)
-                {
-                    case nameof(LoginField):
-                        if (string.IsNullOrEmpty(LoginField))
-                        {
-                            error = UiErrorResource.EmptyLogin;
-                        }
-                        else if (string.IsNullOrWhiteSpace(LoginField))
-                        {
-                            error = UiErrorResource.SpaceInlogin;
-                        }
+                    break;
+                case nameof(PasswordField):
+                    if (string.IsNullOrWhiteSpace(PasswordField))
+                    {
+                        error = UiErrorResource.EmptyPassword;
+                    }
 
-                        break;
-
-                    case nameof(PasswordField):
-                        if (string.IsNullOrEmpty(PasswordField))
-                        {
-                            error = UiErrorResource.EmptyPassword;
-                        }
-                        else if (string.IsNullOrWhiteSpace(PasswordField))
-                        {
-                            error = UiErrorResource.SpaceInPassword;
-                        }
-
-                        break;
-                }
-
-                return error;
+                    break;
             }
+
+            CheckFieldErrors(columnName, error);
+            return error;
         }
 
         private bool IsPasswordChecked(string password)

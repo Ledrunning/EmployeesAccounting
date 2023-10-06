@@ -4,6 +4,7 @@ namespace EA.DesktopApp.Contracts
 {
     public interface IFaceDetectionService
     {
+        string EmployeeName { get; set; }
         bool IsRunning { get; }
         event ImageChangedEventHandler FaceDetectionImageChanged;
         void Dispose();

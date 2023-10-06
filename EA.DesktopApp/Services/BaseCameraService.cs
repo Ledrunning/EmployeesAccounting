@@ -74,7 +74,6 @@ namespace EA.DesktopApp.Services
                 catch (Exception ex)
                 {
                     Logger.Error("Web camera worker error {ex}", ex);
-                    throw;
                 }
                 finally
                 {

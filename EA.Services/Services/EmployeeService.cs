@@ -7,9 +7,11 @@ using EA.Repository.Contracts;
 using EA.Repository.Entities;
 using EA.Services.Contracts;
 using EA.Services.Dto;
+using EA.Services.Extension;
 
 namespace EA.Services.Services;
 
+//TODO - handle exceptions!!
 public class EmployeeService : IEmployeeService
 {
     private const string FolderName = "EmployeePhoto";
@@ -29,25 +31,32 @@ public class EmployeeService : IEmployeeService
     }
 
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllWithPhotoAsync(CancellationToken cancellationToken)
-    { 
+    {
         var employees = await _employeeRepository.ListAsync(cancellationToken);
+        var employeeDtos = new List<EmployeeDto>();
 
         foreach (var employee in employees)
         {
-            if (employee.PhotoPath == null)
+            byte[]? photoData = null;
+
+            if (!string.IsNullOrEmpty(employee.PhotoPath) && File.Exists(employee.PhotoPath))
             {
-                continue;
+                try
+                {
+                    photoData = await File.ReadAllBytesAsync(employee.PhotoPath, cancellationToken);
+                }
+                catch(Exception e)
+                {
+                    throw new EmployeeAccountingException("Error while reading image file: ", e);
+                }
             }
 
-            await using var fileStream = File.Open(employee.PhotoPath, FileMode.Open);
-            {
-                //TODO: как тут быть?
-            }
+            employeeDtos.Add(employee.ToEmployeeDto(photoData));
         }
 
-        //TODO: как тут быть?
-        return _mapper.Map<IReadOnlyList<EmployeeDto>>(employees);
+        return employeeDtos;
     }
+
 
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllAsync(CancellationToken cancellationToken)
     {
@@ -61,7 +70,12 @@ public class EmployeeService : IEmployeeService
         return _mapper.Map<EmployeeDto>(employee);
     }
 
-    //TODO need to test
+    public async Task<string?> GetNameByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+        return $"{employee?.Name} {employee?.LastName}";
+    }
+
     public async Task AddAsync(EmployeeDto employee, CancellationToken cancellationToken)
     {
         try
@@ -98,7 +112,7 @@ public class EmployeeService : IEmployeeService
 
             using var memoryStream = new MemoryStream(employee.Photo);
             var image = Image.FromStream(memoryStream);
-            image.Save($"{PhotoDataPath}\\{employee.Name}", ImageFormat.Jpeg);
+            image.Save($"{PhotoDataPath}\\{employee.PhotoName}", ImageFormat.Jpeg);
         }
         catch (Exception e)
         {

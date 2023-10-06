@@ -24,123 +24,105 @@
         <Image Name="v_Image_Frame"
                Source="{Binding PhotoShootFrame, Converter={StaticResource BitmapToImageSourceConverter}}"
                Stretch="Uniform" Margin="0,0,4,0" />
-        <Image Grid.Column="1" Grid.Row="0" Name="v_Photo_Frame"
-               Source="{Binding GrayScaleImage, Converter={StaticResource BitmapToImageSourceConverter}}"
-               Stretch="Uniform" Margin="0,194,4,0" />
-        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleCameraCaptureCommand}"
-                VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="#FF00AADE" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Photo" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding TakePicture}" />
-            </Button.ToolTip>
-        </Button>
-        <!--DB buttons-->
-        <Button Grid.Row="1" Height="24" Width="90" Command="{Binding ToggleAddToDbCommand}" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="10">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="#FF00AADE" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <!--<Setter Property="BorderBrush" Value="Black"/>-->
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Add" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding AddPerson}" />
-            </Button.ToolTip>
-        </Button>
+        
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleEditFormCommand}"
-                VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="#FF00AADE" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Edit" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding DeletePerson}" />
-            </Button.ToolTip>
-        </Button>
+            <Button Grid.Column="0" Height="24" Width="90" Command="{Binding ToggleCameraCaptureCommand}"
+                    VerticalAlignment="Center" Content="Shoot" HorizontalAlignment="Left" Margin="6,0,0,0">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="#FF00AADE" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                </Button.Style>
+                <Button.ToolTip>
+                    <ToolTip HasDropShadow="True" Content="{Binding TakePicture}" />
+                </Button.ToolTip>
+            </Button>
+            <!--DB buttons-->
+            <Button Grid.Column="1" Height="24" Width="90" Command="{Binding ToggleAddToDbCommand}"
+                    VerticalAlignment="Center"
+                    IsEnabled="{Binding IsButtonEnable}"
+                    HorizontalAlignment="Center" Content="Add">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="#FF00AADE" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                </Button.Style>
+                <Button.ToolTip>
+                    <ToolTip HasDropShadow="True" Content="{Binding AddPerson}" />
+                </Button.ToolTip>
+            </Button>
+
+            <Button Grid.Column="2" Height="24" Width="90" Command="{Binding ToggleClearFormCommand}"
+                    VerticalAlignment="Center" Content="Clear" HorizontalAlignment="Left" Margin="31,0,0,0">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="#FF00AADE" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                </Button.Style>
+                <Button.ToolTip>
+                    <ToolTip HasDropShadow="True" Content="{Binding DeletePerson}" />
+                </Button.ToolTip>
+            </Button>
+        </Grid>
 
         <StackPanel Grid.Row="0" Grid.Column="1">
-
-            <TextBlock Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" Text="Name" />
-            <TextBox Background="Transparent" Height="30" Width="140"
-                     TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-                <TextBox.Text>
-                    <Binding Path="PersonName" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
-                <TextBox.ToolTip>
-                    <ToolTip HasDropShadow="True" Content="{Binding EnterPersonName}" />
-                </TextBox.ToolTip>
-            </TextBox>
-            <TextBlock Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14" Text="Name" />
+                <TextBox Grid.Row="1" Background="Transparent" Height="30" Width="140"
+                         Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                         Text="{Binding Path=PersonName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
+                    <TextBox.ToolTip>
+                        <ToolTip HasDropShadow="True" Content="{Binding EnterPersonName}" />
+                    </TextBox.ToolTip>
+                </TextBox>
+                <TextBlock Grid.Row="2" Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                        Text="Last name" />
 
-            <TextBox Background="Transparent" Height="30" Width="140"
-                     TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-
-                <TextBox.Text>
-                    <Binding Path="PersonLastName" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
-                <TextBox.ToolTip>
-                    <ToolTip HasDropShadow="True" Content="{Binding EnterPersonLastName}" />
-                </TextBox.ToolTip>
-            </TextBox>
-            <TextBlock Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
+                <TextBox Grid.Row="3" Background="Transparent" Height="30" Width="140"
+                         Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                         Text="{Binding Path=PersonLastName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
+                    <TextBox.ToolTip>
+                        <ToolTip HasDropShadow="True" Content="{Binding EnterPersonLastName}" />
+                    </TextBox.ToolTip>
+                </TextBox>
+                <TextBlock Grid.Row="4" Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                        Text="Department" />
 
-            <TextBox Background="Transparent" Height="30" Width="140"
-                     TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-
-                <TextBox.Text>
-                    <Binding Path="PersonDepartment" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
-                <TextBox.ToolTip>
-                    <ToolTip HasDropShadow="True" Content="{Binding EnterPersonDepartment}" />
-                </TextBox.ToolTip>
-            </TextBox>
+                <TextBox Grid.Row="5" Background="Transparent" Height="30" Width="140"
+                         Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                         Text="{Binding Path=PersonDepartment, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
+                    <TextBox.ToolTip>
+                        <ToolTip HasDropShadow="True" Content="{Binding EnterPersonDepartment}" />
+                    </TextBox.ToolTip>
+                </TextBox>
+                <Image Grid.Row="6" Name="v_Photo_Frame"
+                       Source="{Binding GrayScaleImage, Converter={StaticResource BitmapToImageSourceConverter}}"
+                       Stretch="Fill" />
+            </Grid>
         </StackPanel>
     </Grid>
 </Window>

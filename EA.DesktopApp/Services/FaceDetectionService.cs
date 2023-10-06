@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using NLog;
 
@@ -31,19 +31,21 @@ namespace EA.DesktopApp.Services
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService() 
+        public FaceDetectionService()
         {
             InitializeClassifier();
             ImageChanged -= OnFaceDetectionFound;
             ImageChanged += OnFaceDetectionFound;
         }
 
+        public string EmployeeName { get; set; }
+
         public event ImageChangedEventHandler FaceDetectionImageChanged;
 
+        //TODO Put EmployeeName instead of hardcoded literal 
         private void OnFaceDetectionFound(Image<Bgr, byte> image)
         {
             DetectFaces(image);
-            FaceDetectionImageChanged?.Invoke(image);
         }
 
         private void InitializeClassifier()
@@ -86,7 +88,13 @@ namespace EA.DesktopApp.Services
                     image.Draw(eye, ImageProcessingConstants.RectanglesColor,
                         ImageProcessingConstants.RectangleThickness);
                 }
+
+                SetBackgroundText(image, "Osman Mazinov",
+                    face.Location,
+                    ImageProcessingConstants.TextColor);
             }
+
+            FaceDetectionImageChanged?.Invoke(image);
         }
 
         private static Rectangle[] GetRectangles(CascadeClassifier classifier, IInputArray grayFrame)
@@ -96,6 +104,18 @@ namespace EA.DesktopApp.Services
                 ImageProcessingConstants.MinimumNeighbors,
                 Size.Empty);
             return rectangles;
+        }
+
+        private void SetBackgroundText(IInputOutputArray image, string text, Point point, Bgr textColor,
+            double fontScale = 1.0)
+        {
+            CvInvoke.PutText(
+                image,
+                text,
+                point,
+                FontFace.HersheyComplex,
+                fontScale,
+                textColor.MCvScalar);
         }
     }
 }

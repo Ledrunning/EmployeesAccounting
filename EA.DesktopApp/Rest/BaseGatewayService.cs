@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -17,25 +18,36 @@ namespace EA.DesktopApp.Rest
         _timeout = timeout;
     }
 
-    protected T GetContent<T>(RestResponseBase response, string url)
+    protected T GetContent<T>(RestResponseBase response)
     {
-        if (response.IsSuccessful)
+        CheckResponse(response);
+
+        var model = JsonConvert.DeserializeObject<T>(response.Content);
+        if (model != null)
         {
-            if (response.Content != null)
-            {
-                var model = JsonConvert.DeserializeObject<T>(response.Content);
-                if (model != null)
-                {
-                    return model;
-                }
-            }
+            return model;
         }
 
         throw new ApplicationException(
             $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
     }
 
-    protected async Task<RestResponse> CreateRestClient(Uri url, CancellationToken cancellationToken)
+    protected void CheckResponse(RestResponseBase response)
+    {
+        if (!response.IsSuccessful)
+        {
+            throw new ApplicationException(
+                $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
+        }
+
+        if (response.Content == null)
+        {
+            throw new ApplicationException(
+                $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
+        }
+    }
+
+    protected async Task<RestResponse> CreateRestClientAsync(Uri url, CancellationToken cancellationToken)
     {
         var client = new RestClient(SetOptions(url));
         var request = new RestRequest();
@@ -49,12 +61,19 @@ namespace EA.DesktopApp.Rest
             $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
     }
 
-    protected async Task<RestResponse> CreateRestClient<T>(T entity, Uri url, CancellationToken cancellationToken)
+    protected async Task<RestResponse> CreateRestClientAsync<T>(T entity, Uri url, CancellationToken cancellationToken)
     {
         var client = new RestClient(SetOptions(url));
         var json = JsonConvert.SerializeObject(entity);
         var request = new RestRequest(url, Method.Post);
         request.AddParameter("text/json", json, ParameterType.RequestBody);
+
+        // Basic Authorization
+        const string username = "Modern";
+        const string password = "Warfare";
+        var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+        request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+
         var response = await client.ExecuteAsync(request, cancellationToken);
         if (response.IsSuccessful)
         {
