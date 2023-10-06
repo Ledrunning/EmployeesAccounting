@@ -28,16 +28,10 @@
             <TextBlock Grid.Row="0" Height="28" Width="90" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
                        Text="Name" />
 
-            <TextBox Grid.Row="1" Background="Transparent" Height="30" Width="140"
+            <TextBox Grid.Row="1" Height="30" Width="140"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                     Text="{Binding Path=PersonName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                      TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-                <TextBox.Text>
-                    <Binding Path="PersonName" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
                 <TextBox.ToolTip>
                     <ToolTip HasDropShadow="True" Content="{Binding EnterPersonName}" />
                 </TextBox.ToolTip>
@@ -47,16 +41,9 @@
                        FontSize="14" Text="Last Name" />
 
             <TextBox Grid.Row="3" Background="Transparent" Height="30" Width="140"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                     Text="{Binding Path=PersonLastName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                      TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-
-                <TextBox.Text>
-                    <Binding Path="PersonLastName" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
                 <TextBox.ToolTip>
                     <ToolTip HasDropShadow="True" Content="{Binding EnterPersonLastName}" />
                 </TextBox.ToolTip>
@@ -66,23 +53,17 @@
                        FontSize="14" Text="Department" />
 
             <TextBox Grid.Row="5" Background="Transparent" Height="30" Width="140"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
+                     Text="{Binding Path=PersonDepartment, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                      TextAlignment="Center" Foreground="White" HorizontalAlignment="Center">
-
-                <TextBox.Text>
-                    <Binding Path="PersonDepartment" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <ExceptionValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>
-
                 <TextBox.ToolTip>
                     <ToolTip HasDropShadow="True" Content="{Binding EnterPersonDepartment}" />
                 </TextBox.ToolTip>
             </TextBox>
 
         </Grid>
-        <Button Grid.Row="1" Height="24" Width="90" Content="Update" Command="{Binding }"
+        <Button Grid.Column="0" Grid.Row="1" Height="24" Width="90" Content="Update" Command="{Binding }"
+                IsEnabled="{Binding IsButtonEnable}"
                 VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
@@ -98,6 +79,7 @@
         <!--DB buttons-->
         <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Content="Delete" Command="{Binding }"
                 VerticalAlignment="Center"
+                IsEnabled="{Binding IsButtonEnable}"
                 HorizontalAlignment="Center" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">

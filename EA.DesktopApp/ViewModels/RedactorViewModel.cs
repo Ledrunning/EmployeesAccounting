@@ -6,11 +6,11 @@ namespace EA.DesktopApp.ViewModels
 {
     public class RedactorViewModel : BaseViewModel
     {
-        private readonly IEmployeeGatewayService _eployeeService;
+        private readonly IEmployeeGatewayService _employeeService;
 
-        public RedactorViewModel(IEmployeeGatewayService eployeeService)
+        public RedactorViewModel(IEmployeeGatewayService employeeService)
         {
-            _eployeeService = eployeeService;
+            _employeeService = employeeService;
             InitializeCommands();
         }
 
