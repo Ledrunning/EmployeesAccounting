@@ -48,6 +48,7 @@
             <!--DB buttons-->
             <Button Grid.Column="1" Height="24" Width="90" Command="{Binding ToggleAddToDbCommand}"
                     VerticalAlignment="Center"
+                    IsEnabled="{Binding IsButtonEnable}"
                     HorizontalAlignment="Center" Content="Add">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">

@@ -55,6 +55,7 @@ namespace EA.DesktopApp.ViewModels
                     break;
             }
 
+            CheckFieldErrors(columnName, error);
             return error;
         }
 
