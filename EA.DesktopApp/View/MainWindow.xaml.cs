@@ -2,6 +2,7 @@
 using System.Windows;
 using Autofac;
 using EA.DesktopApp.DiSetup;
+using System.ComponentModel;
 
 namespace EA.DesktopApp.View
 {
@@ -15,5 +16,11 @@ namespace EA.DesktopApp.View
             InitializeComponent();
             DataContext = AutofacConfigure.Container.Resolve<MainViewModel>();
         }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            AutofacConfigure.Container.Dispose(); 
+        }
+
     }
 }
