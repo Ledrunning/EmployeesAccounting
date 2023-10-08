@@ -189,7 +189,7 @@ namespace EA.DesktopApp.ViewModels
             ClearFields();
         }
 
-        private void ClearFields()
+        protected override void ClearFields()
         {
             PersonName = string.Empty;
             PersonLastName = string.Empty;
@@ -213,7 +213,7 @@ namespace EA.DesktopApp.ViewModels
                 Name = PersonName,
                 LastName = PersonLastName,
                 Department = PersonDepartment,
-                DateTime = DateTimeOffset.Now,
+                DateTime = DateTimeOffset.UtcNow,
                 Photo = imageArray,
                 PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
             };

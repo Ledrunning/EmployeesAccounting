@@ -51,7 +51,13 @@ namespace EA.DesktopApp.Rest
     {
         var client = new RestClient(SetOptions(url));
         var request = new RestRequest();
-        var response = await client.ExecuteAsync(request, cancellationToken);
+        // Basic Authorization
+        const string username = "Modern";
+        const string password = "Warfare";
+        var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+        request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+
+            var response = await client.ExecuteAsync(request, cancellationToken);
         if (response.IsSuccessful)
         {
             return response;
