@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
-        Title="Employees Accounting" Height="400" Width="535" MinHeight="400" MaxHeight="500" MinWidth="535"
-        MaxWidth="800">
+        Title="Employees Accounting" Height="400" Width="545" MinHeight="400" MinWidth="535">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -108,10 +107,18 @@
         </Button>
 
 
-        <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" RowBackground="Transparent"
-                  HorizontalAlignment="Left" Height="304" Margin="10,10,0,0" VerticalAlignment="Top" Width="357"
-                  ItemsSource="{Binding AllEmployees}" AutoGenerateColumns="true"
-                  SelectedItem="{Binding SelectedProduct}">
+        <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" 
+                  RowBackground="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  ItemsSource="{Binding AllEmployees}" AutoGenerateColumns="false"
+                  SelectedItem="{Binding SelectedProduct}" IsReadOnly="true">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Width="*" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Last Name" Width="*" Binding="{Binding LastName}"/>
+                <DataGridTextColumn Header="Department" Width="*" Binding="{Binding Department}"/>
+                <DataGridTextColumn Header="Created time" Width="*" Binding="{Binding DateTime}"/>
+                <DataGridTextColumn Header="Photo name" Width="*" Binding="{Binding PhotoName}"/>
+            </DataGrid.Columns>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="Transparent" />

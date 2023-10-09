@@ -16,13 +16,5 @@ namespace EA.DesktopApp.View
             InitializeComponent();
             DataContext = AutofacConfigure.Container.Resolve<RegistrationViewModel>();
         }
-
-        public bool IsClosed { get; private set; }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            IsClosed = true;
-        }
     }
 }

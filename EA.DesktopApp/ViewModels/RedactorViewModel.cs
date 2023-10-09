@@ -24,6 +24,7 @@ namespace EA.DesktopApp.ViewModels
             _employeeService = employeeService;
             InitializeCommands();
 
+            //TODO need to think, how use it asynchronously
             LoadData().ConfigureAwait(false);
         }
 
@@ -71,8 +72,8 @@ namespace EA.DesktopApp.ViewModels
 
         private void InitializeCommands()
         {
-            ToggleDeleteCommand = new RelayCommand(ToggleDeleteExecute);
-            ToggleUpdateToDbCommand = new RelayCommand(ToggleUpdateExecute);
+            ToggleDeleteCommand = new RelayCommand(async () => await ToggleDeleteExecute());
+            ToggleUpdateToDbCommand = new RelayCommand(async () => await ToggleUpdateExecute());
             ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
         }
 
@@ -90,11 +91,20 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
-        private void ToggleDeleteExecute()
+        private async Task ToggleDeleteExecute()
         {
+            try
+            {
+                await _employeeService.DeleteAsync(SelectedProduct.Id, CancellationToken.None);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        private void ToggleUpdateExecute()
+        private async Task ToggleUpdateExecute()
         {
             try
             {
@@ -106,7 +116,7 @@ namespace EA.DesktopApp.ViewModels
                     Department = SelectedProduct.Department,
                 };
 
-                _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
+                await _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
             }
             catch (Exception e)
             {

@@ -272,7 +272,8 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                Process.Start(@"Help\intro.html");
+                _windowManager.ShowModalWindow("An error occurred in opening the Help file!");
+                //Process.Start(@"Help\intro.html");
             }
             catch (Exception e)
             {
