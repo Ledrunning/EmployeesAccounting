@@ -10,10 +10,10 @@ namespace EA.DesktopApp.View
     /// </summary>
     public partial class ModalWindow : Window
     {
-        public ModalWindow()
+        public ModalWindow(ModalViewModel viewModel)
         {
             InitializeComponent();
-            DataContext = AutofacConfigure.Container.Resolve<ModalViewModel>();
+            DataContext = viewModel;
         }
     }
 }

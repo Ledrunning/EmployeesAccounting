@@ -21,8 +21,8 @@ namespace EA.DesktopApp.Services.ViewServices
 
         public TWindow GetWindow<TWindow>(string message) where TWindow : Window
         {
-            var viewModel = _scope.Resolve<ModalViewModel>(new NamedParameter("initialMessage", message));
-            return _scope.Resolve<TWindow>(new NamedParameter("viewModel", viewModel));
+            return _scope.Resolve<TWindow>(new NamedParameter("initialMessage", message));
         }
+
     }
 }

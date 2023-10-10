@@ -6,7 +6,7 @@ using EA.DesktopApp.ViewModels.Commands;
 
 namespace EA.DesktopApp.ViewModels
 {
-    internal class ModalViewModel : BaseViewModel
+    public class ModalViewModel : BaseViewModel
     {
         private readonly IWindowManager _windowManager;
         private string _warningText;
