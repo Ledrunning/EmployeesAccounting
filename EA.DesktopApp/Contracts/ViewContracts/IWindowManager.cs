@@ -7,5 +7,6 @@ namespace EA.DesktopApp.Contracts.ViewContracts
         void ShowWindow<T>() where T : Window, new();
         void CloseWindow<T>() where T : Window;
         void ShowModalWindow(string message);
+        void CloseModalWindow();
     }
 }

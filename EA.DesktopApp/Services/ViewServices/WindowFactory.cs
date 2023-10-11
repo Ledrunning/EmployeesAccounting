@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using Autofac;
 using EA.DesktopApp.Contracts.ViewContracts;
-using EA.DesktopApp.ViewModels;
 
 namespace EA.DesktopApp.Services.ViewServices
 {
@@ -21,8 +20,9 @@ namespace EA.DesktopApp.Services.ViewServices
 
         public TWindow GetWindow<TWindow>(string message) where TWindow : Window
         {
-            return _scope.Resolve<TWindow>(new NamedParameter("initialMessage", message));
+            var viewModelFactory = _scope.Resolve<IModalViewModelFactory>();
+            var viewModel = viewModelFactory.Create(message);
+            return _scope.Resolve<TWindow>(new NamedParameter("viewModel", viewModel));
         }
-
     }
 }

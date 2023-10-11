@@ -1,6 +1,5 @@
 ﻿using EA.DesktopApp.DiSetup;
 using EA.DesktopApp.ViewModels;
-using System;
 using System.Windows;
 using Autofac;
 
