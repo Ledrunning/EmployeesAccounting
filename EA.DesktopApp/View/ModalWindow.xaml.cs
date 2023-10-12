@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using EA.DesktopApp.DiSetup;
+using EA.DesktopApp.ViewModels;
+using System.Windows;
+using Autofac;
 
 namespace EA.DesktopApp.View
 {
@@ -7,9 +10,10 @@ namespace EA.DesktopApp.View
     /// </summary>
     public partial class ModalWindow : Window
     {
-        public ModalWindow()
+        public ModalWindow(ModalViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

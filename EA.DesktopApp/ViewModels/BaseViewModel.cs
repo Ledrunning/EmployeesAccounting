@@ -146,8 +146,7 @@ namespace EA.DesktopApp.ViewModels
             PersonLastName = string.Empty;
             PersonDepartment = string.Empty;
         }
-
-
+        
         protected void CheckFieldErrors(string columnName, string error)
         {
             if (string.IsNullOrEmpty(error) && errors.ContainsKey(columnName))
