@@ -185,6 +185,7 @@
     <Compile Include="Contracts\IEmployeeGatewayService.cs" />
     <Compile Include="Contracts\IFaceDetectionService.cs" />
     <Compile Include="Contracts\IPhotoShootService.cs" />
+    <Compile Include="Contracts\ViewContracts\IModalViewModelFactory.cs" />
     <Compile Include="Contracts\ViewContracts\IWindowFactory.cs" />
     <Compile Include="Contracts\ViewContracts\IWindowManager.cs" />
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayerService.cs" />
+    <Compile Include="Services\ViewServices\ModalViewModelFactory.cs" />
     <Compile Include="Services\ViewServices\WindowFactory.cs" />
     <Compile Include="Services\ViewServices\WindowManager.cs" />
     <Compile Include="Resources\Messages\UiErrorResource.Designer.cs">

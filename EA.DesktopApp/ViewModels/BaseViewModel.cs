@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace EA.DesktopApp.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
+    public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private string _login;
         private string _password;
@@ -140,6 +140,13 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        protected virtual void ClearFields()
+        {
+            PersonName = string.Empty;
+            PersonLastName = string.Empty;
+            PersonDepartment = string.Empty;
+        }
+        
         protected void CheckFieldErrors(string columnName, string error)
         {
             if (string.IsNullOrEmpty(error) && errors.ContainsKey(columnName))

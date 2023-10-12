@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
-        Title="Employees Accounting" Height="400" Width="535" MinHeight="400" MaxHeight="500" MinWidth="535"
-        MaxWidth="800">
+        Title="Employees Accounting" Height="400" Width="545" MinHeight="400" MinWidth="535">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -62,7 +61,7 @@
             </TextBox>
 
         </Grid>
-        <Button Grid.Column="0" Grid.Row="1" Height="24" Width="90" Content="Update" Command="{Binding }"
+        <Button Grid.Column="0" Grid.Row="1" Height="24" Width="90" Content="Update" Command="{Binding ToggleUpdateToDbCommand}"
                 IsEnabled="{Binding IsButtonEnable}"
                 VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10">
             <Button.Style>
@@ -77,7 +76,7 @@
             </Button.ToolTip>
         </Button>
         <!--DB buttons-->
-        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Content="Delete" Command="{Binding }"
+        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Content="Delete" Command="{Binding ToggleDeleteCommand}"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding IsButtonEnable}"
                 HorizontalAlignment="Center" Margin="10">
@@ -93,7 +92,7 @@
             </Button.ToolTip>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Content="Clear" Command="{Binding }"
+        <Button Grid.Row="1" Grid.Column="0" Height="24" Width="90" Content="Clear" Command="{Binding ToggleClearFormCommand}"
                 VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
@@ -108,16 +107,26 @@
         </Button>
 
 
-        <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" RowBackground="Transparent"
-                  HorizontalAlignment="Left" Height="304" Margin="10,10,0,0" VerticalAlignment="Top" Width="357">
+        <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" 
+                  RowBackground="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  ItemsSource="{Binding AllEmployees}" AutoGenerateColumns="false"
+                  SelectedItem="{Binding SelectedProduct}" IsReadOnly="true">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Width="*" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Last Name" Width="*" Binding="{Binding LastName}"/>
+                <DataGridTextColumn Header="Department" Width="*" Binding="{Binding Department}"/>
+                <DataGridTextColumn Header="Created time" Width="*" Binding="{Binding DateTime}"/>
+                <DataGridTextColumn Header="Photo name" Width="*" Binding="{Binding PhotoName}"/>
+            </DataGrid.Columns>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="FontWeight" Value="Bold" />
-                    <Setter Property="Foreground" Value="Blue" />
+                    <Setter Property="Foreground" Value="#FF00AADE" />
                 </Style>
             </DataGrid.ColumnHeaderStyle>
-
+            
             <DataGrid.RowHeaderStyle>
                 <Style TargetType="{x:Type DataGridRowHeader}">
                     <Setter Property="Background" Value="Transparent" />

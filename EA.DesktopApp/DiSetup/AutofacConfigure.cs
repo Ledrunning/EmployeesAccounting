@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading;
+using System.Windows;
 using Autofac;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -40,6 +41,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<WindowFactory>().As<IWindowFactory>().SingleInstance();
                 builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
+                builder.RegisterType<ModalViewModelFactory>().As<IModalViewModelFactory>().SingleInstance();
                 builder.RegisterType<LbphFaceRecognition>().As<ILbphFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
@@ -52,6 +54,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<AdminForm>().InstancePerDependency();
                 builder.RegisterType<AdminViewModel>().InstancePerDependency();
 
+                builder.RegisterType<Window>().InstancePerDependency(); 
                 builder.RegisterType<ModalWindow>().InstancePerDependency(); 
                 builder.RegisterType<ModalViewModel>().InstancePerDependency(); 
 

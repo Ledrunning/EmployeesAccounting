@@ -9,10 +9,15 @@ namespace EA.DesktopApp.Services.ViewServices
 {
     public class WindowManager : IWindowManager
     {
-        private readonly Dictionary<(Type, Window), bool> _windowClosedFlags = new Dictionary<(Type, Window), bool>();
+        private const double ResizeScale = 0.25;
+
+        private readonly Dictionary<(Type type, Window window), bool> _windowClosedFlags =
+            new Dictionary<(Type, Window), bool>();
 
 
         private readonly IWindowFactory _windowFactory;
+
+        private ModalWindow currentModalWindow;
 
         public WindowManager(IWindowFactory windowFactory)
         {
@@ -21,11 +26,46 @@ namespace EA.DesktopApp.Services.ViewServices
 
         public void ShowWindow<T>() where T : Window, new()
         {
-            T windowInstance;
+            var windowInstance = WindowMemorize<T>();
 
-            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
+            windowInstance.Owner = Application.Current.MainWindow;
+            windowInstance.Show();
+        }
+
+        public void CloseWindow<T>() where T : Window
+        {
+            var existingWindow = _windowClosedFlags.Keys
+                .FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
 
             if (existingWindow == null)
+            {
+                return;
+            }
+
+            existingWindow.Close();
+            _windowClosedFlags[(typeof(T), existingWindow)] = true;
+        }
+
+        public void ShowModalWindow(string message)
+        {
+            currentModalWindow = _windowFactory.GetWindow<ModalWindow>(message);
+            currentModalWindow.Owner = Application.Current.MainWindow;
+            currentModalWindow.Height = SystemParameters.PrimaryScreenHeight * ResizeScale;
+            currentModalWindow.Width = SystemParameters.PrimaryScreenWidth * ResizeScale;
+            currentModalWindow.Show();
+        }
+
+        public void CloseModalWindow()
+        {
+            currentModalWindow?.Close();
+        }
+
+        private T WindowMemorize<T>() where T : Window, new()
+        {
+            T windowInstance;
+
+            if (!(_windowClosedFlags.Keys.FirstOrDefault(k => k.type == typeof(T) && !_windowClosedFlags[k]).window is T
+                    existingWindow))
             {
                 windowInstance = (T)_windowFactory.GetWindow<T>();
                 windowInstance.Closed += (sender, e) =>
@@ -42,28 +82,7 @@ namespace EA.DesktopApp.Services.ViewServices
                 windowInstance = existingWindow;
             }
 
-            windowInstance.Owner = Application.Current.MainWindow;
-            windowInstance.Show();
-        }
-
-        public void CloseWindow<T>() where T : Window
-        {
-            var existingWindow = _windowClosedFlags.Keys.FirstOrDefault(k => k.Item1 == typeof(T) && !_windowClosedFlags[k]).Item2 as T;
-
-            if (existingWindow == null)
-            {
-                return;
-            }
-
-            existingWindow.Close();
-            _windowClosedFlags[(typeof(T), existingWindow)] = true;
-        }
-
-        public void ShowModalWindow(string message)
-        {
-            var modalWindow = _windowFactory.GetWindow<ModalWindow>(message);
-            modalWindow.Owner = Application.Current.MainWindow;
-            modalWindow.Show();
+            return windowInstance;
         }
     }
 }

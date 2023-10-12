@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.ServiceModel;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
@@ -68,7 +69,7 @@ namespace EA.DesktopApp.ViewModels
         private void InitializeCommands()
         {
             ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            ToggleAddToDbCommand = new RelayCommand(ToggleAddImageToDataBase);
+            ToggleAddToDbCommand = new RelayCommand(async () => await ToggleAddImageToDataBase());
             ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
         }
 
@@ -189,7 +190,7 @@ namespace EA.DesktopApp.ViewModels
             ClearFields();
         }
 
-        private void ClearFields()
+        protected override void ClearFields()
         {
             PersonName = string.Empty;
             PersonLastName = string.Empty;
@@ -200,7 +201,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Send image into Data base
         /// </summary>
-        private async void ToggleAddImageToDataBase()
+        private async Task ToggleAddImageToDataBase()
         {
             _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
@@ -213,11 +214,11 @@ namespace EA.DesktopApp.ViewModels
                 Name = PersonName,
                 LastName = PersonLastName,
                 Department = PersonDepartment,
-                DateTime = DateTimeOffset.Now,
+                DateTime = DateTimeOffset.UtcNow,
                 Photo = imageArray,
                 PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
             };
-
+            //If something weny wrong in UI side checking
             if (employeeModel.Name == null || employeeModel.LastName == null
                                            || employeeModel.Department == null)
             {
