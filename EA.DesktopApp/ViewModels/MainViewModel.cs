@@ -204,16 +204,24 @@ namespace EA.DesktopApp.ViewModels
         {
             var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth,
                 ImageProcessingConstants.GrayPhotoHeight);
-            var employees = await _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
-
-            foreach (var employee in employees)
+            try
             {
-                depthImage.Bytes = employee.Photo;
+                var employees = await _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
 
-                _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                foreach (var employee in employees)
+                {
+                    depthImage.Bytes = employee.Photo;
+
+                    _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                }
+
+                _faceRecognitionService.Train();
             }
-
-            _faceRecognitionService.Train();
+            catch (Exception e)
+            {
+                Logger.Info("Failed to train recognizer {e}", e);
+                _windowManager.ShowModalWindow("Failed to train recognizer");
+            }
         }
 
         /// <summary>

@@ -5,22 +5,33 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.ViewModels.Commands;
+using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
     // TODO: Dont forget about cancellation token
+    /// <summary>
+    ///     If your data set is relatively small and doesn't change frequently
+    ///     (especially by external systems or other users),
+    ///     updating the ObservableCollection directly is a good choice
+    ///     due to the performance and immediate feedback benefits.
+    /// </summary>
     public class RedactorViewModel : BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
+        private readonly IWindowManager _windowManager;
 
         private ObservableCollection<EmployeeModel> _employees;
 
         private EmployeeModel _selectedProduct;
 
-        public RedactorViewModel(IEmployeeGatewayService employeeService)
+        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService)
         {
+            _windowManager = windowManager;
             _employeeService = employeeService;
             InitializeCommands();
 
@@ -63,8 +74,6 @@ namespace EA.DesktopApp.ViewModels
                 return;
             }
 
-            // Do something with the selected product, e.g., display its details
-            //MessageBox.Show($"Selected Product: {SelectedProduct.Name}");
             PersonName = SelectedProduct.Name;
             PersonLastName = SelectedProduct.LastName;
             PersonDepartment = SelectedProduct.Department;
@@ -86,8 +95,8 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to load employees from server {e}", e);
+                _windowManager.ShowModalWindow("Failed to load employees from server");
             }
         }
 
@@ -96,11 +105,12 @@ namespace EA.DesktopApp.ViewModels
             try
             {
                 await _employeeService.DeleteAsync(SelectedProduct.Id, CancellationToken.None);
+                AllEmployees.Remove(SelectedProduct);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to delete employee {e}", e);
+                _windowManager.ShowModalWindow("Failed to delete employee");
             }
         }
 
@@ -108,20 +118,35 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                var updatedEmployeeData = new EmployeeModel()
+                var updatedEmployeeData = new EmployeeModel
                 {
                     DateTime = DateTimeOffset.UtcNow,
                     Name = SelectedProduct.Name,
                     LastName = SelectedProduct.LastName,
-                    Department = SelectedProduct.Department,
+                    Department = SelectedProduct.Department
                 };
 
                 await _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
+
+                UpdateGridCollection(updatedEmployeeData);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to update employee data {e}", e);
+                _windowManager.ShowModalWindow("Failed to update employee data");
+            }
+        }
+
+        private void UpdateGridCollection(EmployeeModel updatedEmployeeData)
+        {
+            // Find the employee in the ObservableCollection and update its properties
+            var employeeToUpdate = AllEmployees.FirstOrDefault(e => e.Id == SelectedProduct.Id);
+            if (employeeToUpdate != null)
+            {
+                employeeToUpdate.DateTime = updatedEmployeeData.DateTime;
+                employeeToUpdate.Name = updatedEmployeeData.Name;
+                employeeToUpdate.LastName = updatedEmployeeData.LastName;
+                employeeToUpdate.Department = updatedEmployeeData.Department;
             }
         }
 
