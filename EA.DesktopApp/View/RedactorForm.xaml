@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
+        Loaded="OnWindowLoaded"
         Title="Employees Accounting" Height="400" Width="545" MinHeight="400" MinWidth="535">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -126,12 +127,17 @@
                     <Setter Property="Foreground" Value="#FF00AADE" />
                 </Style>
             </DataGrid.ColumnHeaderStyle>
-            
+
             <DataGrid.RowHeaderStyle>
                 <Style TargetType="{x:Type DataGridRowHeader}">
                     <Setter Property="Background" Value="Transparent" />
                 </Style>
             </DataGrid.RowHeaderStyle>
         </DataGrid>
+        <ProgressBar Grid.Column="0" Grid.Row="0"
+            Visibility="{Binding IsProgressVisible}"
+            IsIndeterminate="{Binding IsDataLoadIndeterminate}"
+            HorizontalAlignment="Center" VerticalAlignment="Center" 
+            Height="10" Width="180"/>
     </Grid>
 </Window>

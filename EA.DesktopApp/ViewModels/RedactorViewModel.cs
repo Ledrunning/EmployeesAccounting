@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
@@ -19,7 +20,7 @@ namespace EA.DesktopApp.ViewModels
     ///     updating the ObservableCollection directly is a good choice
     ///     due to the performance and immediate feedback benefits.
     /// </summary>
-    public class RedactorViewModel : BaseViewModel
+    public class RedactorViewModel : BaseViewModel, IAsyncInitializer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
@@ -34,19 +35,28 @@ namespace EA.DesktopApp.ViewModels
             _windowManager = windowManager;
             _employeeService = employeeService;
             InitializeCommands();
+        }
 
-            //TODO need to think, how use it asynchronously
-            LoadData().ConfigureAwait(false);
+        private Visibility _isProgressvisible = Visibility.Hidden;
+
+        public Visibility IsProgressVisible
+        {
+            get => _isProgressvisible;
+            set => SetField(ref _isProgressvisible, value);
+        }
+
+        private bool _isDataLoadIndeterminate;
+
+        public bool IsDataLoadIndeterminate
+        {
+            get => _isDataLoadIndeterminate;
+            set => SetField(ref _isDataLoadIndeterminate, value);
         }
 
         public ObservableCollection<EmployeeModel> AllEmployees
         {
             get => _employees;
-            set
-            {
-                _employees = value;
-                OnPropertyChanged(nameof(AllEmployees));
-            }
+            set => SetField(ref _employees , value);
         }
 
         public EmployeeModel SelectedProduct
@@ -54,8 +64,7 @@ namespace EA.DesktopApp.ViewModels
             get => _selectedProduct;
             set
             {
-                _selectedProduct = value;
-                OnPropertyChanged();
+                SetField(ref _selectedProduct, value);
                 // Handle the selection change
                 OnProductSelected();
             }
@@ -153,6 +162,15 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleClearFields()
         {
             ClearFields();
+        }
+
+        public async Task InitializeAsync()
+        {
+            IsProgressVisible = Visibility.Visible;
+            IsDataLoadIndeterminate = true;
+            await LoadData().ConfigureAwait(false);
+            IsProgressVisible = Visibility.Hidden;
+            IsDataLoadIndeterminate = false;
         }
     }
 }

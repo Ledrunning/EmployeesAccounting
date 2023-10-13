@@ -96,7 +96,7 @@
                                 <Setter Property="IsEnabled" Value="False" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsRunning}" Value="False">
-                                <Setter Property="Content" Value="Photo" />
+                                <Setter Property="Content" Value="Add new" />
                                 <Setter Property="IsEnabled" Value="True" />
                             </DataTrigger>
                         </Style.Triggers>

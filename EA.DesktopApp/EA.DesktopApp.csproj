@@ -182,6 +182,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\ImageProcessingConstants.cs" />
+    <Compile Include="Contracts\IAsyncInitializer.cs" />
     <Compile Include="Contracts\IEmployeeGatewayService.cs" />
     <Compile Include="Contracts\IFaceDetectionService.cs" />
     <Compile Include="Contracts\IPhotoShootService.cs" />
