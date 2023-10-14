@@ -92,8 +92,16 @@ public class EmployeeService : IEmployeeService
 
     public async Task UpdateAsync(EmployeeDto employee, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<Employee>(employee);
-        await _employeeRepository.UpdateAsync(entity, cancellationToken);
+        try
+        {
+            var entity = _mapper.Map<Employee>(employee);
+            await _employeeRepository.UpdateAsync(entity, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)

@@ -111,7 +111,7 @@
         <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" 
                   RowBackground="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ItemsSource="{Binding AllEmployees}" AutoGenerateColumns="false"
-                  SelectedItem="{Binding SelectedProduct}" IsReadOnly="true">
+                  SelectedItem="{Binding SelectedEmployee}" IsReadOnly="true">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Width="*" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>

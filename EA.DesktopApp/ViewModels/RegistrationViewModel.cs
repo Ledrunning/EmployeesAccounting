@@ -214,7 +214,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    await _employeeGatewayService.CreateAsync(employeeModel, _token);
+                    await ExecuteAsync(() => _employeeGatewayService.CreateAsync(employeeModel, _token));
                     _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
                     ClearFields();
                 }

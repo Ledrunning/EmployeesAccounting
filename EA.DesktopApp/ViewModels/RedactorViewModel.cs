@@ -25,10 +25,8 @@ namespace EA.DesktopApp.ViewModels
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
         private readonly IWindowManager _windowManager;
-
         private ObservableCollection<EmployeeModel> _employees;
-
-        private EmployeeModel _selectedProduct;
+        private EmployeeModel _selectedEmployee;
 
         public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService)
         {
@@ -37,34 +35,18 @@ namespace EA.DesktopApp.ViewModels
             InitializeCommands();
         }
 
-        private Visibility _isProgressvisible = Visibility.Hidden;
-
-        public Visibility IsProgressVisible
-        {
-            get => _isProgressvisible;
-            set => SetField(ref _isProgressvisible, value);
-        }
-
-        private bool _isDataLoadIndeterminate;
-
-        public bool IsDataLoadIndeterminate
-        {
-            get => _isDataLoadIndeterminate;
-            set => SetField(ref _isDataLoadIndeterminate, value);
-        }
-
         public ObservableCollection<EmployeeModel> AllEmployees
         {
             get => _employees;
-            set => SetField(ref _employees , value);
+            set => SetField(ref _employees, value);
         }
 
-        public EmployeeModel SelectedProduct
+        public EmployeeModel SelectedEmployee
         {
-            get => _selectedProduct;
+            get => _selectedEmployee;
             set
             {
-                SetField(ref _selectedProduct, value);
+                SetField(ref _selectedEmployee, value);
                 // Handle the selection change
                 OnProductSelected();
             }
@@ -76,16 +58,21 @@ namespace EA.DesktopApp.ViewModels
 
         public ICommand ToggleClearFormCommand { get; private set; }
 
+        public async Task InitializeAsync()
+        {
+            await ExecuteAsync(LoadData);
+        }
+
         private void OnProductSelected()
         {
-            if (SelectedProduct == null)
+            if (SelectedEmployee == null)
             {
                 return;
             }
 
-            PersonName = SelectedProduct.Name;
-            PersonLastName = SelectedProduct.LastName;
-            PersonDepartment = SelectedProduct.Department;
+            PersonName = SelectedEmployee.Name;
+            PersonLastName = SelectedEmployee.LastName;
+            PersonDepartment = SelectedEmployee.Department;
         }
 
         private void InitializeCommands()
@@ -113,8 +100,8 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                await _employeeService.DeleteAsync(SelectedProduct.Id, CancellationToken.None);
-                AllEmployees.Remove(SelectedProduct);
+                await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, CancellationToken.None));
+                AllEmployees.Remove(SelectedEmployee);
             }
             catch (Exception e)
             {
@@ -129,13 +116,15 @@ namespace EA.DesktopApp.ViewModels
             {
                 var updatedEmployeeData = new EmployeeModel
                 {
+                    Id = SelectedEmployee.Id,
                     DateTime = DateTimeOffset.UtcNow,
-                    Name = SelectedProduct.Name,
-                    LastName = SelectedProduct.LastName,
-                    Department = SelectedProduct.Department
+                    Name = SelectedEmployee.Name,
+                    LastName = SelectedEmployee.LastName,
+                    Department = SelectedEmployee.Department,
+                    PhotoName = SelectedEmployee.PhotoName,
                 };
 
-                await _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
+                await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None));
 
                 UpdateGridCollection(updatedEmployeeData);
             }
@@ -149,28 +138,21 @@ namespace EA.DesktopApp.ViewModels
         private void UpdateGridCollection(EmployeeModel updatedEmployeeData)
         {
             // Find the employee in the ObservableCollection and update its properties
-            var employeeToUpdate = AllEmployees.FirstOrDefault(e => e.Id == SelectedProduct.Id);
-            if (employeeToUpdate != null)
+            var employeeToUpdate = AllEmployees.FirstOrDefault(e => e.Id == SelectedEmployee.Id);
+            if (employeeToUpdate == null)
             {
-                employeeToUpdate.DateTime = updatedEmployeeData.DateTime;
-                employeeToUpdate.Name = updatedEmployeeData.Name;
-                employeeToUpdate.LastName = updatedEmployeeData.LastName;
-                employeeToUpdate.Department = updatedEmployeeData.Department;
+                return;
             }
+
+            employeeToUpdate.DateTime = updatedEmployeeData.DateTime;
+            employeeToUpdate.Name = updatedEmployeeData.Name;
+            employeeToUpdate.LastName = updatedEmployeeData.LastName;
+            employeeToUpdate.Department = updatedEmployeeData.Department;
         }
 
         private void ToggleClearFields()
         {
             ClearFields();
-        }
-
-        public async Task InitializeAsync()
-        {
-            IsProgressVisible = Visibility.Visible;
-            IsDataLoadIndeterminate = true;
-            await LoadData().ConfigureAwait(false);
-            IsProgressVisible = Visibility.Hidden;
-            IsDataLoadIndeterminate = false;
         }
     }
 }

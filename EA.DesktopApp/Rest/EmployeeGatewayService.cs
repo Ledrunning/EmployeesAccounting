@@ -46,7 +46,7 @@ namespace EA.DesktopApp.Rest
 
         public async Task UpdateAsync(EmployeeModel employee, CancellationToken cancellationToken)
         {
-            var url = new Uri($"{BaseUrl}");
+            var url = new Uri($"{BaseUrl}/api/Employee/Update");
             var response = await CreateRestClientAsync(employee, url, cancellationToken);
             CheckResponse(response);
         }

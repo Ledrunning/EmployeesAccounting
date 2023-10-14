@@ -1,23 +1,38 @@
-﻿using EA.DesktopApp.Resources.Messages;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using EA.DesktopApp.Resources.Messages;
 
 namespace EA.DesktopApp.ViewModels
 {
     public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
+        private bool _hasErrors;
+        private bool _isDataLoadIndeterminate;
+        private Visibility _isProgressVisible = Visibility.Hidden;
         private string _login;
         private string _password;
-
         private string _personDepartment;
-
         private string _personLastName;
-
         private string _personName;
 
         protected Dictionary<string, string> errors = new Dictionary<string, string>();
+
+        public Visibility IsProgressVisible
+        {
+            get => _isProgressVisible;
+            set => SetField(ref _isProgressVisible, value);
+        }
+
+        public bool IsDataLoadIndeterminate
+        {
+            get => _isDataLoadIndeterminate;
+            set => SetField(ref _isDataLoadIndeterminate, value);
+        }
 
         [Required(AllowEmptyStrings = false)]
         public string LoginField
@@ -63,7 +78,6 @@ namespace EA.DesktopApp.ViewModels
             set => SetField(ref _personDepartment, value, nameof(PersonDepartment));
         }
 
-        private bool _hasErrors;
         public bool HasErrors
         {
             private get => _hasErrors;
@@ -71,7 +85,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 _hasErrors = value;
                 SetField(ref _hasErrors, value, nameof(HasErrors));
-                OnPropertyChanged(nameof(IsButtonEnable)); 
+                OnPropertyChanged(nameof(IsButtonEnable));
             }
         }
 
@@ -140,13 +154,29 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        protected virtual async Task ExecuteAsync(Func<Task> execute)
+        {
+            IsProgressVisible = Visibility.Visible;
+            IsDataLoadIndeterminate = true;
+
+            try
+            {
+                await execute.Invoke();
+            }
+            finally
+            {
+                IsProgressVisible = Visibility.Hidden;
+                IsDataLoadIndeterminate = false;
+            }
+        }
+
         protected virtual void ClearFields()
         {
             PersonName = string.Empty;
             PersonLastName = string.Empty;
             PersonDepartment = string.Empty;
         }
-        
+
         protected void CheckFieldErrors(string columnName, string error)
         {
             if (string.IsNullOrEmpty(error) && errors.ContainsKey(columnName))
