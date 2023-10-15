@@ -70,6 +70,15 @@ namespace EA.DesktopApp.Resources.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Employee_{0}_{1}_{2:MMddyyyy_HHmmss}.jpg.
+        /// </summary>
+        internal static string FileName {
+            get {
+                return ResourceManager.GetString("FileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Press to get a program help.
         /// </summary>
         internal static string HelpTooltipMessage {

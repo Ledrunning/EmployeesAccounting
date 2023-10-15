@@ -8,6 +8,7 @@ using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.ViewModels.Commands;
 using NLog;
 
@@ -118,10 +119,10 @@ namespace EA.DesktopApp.ViewModels
                 {
                     Id = SelectedEmployee.Id,
                     DateTime = DateTimeOffset.UtcNow,
-                    Name = SelectedEmployee.Name,
-                    LastName = SelectedEmployee.LastName,
-                    Department = SelectedEmployee.Department,
-                    PhotoName = SelectedEmployee.PhotoName,
+                    Name = PersonName,
+                    LastName = PersonLastName,
+                    Department = PersonDepartment,
+                    PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow),
                 };
 
                 await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None));

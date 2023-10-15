@@ -193,6 +193,7 @@
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />
+    <Compile Include="Exceptions\ApiException .cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Resources\Messages\ProgramResources.Designer.cs">
