@@ -42,8 +42,11 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService,
-            IEmployeeGatewayService employeeGatewayService, IWindowManager windowManager, CancellationToken token)
+        public RegistrationViewModel(IPhotoShootService photoShootService, 
+            ISoundPlayerService soundPlayerService,
+            IEmployeeGatewayService employeeGatewayService, 
+            IWindowManager windowManager, 
+            CancellationToken token)
         {
             _photoShootService = photoShootService;
             _soundPlayerService = soundPlayerService;

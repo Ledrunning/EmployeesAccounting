@@ -14,25 +14,20 @@ using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
-    // TODO: Dont forget about cancellation token
-    /// <summary>
-    ///     If your data set is relatively small and doesn't change frequently
-    ///     (especially by external systems or other users),
-    ///     updating the ObservableCollection directly is a good choice
-    ///     due to the performance and immediate feedback benefits.
-    /// </summary>
     public class RedactorViewModel : BaseViewModel, IAsyncInitializer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
+        private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
         private ObservableCollection<EmployeeModel> _employees;
         private EmployeeModel _selectedEmployee;
 
-        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService)
+        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService, CancellationToken token)
         {
             _windowManager = windowManager;
             _employeeService = employeeService;
+            _token = token;
             InitializeCommands();
         }
 
@@ -87,7 +82,7 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                var loadedData = await _employeeService.GetAllEmployeeAsync(CancellationToken.None);
+                var loadedData = await _employeeService.GetAllEmployeeAsync(_token);
                 AllEmployees = new ObservableCollection<EmployeeModel>(loadedData.ToList());
             }
             catch (Exception e)
@@ -101,8 +96,8 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, CancellationToken.None));
-                AllEmployees.Remove(SelectedEmployee);
+                await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, _token));
+                await LoadData();
             }
             catch (Exception e)
             {
@@ -125,9 +120,9 @@ namespace EA.DesktopApp.ViewModels
                     PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow),
                 };
 
-                await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None));
+                await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, _token));
 
-                UpdateGridCollection(updatedEmployeeData);
+                await LoadData();
             }
             catch (Exception e)
             {
@@ -135,22 +130,7 @@ namespace EA.DesktopApp.ViewModels
                 _windowManager.ShowModalWindow("Failed to update employee data");
             }
         }
-
-        private void UpdateGridCollection(EmployeeModel updatedEmployeeData)
-        {
-            // Find the employee in the ObservableCollection and update its properties
-            var employeeToUpdate = AllEmployees.FirstOrDefault(e => e.Id == SelectedEmployee.Id);
-            if (employeeToUpdate == null)
-            {
-                return;
-            }
-
-            employeeToUpdate.DateTime = updatedEmployeeData.DateTime;
-            employeeToUpdate.Name = updatedEmployeeData.Name;
-            employeeToUpdate.LastName = updatedEmployeeData.LastName;
-            employeeToUpdate.Department = updatedEmployeeData.Department;
-        }
-
+        
         private void ToggleClearFields()
         {
             ClearFields();

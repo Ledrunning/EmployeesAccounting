@@ -8,10 +8,10 @@ using EA.Repository.Entities;
 using EA.Services.Contracts;
 using EA.Services.Dto;
 using EA.Services.Extension;
+using Microsoft.Extensions.Logging;
 
 namespace EA.Services.Services;
 
-//TODO - handle exceptions!!
 public class EmployeeService : IEmployeeService
 {
     private const string FolderName = "EmployeePhoto";
@@ -22,11 +22,13 @@ public class EmployeeService : IEmployeeService
 
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<EmployeeService> _logger;
 
-    public EmployeeService(IEmployeeRepository employeeRepository, IMapper mapper)
+    public EmployeeService(IEmployeeRepository employeeRepository, IMapper mapper, ILogger<EmployeeService> logger)
     {
         _employeeRepository = employeeRepository;
         _mapper = mapper;
+        _logger = logger;
         CreateFolder();
     }
 
@@ -47,6 +49,7 @@ public class EmployeeService : IEmployeeService
                 }
                 catch(Exception e)
                 {
+                    _logger.LogError("Error while reading image file: {e}", e);
                     throw new EmployeeAccountingException("Error while reading image file: ", e);
                 }
             }
@@ -56,24 +59,47 @@ public class EmployeeService : IEmployeeService
 
         return employeeDtos;
     }
-
-
+    
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.ListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<EmployeeDto>>(employee);
+        try
+        {
+            var employee = await _employeeRepository.ListAsync(cancellationToken);
+            return _mapper.Map<IReadOnlyList<EmployeeDto>>(employee);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get all employee: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get all employee", e);
+        }
     }
 
     public async Task<EmployeeDto?> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
-        return _mapper.Map<EmployeeDto>(employee);
+        try
+        {
+            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            return _mapper.Map<EmployeeDto>(employee);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an employee by Id: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an employee by Id", e);
+        }
     }
 
     public async Task<string?> GetNameByIdAsync(long id, CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
-        return $"{employee?.Name} {employee?.LastName}";
+        try
+        {
+            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            return $"{employee?.Name} {employee?.LastName}";
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an employee name by Id: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an employee name by Id", e);
+        }
     }
 
     public async Task AddAsync(EmployeeDto employee, CancellationToken cancellationToken)
@@ -86,7 +112,8 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
-            throw new EmployeeAccountingException("Failed to add employee into database!", e);
+            _logger.LogError("Failed to add an employee to the database!: {e}", e);
+            throw new EmployeeAccountingException("Failed to add an employee to the database!", e);
         }
     }
 
@@ -99,17 +126,25 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            _logger.LogError("Failed to update an employee in database!: {e}", e);
+            throw new EmployeeAccountingException("Failed to update an employee in database!", e);
         }
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
     {
-        await _employeeRepository.DeleteAsync(id, cancellationToken);
+        try
+        {
+            await _employeeRepository.DeleteAsync(id, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to delete an employee in database!: {e}", e);
+            throw new EmployeeAccountingException("Failed to delete an employee in database!", e);
+        }
     }
 
-    private static void SaveImage(EmployeeDto employee)
+    private void SaveImage(EmployeeDto employee)
     {
         try
         {
@@ -124,11 +159,12 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
-            throw new EmployeeAccountingException("Error while saving image file into server folder!", e);
+            _logger.LogError("Error while saving an image file into server folder!: {e}", e);
+            throw new EmployeeAccountingException("Error while saving an image file into server folder!", e);
         }
     }
 
-    private static void CreateFolder()
+    private void CreateFolder()
     {
         try
         {
@@ -139,7 +175,8 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
-            throw new EmployeeAccountingException("Error while creating the folder", e);
+            _logger.LogError("Error while creating a folder: {e}", e);
+            throw new EmployeeAccountingException("Error while creating a folder", e);
         }
     }
 }
