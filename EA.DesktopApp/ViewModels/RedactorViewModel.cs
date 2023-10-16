@@ -3,59 +3,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.ViewModels.Commands;
 using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
-    // TODO: Dont forget about cancellation token
-    /// <summary>
-    ///     If your data set is relatively small and doesn't change frequently
-    ///     (especially by external systems or other users),
-    ///     updating the ObservableCollection directly is a good choice
-    ///     due to the performance and immediate feedback benefits.
-    /// </summary>
-    public class RedactorViewModel : BaseViewModel
+    public class RedactorViewModel : BaseViewModel, IAsyncInitializer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
+        private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
-
         private ObservableCollection<EmployeeModel> _employees;
+        private EmployeeModel _selectedEmployee;
 
-        private EmployeeModel _selectedProduct;
-
-        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService)
+        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService, CancellationToken token)
         {
             _windowManager = windowManager;
             _employeeService = employeeService;
+            _token = token;
             InitializeCommands();
-
-            //TODO need to think, how use it asynchronously
-            LoadData().ConfigureAwait(false);
         }
 
         public ObservableCollection<EmployeeModel> AllEmployees
         {
             get => _employees;
-            set
-            {
-                _employees = value;
-                OnPropertyChanged(nameof(AllEmployees));
-            }
+            set => SetField(ref _employees, value);
         }
 
-        public EmployeeModel SelectedProduct
+        public EmployeeModel SelectedEmployee
         {
-            get => _selectedProduct;
+            get => _selectedEmployee;
             set
             {
-                _selectedProduct = value;
-                OnPropertyChanged();
+                SetField(ref _selectedEmployee, value);
                 // Handle the selection change
                 OnProductSelected();
             }
@@ -67,16 +54,21 @@ namespace EA.DesktopApp.ViewModels
 
         public ICommand ToggleClearFormCommand { get; private set; }
 
+        public async Task InitializeAsync()
+        {
+            await ExecuteAsync(LoadData);
+        }
+
         private void OnProductSelected()
         {
-            if (SelectedProduct == null)
+            if (SelectedEmployee == null)
             {
                 return;
             }
 
-            PersonName = SelectedProduct.Name;
-            PersonLastName = SelectedProduct.LastName;
-            PersonDepartment = SelectedProduct.Department;
+            PersonName = SelectedEmployee.Name;
+            PersonLastName = SelectedEmployee.LastName;
+            PersonDepartment = SelectedEmployee.Department;
         }
 
         private void InitializeCommands()
@@ -90,7 +82,7 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                var loadedData = await _employeeService.GetAllEmployeeAsync(CancellationToken.None);
+                var loadedData = await _employeeService.GetAllEmployeeAsync(_token);
                 AllEmployees = new ObservableCollection<EmployeeModel>(loadedData.ToList());
             }
             catch (Exception e)
@@ -104,8 +96,8 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                await _employeeService.DeleteAsync(SelectedProduct.Id, CancellationToken.None);
-                AllEmployees.Remove(SelectedProduct);
+                await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, _token));
+                await LoadData();
             }
             catch (Exception e)
             {
@@ -120,15 +112,17 @@ namespace EA.DesktopApp.ViewModels
             {
                 var updatedEmployeeData = new EmployeeModel
                 {
+                    Id = SelectedEmployee.Id,
                     DateTime = DateTimeOffset.UtcNow,
-                    Name = SelectedProduct.Name,
-                    LastName = SelectedProduct.LastName,
-                    Department = SelectedProduct.Department
+                    Name = PersonName,
+                    LastName = PersonLastName,
+                    Department = PersonDepartment,
+                    PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow),
                 };
 
-                await _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
+                await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, _token));
 
-                UpdateGridCollection(updatedEmployeeData);
+                await LoadData();
             }
             catch (Exception e)
             {
@@ -136,20 +130,7 @@ namespace EA.DesktopApp.ViewModels
                 _windowManager.ShowModalWindow("Failed to update employee data");
             }
         }
-
-        private void UpdateGridCollection(EmployeeModel updatedEmployeeData)
-        {
-            // Find the employee in the ObservableCollection and update its properties
-            var employeeToUpdate = AllEmployees.FirstOrDefault(e => e.Id == SelectedProduct.Id);
-            if (employeeToUpdate != null)
-            {
-                employeeToUpdate.DateTime = updatedEmployeeData.DateTime;
-                employeeToUpdate.Name = updatedEmployeeData.Name;
-                employeeToUpdate.LastName = updatedEmployeeData.LastName;
-                employeeToUpdate.Department = updatedEmployeeData.Department;
-            }
-        }
-
+        
         private void ToggleClearFields()
         {
             ClearFields();

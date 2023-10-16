@@ -120,6 +120,9 @@
   <data name="CancelTooltipMessage" xml:space="preserve">
     <value>Press for clear</value>
   </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Employee_{0}_{1}_{2:MMddyyyy_HHmmss}.jpg</value>
+  </data>
   <data name="HelpTooltipMessage" xml:space="preserve">
     <value>Press to get a program help</value>
   </data>

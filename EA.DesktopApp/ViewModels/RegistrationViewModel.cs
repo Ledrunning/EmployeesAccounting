@@ -42,8 +42,11 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService,
-            IEmployeeGatewayService employeeGatewayService, IWindowManager windowManager, CancellationToken token)
+        public RegistrationViewModel(IPhotoShootService photoShootService, 
+            ISoundPlayerService soundPlayerService,
+            IEmployeeGatewayService employeeGatewayService, 
+            IWindowManager windowManager, 
+            CancellationToken token)
         {
             _photoShootService = photoShootService;
             _soundPlayerService = soundPlayerService;
@@ -202,9 +205,9 @@ namespace EA.DesktopApp.ViewModels
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.UtcNow,
                 Photo = imageArray,
-                PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
+                PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow)
             };
-            //If something weny wrong in UI side checking
+            //If something went wrong in UI side checking
             if (employeeModel.Name == null || employeeModel.LastName == null
                                            || employeeModel.Department == null)
             {
@@ -214,7 +217,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    await _employeeGatewayService.CreateAsync(employeeModel, _token);
+                    await ExecuteAsync(() => _employeeGatewayService.CreateAsync(employeeModel, _token));
                     _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
                     ClearFields();
                 }

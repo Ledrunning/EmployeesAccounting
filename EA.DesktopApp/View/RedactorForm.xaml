@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="{StaticResource BackgroundKey}"
         WindowStartupLocation="CenterOwner"
+        Loaded="OnWindowLoaded"
         Title="Employees Accounting" Height="400" Width="545" MinHeight="400" MinWidth="535">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -110,7 +111,7 @@
         <DataGrid Grid.Row="0" Grid.Column="0" Foreground="Blue" Background="Transparent" 
                   RowBackground="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ItemsSource="{Binding AllEmployees}" AutoGenerateColumns="false"
-                  SelectedItem="{Binding SelectedProduct}" IsReadOnly="true">
+                  SelectedItem="{Binding SelectedEmployee}" IsReadOnly="true">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Width="*" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
@@ -126,12 +127,17 @@
                     <Setter Property="Foreground" Value="#FF00AADE" />
                 </Style>
             </DataGrid.ColumnHeaderStyle>
-            
+
             <DataGrid.RowHeaderStyle>
                 <Style TargetType="{x:Type DataGridRowHeader}">
                     <Setter Property="Background" Value="Transparent" />
                 </Style>
             </DataGrid.RowHeaderStyle>
         </DataGrid>
+        <ProgressBar Grid.Column="0" Grid.Row="0"
+            Visibility="{Binding IsProgressVisible}"
+            IsIndeterminate="{Binding IsDataLoadIndeterminate}"
+            HorizontalAlignment="Center" VerticalAlignment="Center" 
+            Height="10" Width="180"/>
     </Grid>
 </Window>

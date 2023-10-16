@@ -86,11 +86,7 @@ namespace EA.DesktopApp.ViewModels
         public string DetectionHint
         {
             get => _detectionHint;
-            set
-            {
-                _detectionHint = value;
-                OnPropertyChanged(nameof(DetectionHint));
-            }
+            set => SetField(ref _detectionHint, value, nameof(DetectionHint));
         }
 
         /// <summary>
