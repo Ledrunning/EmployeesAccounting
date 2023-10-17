@@ -22,6 +22,14 @@ namespace EA.DesktopApp.Rest
             return GetContent<IReadOnlyList<EmployeeModel>>(response);
         }
 
+        public async Task<IReadOnlyList<EmployeeModel>> GetAllWithPhotoAsync(CancellationToken token)
+        {
+            var url = new Uri($"{BaseUrl}/api/Employee/GetAllWithPhoto");
+            var response = await SendRequestAsync(url, Method.Get, token);
+
+            return GetContent<IReadOnlyList<EmployeeModel>>(response);
+        }
+
         public async Task<EmployeeModel> GetByIdAsync(long id, CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Employee/GetEmployeeById?id={id}");

@@ -45,7 +45,7 @@ namespace EA.DesktopApp.View
 
             try
             {
-                await initializer.InitializeAsync();
+                await initializer.InitializeDataAsync();
             }
             catch (Exception ex)
             {

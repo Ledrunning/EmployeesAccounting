@@ -32,6 +32,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly ILbphFaceRecognition _faceRecognitionService;
         private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
 
         private string _currentTimeDate;
@@ -58,7 +59,8 @@ namespace EA.DesktopApp.ViewModels
             ILbphFaceRecognition faceRecognitionService,
             IEmployeeGatewayService employeeGatewayService,
             IWindowManager windowManager,
-            ISoundPlayerService soundPlayerHelper)
+            ISoundPlayerService soundPlayerHelper,
+            CancellationToken token)
         {
             _faceDetectionService = faceDetectionService;
             _faceRecognitionService = faceRecognitionService;
@@ -69,6 +71,7 @@ namespace EA.DesktopApp.ViewModels
             InitializeCommands();
             TimeTicker();
             _soundPlayerHelper = soundPlayerHelper;
+            _token = token;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
@@ -156,10 +159,11 @@ namespace EA.DesktopApp.ViewModels
         public ICommand ToggleHelpCallCommand { get; private set; }
         public ICommand ToggleOpenEditCommand { get; private set; }
 
-        private void InitializeServices()
+        private async void InitializeServices()
         {
             Logger.Info("Initialize of all services.....");
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
+            await FetchFacesFromDbAndTrain();
         }
 
         private void LoadAvailableCameras()
@@ -202,7 +206,7 @@ namespace EA.DesktopApp.ViewModels
                 ImageProcessingConstants.GrayPhotoHeight);
             try
             {
-                var employees = await _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
+                var employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
 
                 foreach (var employee in employees)
                 {
@@ -322,8 +326,8 @@ namespace EA.DesktopApp.ViewModels
         private async void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
-            //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            //_faceDetectionService.EmployeeName = await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
+            var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
+            _faceDetectionService.EmployeeName = await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
         }
     }
 }

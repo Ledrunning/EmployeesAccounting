@@ -89,7 +89,7 @@ namespace EA.DesktopApp.Services
                         ImageProcessingConstants.RectangleThickness);
                 }
 
-                SetBackgroundText(image, "Osman Mazinov",
+                SetBackgroundText(image, EmployeeName,
                     face.Location,
                     ImageProcessingConstants.TextColor);
             }
