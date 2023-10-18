@@ -190,6 +190,7 @@
     <Compile Include="Contracts\ViewContracts\IWindowFactory.cs" />
     <Compile Include="Contracts\ViewContracts\IWindowManager.cs" />
     <Compile Include="Converters\BitmapToImageSourceConverter.cs" />
+    <Compile Include="Converters\EmguFormatImageConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
     <Compile Include="Event\ImageEvent.cs" />

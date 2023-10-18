@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +13,8 @@ using System.Windows.Threading;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
+using EA.DesktopApp.Converters;
+using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -18,6 +23,7 @@ using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using NLog;
+using static Emgu.CV.ML.KNearest;
 
 namespace EA.DesktopApp.ViewModels
 {
@@ -101,6 +107,15 @@ namespace EA.DesktopApp.ViewModels
         ///     Help tooltip message
         /// </summary>
         public string HelpHint => ProgramResources.HelpTooltipMessage;
+
+        private Bitmap _grayScaleImage;
+
+        public Bitmap GrayScaleImage
+        {
+            get => _grayScaleImage;
+
+            set => SetField(ref _grayScaleImage, value);
+        }
 
         /// <summary>
         ///     Current date binding property
@@ -196,21 +211,25 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        private IReadOnlyList<EmployeeModel> employees;
+
         /// <summary>
         ///     TODO: Fetch data and train recognizer when app is starts
         /// </summary>
         /// <returns></returns>
         private async Task FetchFacesFromDbAndTrain()
         {
-            var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth,
-                ImageProcessingConstants.GrayPhotoHeight);
             try
             {
-                var employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
+                employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
 
                 foreach (var employee in employees)
                 {
-                    depthImage.Bytes = employee.Photo;
+                    //var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
+                    
+                    File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
+                    var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
+                    GrayScaleImage = depthImage.ToBitmap();
 
                     _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
                 }
@@ -323,11 +342,14 @@ namespace EA.DesktopApp.ViewModels
         ///     TODO: Uncomment recognizer after debugging
         /// </summary>
         /// <param name="image"></param>
-        private async void OnImageChanged(Image<Bgr, byte> image)
+        private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
             var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            _faceDetectionService.EmployeeName = await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
+            var employee = employees.FirstOrDefault(s => s.Id == idPredict);
+            _faceDetectionService.EmployeeName =
+                $"{employee?.Name} {employee?.LastName}"; 
+            //await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
         }
     }
 }
