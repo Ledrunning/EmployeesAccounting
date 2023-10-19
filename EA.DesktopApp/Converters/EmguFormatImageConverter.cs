@@ -4,6 +4,7 @@ using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Converters
 {
+    // TODO: https://stackoverflow.com/questions/29153967/convert-a-byte-into-an-emgu-opencv-image
     public static class EmguFormatImageConverter
     {
         private const int Width = 400; // Image Width
@@ -12,7 +13,7 @@ namespace EA.DesktopApp.Converters
 
         public static Image<Gray, byte> ByteArrayToGrayImage(byte[] byteArray)
         {
-            // Create data for an Image 400x400 GRAY - 10 000 Bytes - 0x2710
+            // Create data for an Image 400x400 GRAY - 160 000 Bytes - 0x27100
             var sourceImgData = new byte[0x27100];
 
             // Pin the imgData in memory and create an IntPtr to it's location
@@ -20,7 +21,7 @@ namespace EA.DesktopApp.Converters
             var pointer = pinnedArray.AddrOfPinnedObject();
 
             // Create an image from the imgData
-            var img = new Image<Gray, byte>(Width, Height, Stride, pointer);
+            var img = new Image<Gray, byte>(Width, Height, 1, pointer);
 
             // Free the memory
             pinnedArray.Free();

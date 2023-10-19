@@ -9,6 +9,7 @@ public static class EmployeeExtensions
     {
         var dto = new EmployeeDto
         {
+            Id = employee.Id,
             Name = employee.Name,
             LastName = employee.LastName,
             Department = employee.Department,

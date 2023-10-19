@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
+using EA.DesktopApp.Models;
+using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -23,6 +27,7 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
+        private readonly ILbphFaceRecognition _faceRecognitionService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private CascadeClassifier _eyeCascadeClassifier;
         private CascadeClassifier _faceCascadeClassifier;
@@ -31,19 +36,19 @@ namespace EA.DesktopApp.Services
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService()
+        public FaceDetectionService(ILbphFaceRecognition faceRecognitionService)
         {
+            _faceRecognitionService = faceRecognitionService;
             InitializeClassifier();
-            ImageChanged -= OnFaceDetectionFound;
-            ImageChanged += OnFaceDetectionFound;
+            ImageChanged -= OnFaceDetected;
+            ImageChanged += OnFaceDetected;
         }
 
-        public string EmployeeName { get; set; }
+        public IReadOnlyList<EmployeeModel> Employees { get; set; }
 
         public event ImageChangedEventHandler FaceDetectionImageChanged;
 
-        //TODO Put EmployeeName instead of hardcoded literal 
-        private void OnFaceDetectionFound(Image<Bgr, byte> image)
+        private void OnFaceDetected(Image<Bgr, byte> image)
         {
             DetectFaces(image);
         }
@@ -80,18 +85,23 @@ namespace EA.DesktopApp.Services
 
             foreach (var face in faces)
             {
+                // Recognize the face right after detection
+                var faceImage = grayFrame.GetSubRect(face);
+                var idPredict = _faceRecognitionService.Predict(faceImage);
+                var employee = Employees.Single(s => s.Id == idPredict); // Ensure employees list is accessible
+                var detectedEmployeeName = $"{employee?.Name} {employee?.LastName}";
+
                 image.Draw(face, ImageProcessingConstants.RectanglesColor,
                     ImageProcessingConstants.RectangleThickness);
+                SetBackgroundText(image, detectedEmployeeName,
+                    face.Location,
+                    ImageProcessingConstants.TextColor);
 
                 foreach (var eye in eyes)
                 {
                     image.Draw(eye, ImageProcessingConstants.RectanglesColor,
                         ImageProcessingConstants.RectangleThickness);
                 }
-
-                SetBackgroundText(image, EmployeeName,
-                    face.Location,
-                    ImageProcessingConstants.TextColor);
             }
 
             FaceDetectionImageChanged?.Invoke(image);
@@ -106,7 +116,7 @@ namespace EA.DesktopApp.Services
             return rectangles;
         }
 
-        private void SetBackgroundText(IInputOutputArray image, string text, Point point, Bgr textColor,
+        private static void SetBackgroundText(IInputOutputArray image, string text, Point point, Bgr textColor,
             double fontScale = 1.0)
         {
             CvInvoke.PutText(

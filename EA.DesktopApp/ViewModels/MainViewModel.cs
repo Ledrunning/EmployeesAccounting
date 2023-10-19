@@ -21,6 +21,7 @@ using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
+using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using NLog;
 using static Emgu.CV.ML.KNearest;
@@ -107,16 +108,7 @@ namespace EA.DesktopApp.ViewModels
         ///     Help tooltip message
         /// </summary>
         public string HelpHint => ProgramResources.HelpTooltipMessage;
-
-        private Bitmap _grayScaleImage;
-
-        public Bitmap GrayScaleImage
-        {
-            get => _grayScaleImage;
-
-            set => SetField(ref _grayScaleImage, value);
-        }
-
+        
         /// <summary>
         ///     Current date binding property
         /// </summary>
@@ -222,15 +214,15 @@ namespace EA.DesktopApp.ViewModels
             try
             {
                 employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
-
+                _faceDetectionService.Employees = employees;
                 foreach (var employee in employees)
                 {
-                    //var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
-                    
-                    File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
-                    var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
-                    GrayScaleImage = depthImage.ToBitmap();
+                    var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
 
+                    //TODO: Maybe I'll apply it for perfomance
+                    //File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
+                    //var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
+ 
                     _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
                 }
 
@@ -339,16 +331,16 @@ namespace EA.DesktopApp.ViewModels
 
         /// <summary>
         ///     Draw the bitmap on control
-        ///     TODO: Uncomment recognizer after debugging
         /// </summary>
         /// <param name="image"></param>
         private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
-            var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            var employee = employees.FirstOrDefault(s => s.Id == idPredict);
-            _faceDetectionService.EmployeeName =
-                $"{employee?.Name} {employee?.LastName}"; 
+            
+            //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
+            //var employee = employees.Single(s => s.Id == idPredict);
+            //_faceDetectionService.EmployeeName =
+            //    $"{employee?.Name} {employee?.LastName}"; 
             //await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
         }
     }

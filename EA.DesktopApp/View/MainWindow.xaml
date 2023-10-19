@@ -24,9 +24,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Image Grid.Row="1" Name="v_Photo_Frame"
-                   Source="{Binding GrayScaleImage, Converter={StaticResource BitmapToImageSourceConverter}}"
-                   Stretch="Fill" />
             <Button Grid.Row="0" Height="45" Width="45"
                     Content="?" Foreground="#FF00AADE" FontSize="20"
                     Command="{Binding ToggleHelpCallCommand}" Margin="95,0,10,0">
