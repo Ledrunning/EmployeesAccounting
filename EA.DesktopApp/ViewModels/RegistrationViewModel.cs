@@ -168,8 +168,8 @@ namespace EA.DesktopApp.ViewModels
         /// <param name="image"></param>
         private void OnImageChanged(Image<Bgr, byte> image)
         {
+            CapturedImage = image;
             PhotoShootFrame = image.ToBitmap();
-            // New grayscale image for recognition
             PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth,
                 ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
         }
@@ -234,15 +234,17 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        private Image<Bgr, byte> CapturedImage { get; set; }
+
         /// <summary>
         ///     Get grayscale image method
         /// </summary>
         private void ToggleGetImageExecute()
         {
             _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
-
             // Get grayscale and send into BitmapToImageSourceConverter
-            GrayScaleImage = PhotoShootGray.ToBitmap();
+            //GrayScaleImage = PhotoShootGray.ToBitmap();
+            GrayScaleImage = _photoShootService.CropFaceFromImage(CapturedImage).ToBitmap();
         }
     }
 }

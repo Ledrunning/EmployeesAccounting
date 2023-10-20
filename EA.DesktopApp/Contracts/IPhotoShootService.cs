@@ -1,4 +1,6 @@
 ﻿using EA.DesktopApp.Event;
+using Emgu.CV.Structure;
+using Emgu.CV;
 
 namespace EA.DesktopApp.Contracts
 {
@@ -7,6 +9,7 @@ namespace EA.DesktopApp.Contracts
         event ImageChangedEventHandler PhotoImageChanged;
         void Dispose();
         event ImageChangedEventHandler ImageChanged;
+        Image<Gray, byte> CropFaceFromImage(Image<Bgr, byte> image);
 
         /// <summary>
         ///     Async method for background work

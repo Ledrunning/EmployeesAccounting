@@ -1,4 +1,6 @@
-﻿using EA.DesktopApp.Contracts;
+﻿using System.Drawing;
+using EA.DesktopApp.Constants;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -16,9 +18,37 @@ namespace EA.DesktopApp.Services
         public PhotoShootService()
         {
             InitializeServices();
+            InitializeClassifier();
         }
 
         public event ImageChangedEventHandler PhotoImageChanged;
+
+        public Image<Gray, byte> CropFaceFromImage(Image<Bgr, byte> image)
+        {
+            // Load the image
+            var grayImage = image.Convert<Gray, byte>();
+
+            // Detect faces
+            var faces = FaceCascadeClassifier.DetectMultiScale(
+                grayImage,
+                ImageProcessingConstants.ScaleFactor,
+                ImageProcessingConstants.MinimumNeighbors,
+                Size.Empty); // min size
+
+            // If no faces or multiple faces are detected, handle appropriately.
+            // For simplicity, we'll just take the first detected face in this example.
+            if (faces.Length == 0)
+            {
+                return null; // No face detected
+            }
+
+            var face = faces[0];
+
+            // Crop the face from the image 
+            var croppedFace = grayImage.Copy(face);
+
+            return croppedFace;
+        }
 
         /// <summary>
         ///     Event handler from web cam services

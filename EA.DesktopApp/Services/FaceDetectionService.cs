@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
@@ -27,10 +24,8 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
-        private readonly ILbphFaceRecognition _faceRecognitionService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private CascadeClassifier _eyeCascadeClassifier;
-        private CascadeClassifier _faceCascadeClassifier;
+        private readonly ILbphFaceRecognition _faceRecognitionService;
 
         /// <summary>
         ///     Capture stream from camera
@@ -53,35 +48,11 @@ namespace EA.DesktopApp.Services
             DetectFaces(image);
         }
 
-        private void InitializeClassifier()
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                var path = Path.GetDirectoryName(assembly.Location);
-
-                if (path != null)
-                {
-                    _faceCascadeClassifier =
-                        new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
-                    _eyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
-                }
-                else
-                {
-                    Logger.Error("Could not find haarcascade xml file");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Could not find clissifier files");
-            }
-        }
-
         private void DetectFaces(Image<Bgr, byte> image)
         {
             var grayFrame = image.Convert<Gray, byte>();
-            var faces = GetRectangles(_faceCascadeClassifier, grayFrame);
-            var eyes = GetRectangles(_eyeCascadeClassifier, grayFrame);
+            var faces = GetRectangles(FaceCascadeClassifier, grayFrame);
+            var eyes = GetRectangles(EyeCascadeClassifier, grayFrame);
 
             foreach (var face in faces)
             {
