@@ -4,13 +4,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Converters;
@@ -21,10 +19,8 @@ using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
-using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using NLog;
-using static Emgu.CV.ML.KNearest;
 
 namespace EA.DesktopApp.ViewModels
 {
@@ -52,6 +48,8 @@ namespace EA.DesktopApp.ViewModels
         private bool _isStreaming;
 
         private string _selectedCamera;
+
+        private IReadOnlyList<EmployeeModel> employees;
 
         /// <summary>
         ///     Timer
@@ -108,7 +106,7 @@ namespace EA.DesktopApp.ViewModels
         ///     Help tooltip message
         /// </summary>
         public string HelpHint => ProgramResources.HelpTooltipMessage;
-        
+
         /// <summary>
         ///     Current date binding property
         /// </summary>
@@ -164,6 +162,7 @@ namespace EA.DesktopApp.ViewModels
         ///     Button for help
         /// </summary>
         public ICommand ToggleHelpCallCommand { get; private set; }
+
         public ICommand ToggleOpenEditCommand { get; private set; }
 
         private async void InitializeServices()
@@ -203,8 +202,6 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
-        private IReadOnlyList<EmployeeModel> employees;
-
         /// <summary>
         ///     TODO: Fetch data and train recognizer when app is starts
         /// </summary>
@@ -222,7 +219,7 @@ namespace EA.DesktopApp.ViewModels
                     //TODO: Maybe I'll apply it for perfomance
                     //File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
                     //var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
- 
+
                     _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
                 }
 
@@ -329,6 +326,23 @@ namespace EA.DesktopApp.ViewModels
             Timer.Start();
         }
 
+        private bool IsServerAvailable(string serverAddress)
+        {
+            try
+            {
+                using (var ping = new Ping())
+                {
+                    var reply = ping.Send(serverAddress, 1000); // timeout in milliseconds
+                    return reply.Status == IPStatus.Success;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
         /// <summary>
         ///     Draw the bitmap on control
         /// </summary>
@@ -336,7 +350,7 @@ namespace EA.DesktopApp.ViewModels
         private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
-            
+
             //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
             //var employee = employees.Single(s => s.Id == idPredict);
             //_faceDetectionService.EmployeeName =
