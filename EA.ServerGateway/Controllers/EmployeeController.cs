@@ -17,6 +17,13 @@ public class EmployeeController : Controller
         _employee = employee;
     }
 
+    [HttpGet]
+    [Route(nameof(Index))]
+    public IActionResult Index()
+    {
+        return Content("Welcome to EmployeesAccounting web api server!");
+    }
+
     [HttpPost]
     [Route(nameof(Create))]
     public async Task Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)

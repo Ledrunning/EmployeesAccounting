@@ -14,5 +14,7 @@ namespace EA.DesktopApp.Contracts
         Task CreateAsync(EmployeeModel employee, CancellationToken token);
         Task UpdateAsync(EmployeeModel employee, CancellationToken token);
         Task DeleteAsync(long id, CancellationToken token);
+
+        Task<bool> IsServerAvailableAsync(CancellationToken token);
     }
 }

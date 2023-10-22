@@ -13,11 +13,17 @@ namespace EA.DesktopApp.Rest
     {
         private readonly int _timeout;
         protected readonly string BaseUrl;
+        protected readonly string PingUrl;
+        protected readonly int MaxPingAttempts;
+        protected readonly int ServerPingTimeout;
 
-        public BaseGatewayService(string baseUrl, int timeout)
+        public BaseGatewayService(AppConfig appConfig)
         {
-            BaseUrl = baseUrl;
-            _timeout = timeout;
+            BaseUrl = appConfig.BaseServerUri;
+            _timeout = appConfig.Timeout;
+            PingUrl = appConfig.ServerPingUri;
+            MaxPingAttempts = appConfig.MaxPingAttempts;
+            ServerPingTimeout = appConfig.ServerPingTimeout;
         }
 
         protected T GetContent<T>(RestResponseBase response)
@@ -82,7 +88,7 @@ namespace EA.DesktopApp.Rest
             request.AddHeader("Authorization", $"Basic {basicAuthValue}");
 
             request.AddParameter("text/json", json, ParameterType.RequestBody);
-            
+
             var response = await client.ExecuteAsync(request, cancellationToken);
             if (response.IsSuccessful)
             {

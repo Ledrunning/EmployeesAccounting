@@ -37,7 +37,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
-
+        
         private string _currentTimeDate;
         private string _detectionHint;
 
@@ -169,7 +169,17 @@ namespace EA.DesktopApp.ViewModels
         {
             Logger.Info("Initialize of all services.....");
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
-            await FetchFacesFromDbAndTrain();
+
+            if (await _employeeGatewayService.IsServerAvailableAsync(_token))
+            {
+                await FetchFacesFromDbAndTrain();
+                Logger.Info("Data has been fetched!");
+            }
+            else
+            {
+                Logger.Info("Server is offline!");
+                _windowManager.ShowModalWindow("Server is offline");
+            }
         }
 
         private void LoadAvailableCameras()
@@ -325,24 +335,7 @@ namespace EA.DesktopApp.ViewModels
             Timer.Tick += (sender, args) => { CurrentTimeDate = DateTime.Now.ToString(CultureInfo.CurrentCulture); };
             Timer.Start();
         }
-
-        private bool IsServerAvailable(string serverAddress)
-        {
-            try
-            {
-                using (var ping = new Ping())
-                {
-                    var reply = ping.Send(serverAddress, 1000); // timeout in milliseconds
-                    return reply.Status == IPStatus.Success;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
+        
         /// <summary>
         ///     Draw the bitmap on control
         /// </summary>
