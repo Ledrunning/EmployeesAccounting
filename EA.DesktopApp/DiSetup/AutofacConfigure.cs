@@ -43,6 +43,7 @@ namespace EA.DesktopApp.DiSetup
 
                 builder.RegisterType<ModalViewModelFactory>().As<IModalViewModelFactory>().SingleInstance();
                 builder.RegisterType<LbphFaceRecognition>().As<ILbphFaceRecognition>().SingleInstance();
+                builder.RegisterType<EigenFaceRecognition>().As<IEigenFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();

@@ -114,16 +114,6 @@ namespace EA.DesktopApp.ViewModels
         }
 
         /// <summary>
-        ///     Get bitmap from frame
-        /// </summary>
-        public Image<Gray, byte> PhotoShootGray
-        {
-            get => _photoShootGray;
-
-            set => SetField(ref _photoShootGray, value);
-        }
-
-        /// <summary>
         ///     Toggle to photoshoot command
         /// </summary>
         public ICommand ToggleCameraCaptureCommand { get; private set; }
@@ -170,8 +160,6 @@ namespace EA.DesktopApp.ViewModels
         {
             CapturedImage = image;
             PhotoShootFrame = image.ToBitmap();
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth,
-                ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
         }
 
         private void ToggleClearFields()
@@ -194,9 +182,8 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
-            var resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
-            var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
+            var imageArray = (byte[])converter.ConvertTo(GrayScaleImage, typeof(byte[]));
 
             var employeeModel = new EmployeeModel
             {

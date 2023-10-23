@@ -25,15 +25,17 @@ namespace EA.DesktopApp.Services
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IEigenFaceRecognition _eigen;
         private readonly ILbphFaceRecognition _faceRecognitionService;
 
         /// <summary>
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService(ILbphFaceRecognition faceRecognitionService)
+        public FaceDetectionService(ILbphFaceRecognition faceRecognitionService, IEigenFaceRecognition eigen)
         {
             _faceRecognitionService = faceRecognitionService;
+            _eigen = eigen;
             InitializeClassifier();
             ImageChanged -= OnFaceDetected;
             ImageChanged += OnFaceDetected;
@@ -58,8 +60,12 @@ namespace EA.DesktopApp.Services
             {
                 // Recognize the face right after detection
                 var faceImage = grayFrame.GetSubRect(face);
-                var idPredict = _faceRecognitionService.Predict(faceImage);
-                var employee = Employees.Single(s => s.Id == idPredict); // Ensure employees list is accessible
+                //var idPredict = _faceRecognitionService.Predict(faceImage);
+                faceImage = faceImage.Resize(273,
+                    273, Inter.Cubic);
+
+                var idPredict = _eigen.Predict(faceImage);
+                var employee = Employees.First(s => s.Id == idPredict); // Ensure employees list is accessible
                 var detectedEmployeeName = $"{employee?.Name} {employee?.LastName}";
 
                 image.Draw(face, ImageProcessingConstants.RectanglesColor,

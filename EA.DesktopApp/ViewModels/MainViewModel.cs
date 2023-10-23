@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly ILbphFaceRecognition _faceRecognitionService;
+        private readonly IEigenFaceRecognition _eigenRecognition;
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
@@ -62,6 +64,7 @@ namespace EA.DesktopApp.ViewModels
         public MainViewModel(
             IFaceDetectionService faceDetectionService,
             ILbphFaceRecognition faceRecognitionService,
+            IEigenFaceRecognition eigenRecognition,
             IEmployeeGatewayService employeeGatewayService,
             IWindowManager windowManager,
             ISoundPlayerService soundPlayerHelper,
@@ -69,6 +72,7 @@ namespace EA.DesktopApp.ViewModels
         {
             _faceDetectionService = faceDetectionService;
             _faceRecognitionService = faceRecognitionService;
+            _eigenRecognition = eigenRecognition;
             _employeeGatewayService = employeeGatewayService;
             _windowManager = windowManager;
             InitializeServices();
@@ -224,16 +228,18 @@ namespace EA.DesktopApp.ViewModels
                 _faceDetectionService.Employees = employees;
                 foreach (var employee in employees)
                 {
-                    var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
+                    //var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
 
                     //TODO: Maybe I'll apply it for perfomance
-                    //File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
-                    //var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
+                    File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
+                    var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
 
-                    _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                    //_faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                    _eigenRecognition.AddTrainingImage(depthImage, Convert.ToInt32(employee.Id));
                 }
 
-                _faceRecognitionService.Train();
+                //_faceRecognitionService.Train();
+                _eigenRecognition.Train();
             }
             catch (Exception e)
             {

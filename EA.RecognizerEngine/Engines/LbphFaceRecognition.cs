@@ -20,7 +20,7 @@ namespace EA.RecognizerEngine.Engines
 
         public LbphFaceRecognition()
         {
-            _recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 1000.00);
+            _recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 400.00);
             _trainingImages = new List<Image<Gray, byte>>();
         }
 
