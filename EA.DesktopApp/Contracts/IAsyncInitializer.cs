@@ -4,6 +4,6 @@ namespace EA.DesktopApp.Contracts
 {
     public interface IAsyncInitializer
     {
-        Task InitializeAsync();
+        Task InitializeDataAsync();
     }
 }

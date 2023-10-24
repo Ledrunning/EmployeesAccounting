@@ -107,6 +107,11 @@ public class EmployeeService : IEmployeeService
         try
         {
             var entity = _mapper.Map<Employee>(employee);
+            // Construct the PhotoPath
+            if (!string.IsNullOrEmpty(employee.PhotoName))
+            {
+                entity.PhotoPath = $"{PhotoDataPath}\\{employee.PhotoName}";
+            }
             await _employeeRepository.AddAsync(entity, cancellationToken);
             SaveImage(employee);
         }

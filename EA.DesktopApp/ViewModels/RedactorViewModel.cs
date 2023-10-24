@@ -54,7 +54,7 @@ namespace EA.DesktopApp.ViewModels
 
         public ICommand ToggleClearFormCommand { get; private set; }
 
-        public async Task InitializeAsync()
+        public async Task InitializeDataAsync()
         {
             await ExecuteAsync(LoadData);
         }

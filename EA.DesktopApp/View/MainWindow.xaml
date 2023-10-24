@@ -24,7 +24,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
             <Button Grid.Row="0" Height="45" Width="45"
                     Content="?" Foreground="#FF00AADE" FontSize="20"
                     Command="{Binding ToggleHelpCallCommand}" Margin="95,0,10,0">
