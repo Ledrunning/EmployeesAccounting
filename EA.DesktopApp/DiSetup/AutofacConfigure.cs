@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Threading;
 using System.Windows;
 using Autofac;
@@ -42,7 +41,6 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
                 builder.RegisterType<ModalViewModelFactory>().As<IModalViewModelFactory>().SingleInstance();
-                builder.RegisterType<LbphFaceRecognition>().As<ILbphFaceRecognition>().SingleInstance();
                 builder.RegisterType<EigenFaceRecognition>().As<IEigenFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();

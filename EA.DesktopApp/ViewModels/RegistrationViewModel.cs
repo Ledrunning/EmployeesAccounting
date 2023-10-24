@@ -37,8 +37,6 @@ namespace EA.DesktopApp.ViewModels
 
         private Bitmap _photoShootFrame;
 
-        private Image<Gray, byte> _photoShootGray;
-
         /// <summary>
         ///     .ctor
         /// </summary>
@@ -229,8 +227,6 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleGetImageExecute()
         {
             _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
-            // Get grayscale and send into BitmapToImageSourceConverter
-            //GrayScaleImage = PhotoShootGray.ToBitmap();
             GrayScaleImage = _photoShootService.CropFaceFromImage(CapturedImage).ToBitmap();
         }
     }

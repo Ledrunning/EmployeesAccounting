@@ -8,10 +8,8 @@ namespace EA.DesktopApp.Constants
         public const int RectangleThickness = 2;
         public const int MinimumNeighbors = 10;
         public const double ScaleFactor = 1.1;
-        public const int PhotoHeight = 400;
-        public const int PhotoWidth = 500;
-        public const int GrayPhotoHeight = 400;
-        public const int GrayPhotoWidth = 400;
+        public const int GrayPhotoHeight = 200;
+        public const int GrayPhotoWidth = 200;
         public static readonly Point SourcePoint = new Point(10, 80);
         public static readonly Bgr RectanglesColor = new Bgr(Color.Aqua);
         public static readonly Bgr TextColor = new Bgr(Color.Aqua);

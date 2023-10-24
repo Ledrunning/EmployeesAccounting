@@ -66,7 +66,7 @@
   <ItemGroup>
     <Compile Include="Contracts\IEigenFaceRecognition.cs" />
     <Compile Include="Contracts\ILbphFaceRecognition.cs" />
-    <Compile Include="Engines\EigenFaceRecognizer.cs" />
+    <Compile Include="Engines\EigenFaceRecognition.cs" />
     <Compile Include="Engines\LbphFaceRecognition.cs" />
     <Compile Include="Exceptions\RecognizerEngineException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

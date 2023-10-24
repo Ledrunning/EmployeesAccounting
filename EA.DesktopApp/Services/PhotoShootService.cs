@@ -3,6 +3,7 @@ using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
 using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
 namespace EA.DesktopApp.Services
@@ -46,8 +47,9 @@ namespace EA.DesktopApp.Services
 
             // Crop the face from the image 
             var croppedFace = grayImage.Copy(face);
-
-            return croppedFace;
+            var x = croppedFace.Resize(ImageProcessingConstants.GrayPhotoWidth,
+                ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
+            return x;
         }
 
         /// <summary>

@@ -25,17 +25,15 @@ namespace EA.DesktopApp.Services
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IEigenFaceRecognition _eigen;
-        private readonly ILbphFaceRecognition _faceRecognitionService;
+        private readonly IEigenFaceRecognition _eigenRecognizer;
 
         /// <summary>
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService(ILbphFaceRecognition faceRecognitionService, IEigenFaceRecognition eigen)
+        public FaceDetectionService(IEigenFaceRecognition eigenRecognizer)
         {
-            _faceRecognitionService = faceRecognitionService;
-            _eigen = eigen;
+            _eigenRecognizer = eigenRecognizer;
             InitializeClassifier();
             ImageChanged -= OnFaceDetected;
             ImageChanged += OnFaceDetected;
@@ -59,14 +57,12 @@ namespace EA.DesktopApp.Services
             foreach (var face in faces)
             {
                 // Recognize the face right after detection
-                var faceImage = grayFrame.GetSubRect(face);
-                //var idPredict = _faceRecognitionService.Predict(faceImage);
-                faceImage = faceImage.Resize(273,
-                    273, Inter.Cubic);
+                var resizedImage = grayFrame.Resize(ImageProcessingConstants.GrayPhotoWidth,
+                    ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
 
-                var idPredict = _eigen.Predict(faceImage);
+                var idPredict = _eigenRecognizer.Predict(resizedImage);
                 var employee = Employees.First(s => s.Id == idPredict); // Ensure employees list is accessible
-                var detectedEmployeeName = $"{employee?.Name} {employee?.LastName}";
+                var detectedEmployeeName = $"{employee.Name} {employee.LastName}";
 
                 image.Draw(face, ImageProcessingConstants.RectanglesColor,
                     ImageProcessingConstants.RectangleThickness);
