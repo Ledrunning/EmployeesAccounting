@@ -23,7 +23,11 @@
         <Image Name="v_Image_Frame"
                Source="{Binding PhotoShootFrame, Converter={StaticResource BitmapToImageSourceConverter}}"
                Stretch="Uniform" Margin="0,0,4,0" />
-        
+        <ProgressBar Grid.Column="0" Grid.Row="0"
+                     Visibility="{Binding IsProgressVisible}"
+                     IsIndeterminate="{Binding IsDataLoadIndeterminate}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" 
+                     Height="10" Width="180"/>
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

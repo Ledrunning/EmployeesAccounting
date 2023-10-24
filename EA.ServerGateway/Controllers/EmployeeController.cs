@@ -17,6 +17,13 @@ public class EmployeeController : Controller
         _employee = employee;
     }
 
+    [HttpGet]
+    [Route(nameof(Index))]
+    public IActionResult Index()
+    {
+        return Content("Welcome to EmployeesAccounting web api server!");
+    }
+
     [HttpPost]
     [Route(nameof(Create))]
     public async Task Create([FromBody] EmployeeDto employee, CancellationToken cancellationToken)
@@ -52,7 +59,7 @@ public class EmployeeController : Controller
         return await _employee.GetNameByIdAsync(id, cancellationToken);
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route(nameof(Update))]
     public async Task Update(EmployeeDto employee, CancellationToken cancellationToken)
     {
@@ -61,15 +68,8 @@ public class EmployeeController : Controller
 
     [HttpDelete]
     [Route(nameof(Delete))]
-    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
+    public async Task Delete(long id, CancellationToken cancellationToken)
     {
-        var employee = await _employee.GetByIdAsync(id, cancellationToken);
-        if (employee == null)
-        {
-            return NotFound();
-        }
-
         await _employee.DeleteAsync(id, cancellationToken);
-        return new NoContentResult();
     }
 }

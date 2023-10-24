@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,9 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
+using EA.DesktopApp.Converters;
+using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -28,10 +30,11 @@ namespace EA.DesktopApp.ViewModels
     {
         private const int OneSecondForTimeSpan = 1;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IEigenFaceRecognition _eigenRecognizer;
         private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly IFaceDetectionService _faceDetectionService;
-        private readonly ILbphFaceRecognition _faceRecognitionService;
         private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
 
         private string _currentTimeDate;
@@ -45,6 +48,8 @@ namespace EA.DesktopApp.ViewModels
 
         private string _selectedCamera;
 
+        private IReadOnlyList<EmployeeModel> employees;
+
         /// <summary>
         ///     Timer
         /// </summary>
@@ -55,13 +60,14 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public MainViewModel(
             IFaceDetectionService faceDetectionService,
-            ILbphFaceRecognition faceRecognitionService,
+            IEigenFaceRecognition eigenRecognizer,
             IEmployeeGatewayService employeeGatewayService,
             IWindowManager windowManager,
-            ISoundPlayerService soundPlayerHelper)
+            ISoundPlayerService soundPlayerHelper,
+            CancellationToken token)
         {
             _faceDetectionService = faceDetectionService;
-            _faceRecognitionService = faceRecognitionService;
+            _eigenRecognizer = eigenRecognizer;
             _employeeGatewayService = employeeGatewayService;
             _windowManager = windowManager;
             InitializeServices();
@@ -69,6 +75,7 @@ namespace EA.DesktopApp.ViewModels
             InitializeCommands();
             TimeTicker();
             _soundPlayerHelper = soundPlayerHelper;
+            _token = token;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
 
@@ -86,11 +93,7 @@ namespace EA.DesktopApp.ViewModels
         public string DetectionHint
         {
             get => _detectionHint;
-            set
-            {
-                _detectionHint = value;
-                OnPropertyChanged(nameof(DetectionHint));
-            }
+            set => SetField(ref _detectionHint, value, nameof(DetectionHint));
         }
 
         /// <summary>
@@ -158,12 +161,24 @@ namespace EA.DesktopApp.ViewModels
         ///     Button for help
         /// </summary>
         public ICommand ToggleHelpCallCommand { get; private set; }
+
         public ICommand ToggleOpenEditCommand { get; private set; }
 
-        private void InitializeServices()
+        private async void InitializeServices()
         {
             Logger.Info("Initialize of all services.....");
             _faceDetectionService.FaceDetectionImageChanged += OnImageChanged;
+
+            if (await _employeeGatewayService.IsServerAvailableAsync(_token))
+            {
+                await FetchFacesFromDbAndTrain();
+                Logger.Info("Data has been fetched!");
+            }
+            else
+            {
+                Logger.Info("Server is offline!");
+                _windowManager.ShowModalWindow("Server is offline");
+            }
         }
 
         private void LoadAvailableCameras()
@@ -196,24 +211,30 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
-        /// <summary>
-        ///     TODO: Fetch data and train recognizer when app is starts
-        /// </summary>
-        /// <returns></returns>
         private async Task FetchFacesFromDbAndTrain()
         {
-            var depthImage = new Image<Gray, byte>(ImageProcessingConstants.GrayPhotoWidth,
-                ImageProcessingConstants.GrayPhotoHeight);
-            var employees = await _employeeGatewayService.GetAllEmployeeAsync(CancellationToken.None);
-
-            foreach (var employee in employees)
+            try
             {
-                depthImage.Bytes = employee.Photo;
+                employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
+                _faceDetectionService.Employees = employees;
+                foreach (var employee in employees)
+                {
+                    var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
 
-                _faceRecognitionService.AddTrainingImage(depthImage, employee.Id);
+                    //TODO: Maybe I'll apply it for perfomance
+                    // File.WriteAllBytes($"D:\\Trash\\{employee.PhotoName}", employee.Photo);
+                    // var depthImage = new Image<Gray, byte>($"D:\\Trash\\{employee.PhotoName}");
+
+                    _eigenRecognizer.AddTrainingImage(depthImage, Convert.ToInt32(employee.Id));
+                }
+
+                _eigenRecognizer.Train();
             }
-
-            _faceRecognitionService.Train();
+            catch (Exception e)
+            {
+                Logger.Info("Failed to train recognizer {e}", e);
+                _windowManager.ShowModalWindow("Failed to train recognizer");
+            }
         }
 
         /// <summary>
@@ -312,14 +333,11 @@ namespace EA.DesktopApp.ViewModels
 
         /// <summary>
         ///     Draw the bitmap on control
-        ///     TODO: Uncomment recognizer after debugging
         /// </summary>
         /// <param name="image"></param>
-        private async void OnImageChanged(Image<Bgr, byte> image)
+        private void OnImageChanged(Image<Bgr, byte> image)
         {
             Frame = image.ToBitmap();
-            //var idPredict = _faceRecognitionService.Predict(image.Convert<Gray, byte>());
-            //_faceDetectionService.EmployeeName = await _employeeGatewayService.GetNameByIdAsync(idPredict, CancellationToken.None);
         }
     }
 }

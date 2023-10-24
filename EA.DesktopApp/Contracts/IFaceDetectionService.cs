@@ -1,10 +1,12 @@
 ﻿using EA.DesktopApp.Event;
+using EA.DesktopApp.Models;
+using System.Collections.Generic;
 
 namespace EA.DesktopApp.Contracts
 {
     public interface IFaceDetectionService
     {
-        string EmployeeName { get; set; }
+        IReadOnlyList<EmployeeModel> Employees { get; set; }
         bool IsRunning { get; }
         event ImageChangedEventHandler FaceDetectionImageChanged;
         void Dispose();

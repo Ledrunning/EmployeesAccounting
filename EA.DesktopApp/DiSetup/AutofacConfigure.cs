@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Threading;
 using System.Windows;
 using Autofac;
@@ -27,11 +26,11 @@ namespace EA.DesktopApp.DiSetup
             {
                 var builder = new ContainerBuilder();
 
-                var urlAddress = ConfigurationManager.AppSettings["serverUriString"];
-                var timeOutConfig = ConfigurationManager.AppSettings["timeOut"];
-                int.TryParse(timeOutConfig, out var timeOut);
+                var appConfig = new AppConfig();
 
-                var employeeGatewayService = new EmployeeGatewayService(urlAddress, timeOut);
+                var loadedConfiguration = appConfig.LoadConfiguration();
+
+                var employeeGatewayService = new EmployeeGatewayService(loadedConfiguration);
 
                 // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
                 builder.RegisterInstance(new CancellationTokenSource()).AsSelf();
@@ -42,7 +41,7 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
                 builder.RegisterType<ModalViewModelFactory>().As<IModalViewModelFactory>().SingleInstance();
-                builder.RegisterType<LbphFaceRecognition>().As<ILbphFaceRecognition>().SingleInstance();
+                builder.RegisterType<EigenFaceRecognition>().As<IEigenFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();

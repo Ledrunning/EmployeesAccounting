@@ -3,48 +3,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
+using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.ViewModels.Commands;
+using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
-    // TODO: Dont forget about cancellation token
-    public class RedactorViewModel : BaseViewModel
+    public class RedactorViewModel : BaseViewModel, IAsyncInitializer
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEmployeeGatewayService _employeeService;
-
+        private readonly CancellationToken _token;
+        private readonly IWindowManager _windowManager;
         private ObservableCollection<EmployeeModel> _employees;
+        private EmployeeModel _selectedEmployee;
 
-        private EmployeeModel _selectedProduct;
-
-        public RedactorViewModel(IEmployeeGatewayService employeeService)
+        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService, CancellationToken token)
         {
+            _windowManager = windowManager;
             _employeeService = employeeService;
+            _token = token;
             InitializeCommands();
-
-            //TODO need to think, how use it asynchronously
-            LoadData().ConfigureAwait(false);
         }
 
         public ObservableCollection<EmployeeModel> AllEmployees
         {
             get => _employees;
-            set
-            {
-                _employees = value;
-                OnPropertyChanged(nameof(AllEmployees));
-            }
+            set => SetField(ref _employees, value);
         }
 
-        public EmployeeModel SelectedProduct
+        public EmployeeModel SelectedEmployee
         {
-            get => _selectedProduct;
+            get => _selectedEmployee;
             set
             {
-                _selectedProduct = value;
-                OnPropertyChanged();
+                SetField(ref _selectedEmployee, value);
                 // Handle the selection change
                 OnProductSelected();
             }
@@ -56,18 +54,21 @@ namespace EA.DesktopApp.ViewModels
 
         public ICommand ToggleClearFormCommand { get; private set; }
 
+        public async Task InitializeDataAsync()
+        {
+            await ExecuteAsync(LoadData);
+        }
+
         private void OnProductSelected()
         {
-            if (SelectedProduct == null)
+            if (SelectedEmployee == null)
             {
                 return;
             }
 
-            // Do something with the selected product, e.g., display its details
-            //MessageBox.Show($"Selected Product: {SelectedProduct.Name}");
-            PersonName = SelectedProduct.Name;
-            PersonLastName = SelectedProduct.LastName;
-            PersonDepartment = SelectedProduct.Department;
+            PersonName = SelectedEmployee.Name;
+            PersonLastName = SelectedEmployee.LastName;
+            PersonDepartment = SelectedEmployee.Department;
         }
 
         private void InitializeCommands()
@@ -81,13 +82,13 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                var loadedData = await _employeeService.GetAllEmployeeAsync(CancellationToken.None);
+                var loadedData = await _employeeService.GetAllEmployeeAsync(_token);
                 AllEmployees = new ObservableCollection<EmployeeModel>(loadedData.ToList());
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to load employees from server {e}", e);
+                _windowManager.ShowModalWindow("Failed to load employees from server");
             }
         }
 
@@ -95,12 +96,13 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                await _employeeService.DeleteAsync(SelectedProduct.Id, CancellationToken.None);
+                await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, _token));
+                await LoadData();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to delete employee {e}", e);
+                _windowManager.ShowModalWindow("Failed to delete employee");
             }
         }
 
@@ -108,23 +110,27 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                var updatedEmployeeData = new EmployeeModel()
+                var updatedEmployeeData = new EmployeeModel
                 {
+                    Id = SelectedEmployee.Id,
                     DateTime = DateTimeOffset.UtcNow,
-                    Name = SelectedProduct.Name,
-                    LastName = SelectedProduct.LastName,
-                    Department = SelectedProduct.Department,
+                    Name = PersonName,
+                    LastName = PersonLastName,
+                    Department = PersonDepartment,
+                    PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow),
                 };
 
-                await _employeeService.UpdateAsync(updatedEmployeeData, CancellationToken.None);
+                await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, _token));
+
+                await LoadData();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Info("Failed to update employee data {e}", e);
+                _windowManager.ShowModalWindow("Failed to update employee data");
             }
         }
-
+        
         private void ToggleClearFields()
         {
             ClearFields();

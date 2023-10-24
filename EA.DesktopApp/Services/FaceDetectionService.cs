@@ -1,10 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
+using System.Linq;
 using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Event;
+using EA.DesktopApp.Models;
+using EA.RecognizerEngine.Contracts;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -24,74 +25,56 @@ namespace EA.DesktopApp.Services
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private CascadeClassifier _eyeCascadeClassifier;
-        private CascadeClassifier _faceCascadeClassifier;
+        private readonly IEigenFaceRecognition _eigenRecognizer;
 
         /// <summary>
         ///     Capture stream from camera
         ///     And init background workers
         /// </summary>
-        public FaceDetectionService()
+        public FaceDetectionService(IEigenFaceRecognition eigenRecognizer)
         {
+            _eigenRecognizer = eigenRecognizer;
             InitializeClassifier();
-            ImageChanged -= OnFaceDetectionFound;
-            ImageChanged += OnFaceDetectionFound;
+            ImageChanged -= OnFaceDetected;
+            ImageChanged += OnFaceDetected;
         }
 
-        public string EmployeeName { get; set; }
+        public IReadOnlyList<EmployeeModel> Employees { get; set; }
 
         public event ImageChangedEventHandler FaceDetectionImageChanged;
 
-        //TODO Put EmployeeName instead of hardcoded literal 
-        private void OnFaceDetectionFound(Image<Bgr, byte> image)
+        private void OnFaceDetected(Image<Bgr, byte> image)
         {
             DetectFaces(image);
-        }
-
-        private void InitializeClassifier()
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                var path = Path.GetDirectoryName(assembly.Location);
-
-                if (path != null)
-                {
-                    _faceCascadeClassifier =
-                        new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
-                    _eyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
-                }
-                else
-                {
-                    Logger.Error("Could not find haarcascade xml file");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Could not find clissifier files");
-            }
         }
 
         private void DetectFaces(Image<Bgr, byte> image)
         {
             var grayFrame = image.Convert<Gray, byte>();
-            var faces = GetRectangles(_faceCascadeClassifier, grayFrame);
-            var eyes = GetRectangles(_eyeCascadeClassifier, grayFrame);
+            var faces = GetRectangles(FaceCascadeClassifier, grayFrame);
+            var eyes = GetRectangles(EyeCascadeClassifier, grayFrame);
 
             foreach (var face in faces)
             {
+                // Recognize the face right after detection
+                var resizedImage = grayFrame.Resize(ImageProcessingConstants.GrayPhotoWidth,
+                    ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
+
+                var idPredict = _eigenRecognizer.Predict(resizedImage);
+                var employee = Employees.First(s => s.Id == idPredict); // Ensure employees list is accessible
+                var detectedEmployeeName = $"{employee.Name} {employee.LastName}";
+
                 image.Draw(face, ImageProcessingConstants.RectanglesColor,
                     ImageProcessingConstants.RectangleThickness);
+                SetBackgroundText(image, detectedEmployeeName,
+                    face.Location,
+                    ImageProcessingConstants.TextColor);
 
                 foreach (var eye in eyes)
                 {
                     image.Draw(eye, ImageProcessingConstants.RectanglesColor,
                         ImageProcessingConstants.RectangleThickness);
                 }
-
-                SetBackgroundText(image, "Osman Mazinov",
-                    face.Location,
-                    ImageProcessingConstants.TextColor);
             }
 
             FaceDetectionImageChanged?.Invoke(image);
@@ -106,7 +89,7 @@ namespace EA.DesktopApp.Services
             return rectangles;
         }
 
-        private void SetBackgroundText(IInputOutputArray image, string text, Point point, Bgr textColor,
+        private static void SetBackgroundText(IInputOutputArray image, string text, Point point, Bgr textColor,
             double fontScale = 1.0)
         {
             CvInvoke.PutText(

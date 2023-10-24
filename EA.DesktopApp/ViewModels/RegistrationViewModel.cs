@@ -33,11 +33,18 @@ namespace EA.DesktopApp.ViewModels
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
 
+        private Bitmap _grayScaleImage;
+
+        private Bitmap _photoShootFrame;
+
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService, ISoundPlayerService soundPlayerService,
-            IEmployeeGatewayService employeeGatewayService, IWindowManager windowManager, CancellationToken token)
+        public RegistrationViewModel(IPhotoShootService photoShootService, 
+            ISoundPlayerService soundPlayerService,
+            IEmployeeGatewayService employeeGatewayService, 
+            IWindowManager windowManager, 
+            CancellationToken token)
         {
             _photoShootService = photoShootService;
             _soundPlayerService = soundPlayerService;
@@ -48,44 +55,6 @@ namespace EA.DesktopApp.ViewModels
             InitializeCommands();
             WindowClosingBehavior.WindowClose += OnWindowClosingBehavior;
         }
-
-        private void OnWindowClosingBehavior(object sender, EventArgs e)
-        {
-            _photoShootService?.CancelServiceAsync();
-        }
-
-        /// <summary>
-        ///     Initialize all services
-        /// </summary>
-        private void InitializeServices()
-        {
-            _photoShootService.RunServiceAsync();
-            _photoShootService.PhotoImageChanged += OnImageChanged;
-        }
-
-        /// <summary>
-        ///     Initialize all commands
-        /// </summary>
-        private void InitializeCommands()
-        {
-            ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
-            ToggleAddToDbCommand = new RelayCommand(async () => await ToggleAddImageToDataBase());
-            ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
-        }
-
-        /// <summary>
-        ///     Event handler for image changing
-        /// </summary>
-        /// <param name="image"></param>
-        private void OnImageChanged(Image<Bgr, byte> image)
-        {
-            PhotoShootFrame = image.ToBitmap();
-            // New grayscale image for recognition
-            PhotoShootGray = image.Convert<Gray, byte>().Resize(ImageProcessingConstants.GrayPhotoWidth,
-                ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
-        }
-
-        #region ToolTip properties
 
         /// <summary>
         ///     For main xaml take a photo
@@ -122,12 +91,6 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public string EnterPersonDepartment => UiErrorResource.EnterPersonDepartment;
 
-        #endregion ToolTip properties
-
-        #region Image fields
-
-        private Bitmap _grayScaleImage;
-
         /// <summary>
         ///     Get bitmap from frame
         /// </summary>
@@ -138,8 +101,6 @@ namespace EA.DesktopApp.ViewModels
             set => SetField(ref _grayScaleImage, value);
         }
 
-        private Bitmap _photoShootFrame;
-
         /// <summary>
         ///     Get bitmap from frame
         /// </summary>
@@ -149,22 +110,6 @@ namespace EA.DesktopApp.ViewModels
 
             set => SetField(ref _photoShootFrame, value);
         }
-
-        private Image<Gray, byte> _photoShootGray;
-
-        /// <summary>
-        ///     Get bitmap from frame
-        /// </summary>
-        public Image<Gray, byte> PhotoShootGray
-        {
-            get => _photoShootGray;
-
-            set => SetField(ref _photoShootGray, value);
-        }
-
-        #endregion Image fields
-
-        #region Command properties
 
         /// <summary>
         ///     Toggle to photoshoot command
@@ -181,9 +126,39 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public ICommand ToggleClearFormCommand { get; private set; }
 
-        #endregion Command properties
+        private void OnWindowClosingBehavior(object sender, EventArgs e)
+        {
+            _photoShootService?.CancelServiceAsync();
+        }
 
-        #region Toggles Execute methods
+        /// <summary>
+        ///     Initialize all services
+        /// </summary>
+        private void InitializeServices()
+        {
+            _photoShootService.RunServiceAsync();
+            _photoShootService.PhotoImageChanged += OnImageChanged;
+        }
+
+        /// <summary>
+        ///     Initialize all commands
+        /// </summary>
+        private void InitializeCommands()
+        {
+            ToggleCameraCaptureCommand = new RelayCommand(ToggleGetImageExecute);
+            ToggleAddToDbCommand = new RelayCommand(async () => await ToggleAddImageToDataBase());
+            ToggleClearFormCommand = new RelayCommand(ToggleClearFields);
+        }
+
+        /// <summary>
+        ///     Event handler for image changing
+        /// </summary>
+        /// <param name="image"></param>
+        private void OnImageChanged(Image<Bgr, byte> image)
+        {
+            CapturedImage = image;
+            PhotoShootFrame = image.ToBitmap();
+        }
 
         private void ToggleClearFields()
         {
@@ -205,9 +180,8 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
-            var resultImage = PhotoShootGray.ToBitmap();
             var converter = new ImageConverter();
-            var imageArray = (byte[])converter.ConvertTo(resultImage, typeof(byte[]));
+            var imageArray = (byte[])converter.ConvertTo(GrayScaleImage, typeof(byte[]));
 
             var employeeModel = new EmployeeModel
             {
@@ -216,9 +190,9 @@ namespace EA.DesktopApp.ViewModels
                 Department = PersonDepartment,
                 DateTime = DateTimeOffset.UtcNow,
                 Photo = imageArray,
-                PhotoName = $"Employee_{PersonName}_{PersonLastName}_{DateTime.UtcNow:MMddyyyy_HHmmss}.jpg"
+                PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow)
             };
-            //If something weny wrong in UI side checking
+            //If something went wrong in UI side checking
             if (employeeModel.Name == null || employeeModel.LastName == null
                                            || employeeModel.Department == null)
             {
@@ -228,7 +202,7 @@ namespace EA.DesktopApp.ViewModels
             {
                 try
                 {
-                    await _employeeGatewayService.CreateAsync(employeeModel, _token);
+                    await ExecuteAsync(() => _employeeGatewayService.CreateAsync(employeeModel, _token));
                     _windowManager.ShowModalWindow("Data has been successfully loaded to database.");
                     ClearFields();
                 }
@@ -245,17 +219,15 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        private Image<Bgr, byte> CapturedImage { get; set; }
+
         /// <summary>
         ///     Get grayscale image method
         /// </summary>
         private void ToggleGetImageExecute()
         {
             _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
-
-            // Get grayscale and send into BitmapToImageSourceConverter
-            GrayScaleImage = PhotoShootGray.ToBitmap();
+            GrayScaleImage = _photoShootService.CropFaceFromImage(CapturedImage).ToBitmap();
         }
-
-        #endregion Toggles Execute methods
     }
 }

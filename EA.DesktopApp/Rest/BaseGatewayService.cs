@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EA.DesktopApp.Exceptions;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -12,11 +13,17 @@ namespace EA.DesktopApp.Rest
     {
         private readonly int _timeout;
         protected readonly string BaseUrl;
+        protected readonly string PingUrl;
+        protected readonly int MaxPingAttempts;
+        protected readonly int ServerPingTimeout;
 
-        public BaseGatewayService(string baseUrl, int timeout)
+        public BaseGatewayService(AppConfig appConfig)
         {
-            BaseUrl = baseUrl;
-            _timeout = timeout;
+            BaseUrl = appConfig.BaseServerUri;
+            _timeout = appConfig.Timeout;
+            PingUrl = appConfig.ServerPingUri;
+            MaxPingAttempts = appConfig.MaxPingAttempts;
+            ServerPingTimeout = appConfig.ServerPingTimeout;
         }
 
         protected T GetContent<T>(RestResponseBase response)
@@ -29,7 +36,7 @@ namespace EA.DesktopApp.Rest
                 return model;
             }
 
-            throw new ApplicationException(
+            throw new ApiException(
                 $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
 
@@ -37,21 +44,21 @@ namespace EA.DesktopApp.Rest
         {
             if (!response.IsSuccessful)
             {
-                throw new ApplicationException(
+                throw new ApiException(
                     $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
             }
 
             if (response.Content == null)
             {
-                throw new ApplicationException(
+                throw new ApiException(
                     $"Response from service is failed. Status code: {response.StatusCode}, {response.ErrorMessage}");
             }
         }
 
-        protected async Task<RestResponse> CreateRestClientAsync(Uri url, CancellationToken cancellationToken)
+        protected async Task<RestResponse> SendRequestAsync(Uri url, Method method, CancellationToken cancellationToken)
         {
             var client = new RestClient(SetOptions(url));
-            var request = new RestRequest();
+            var request = new RestRequest(url, method);
             // Basic Authorization
             const string username = "Modern";
             const string password = "Warfare";
@@ -64,23 +71,23 @@ namespace EA.DesktopApp.Rest
                 return response;
             }
 
-            throw new ApplicationException(
+            throw new ApiException(
                 $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
 
-        protected async Task<RestResponse> CreateRestClientAsync<T>(T entity, Uri url,
+        protected async Task<RestResponse> SendRequestAsync<T>(T entity, Uri url, Method method,
             CancellationToken cancellationToken)
         {
             var client = new RestClient(SetOptions(url));
             var json = JsonConvert.SerializeObject(entity);
-            var request = new RestRequest(url, Method.Post);
-            request.AddParameter("text/json", json, ParameterType.RequestBody);
-
+            var request = new RestRequest(url, method);
             // Basic Authorization
             const string username = "Modern";
             const string password = "Warfare";
             var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+
+            request.AddParameter("text/json", json, ParameterType.RequestBody);
 
             var response = await client.ExecuteAsync(request, cancellationToken);
             if (response.IsSuccessful)
@@ -88,7 +95,7 @@ namespace EA.DesktopApp.Rest
                 return response;
             }
 
-            throw new ApplicationException(
+            throw new ApiException(
                 $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
 

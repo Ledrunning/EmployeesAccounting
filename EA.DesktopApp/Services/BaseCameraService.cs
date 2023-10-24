@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EA.DesktopApp.Event;
@@ -16,6 +18,8 @@ namespace EA.DesktopApp.Services
         private CancellationTokenSource _cancellationToken;
         private CancellationToken _token;
         public const int CamerasQuantity = 10;
+        protected CascadeClassifier EyeCascadeClassifier;
+        protected CascadeClassifier FaceCascadeClassifier;
 
         public bool IsRunning { get; set; }
 
@@ -91,6 +95,30 @@ namespace EA.DesktopApp.Services
             }
 
             _videoCapture = new VideoCapture(cameraIndex);
+        }
+
+        protected void InitializeClassifier()
+        {
+            try
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var path = Path.GetDirectoryName(assembly.Location);
+
+                if (path != null)
+                {
+                    FaceCascadeClassifier =
+                        new CascadeClassifier(Path.Combine(path, "haarcascade_frontalface_default.xml"));
+                    EyeCascadeClassifier = new CascadeClassifier(Path.Combine(path, "haarcascade_eye.xml"));
+                }
+                else
+                {
+                    Logger.Error("Could not find haarcascade xml file");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Could not find clissifier files");
+            }
         }
     }
 }

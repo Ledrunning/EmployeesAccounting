@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
@@ -8,6 +9,7 @@ namespace EA.DesktopApp.ViewModels
     public class ModalViewModel : BaseViewModel
     {
         private readonly IWindowManager _windowManager;
+        private readonly ISoundPlayerService _soundPlayerHelper;
         private string _warningText;
 
         /// <summary>
@@ -15,9 +17,10 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         /// <param name="windowManager"></param>
         /// <param name="initialMessage"></param>
-        public ModalViewModel(IWindowManager windowManager, string initialMessage)
+        public ModalViewModel(IWindowManager windowManager, ISoundPlayerService soundPlayerHelper, string initialMessage)
         {
             _windowManager = windowManager;
+            _soundPlayerHelper = soundPlayerHelper;
             WarningText = initialMessage;
             InitializeCommands();
         }
@@ -54,8 +57,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void CloseWindowExecute()
         {
-            var soundPlayerHelper = new SoundPlayerService();
-            soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             _windowManager.CloseModalWindow();
         }
     }
