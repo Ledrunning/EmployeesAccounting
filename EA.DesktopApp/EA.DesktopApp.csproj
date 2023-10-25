@@ -205,6 +205,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ProgramResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Rest\AdminGatewayService.cs" />
     <Compile Include="Rest\BaseGatewayService.cs" />
     <Compile Include="Rest\EmployeeGatewayService.cs" />
     <Compile Include="Services\BaseCameraService.cs" />

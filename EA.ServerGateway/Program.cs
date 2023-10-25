@@ -34,7 +34,9 @@ try
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+    builder.Services.AddTransient<IAdministratorRepository, AdministratorRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+    builder.Services.AddTransient<IAdministratorService, AdministratorService>();
 
     builder.Services.AddAuthentication("BasicAuthentication")
         .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
