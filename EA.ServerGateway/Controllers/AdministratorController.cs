@@ -41,6 +41,13 @@ public class AdministratorController : Controller
         return await _administratorService.GetByIdAsync(id, cancellationToken);
     }
 
+    [HttpGet]
+    [Route(nameof(GetAdministratorById))]
+    public async Task<AdministratorDto?> GetAdministratorByCredential(string login, string pass, CancellationToken cancellationToken)
+    {
+        return await _administratorService.GetByCredentialsAsync(login, pass, cancellationToken);
+    }
+
     [HttpPut]
     [Route(nameof(Update))]
     public async Task Update(AdministratorDto administrator, CancellationToken cancellationToken)

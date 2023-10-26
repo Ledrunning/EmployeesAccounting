@@ -185,6 +185,7 @@
     </ApplicationDefinition>
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Constants\ImageProcessingConstants.cs" />
+    <Compile Include="Contracts\IAdminGatewayService.cs" />
     <Compile Include="Contracts\IAsyncInitializer.cs" />
     <Compile Include="Contracts\IEmployeeGatewayService.cs" />
     <Compile Include="Contracts\IFaceDetectionService.cs" />

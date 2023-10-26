@@ -4,15 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
-using NLog;
 using RestSharp;
 
 namespace EA.DesktopApp.Rest
 {
     public class EmployeeGatewayService : BaseGatewayService, IEmployeeGatewayService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public EmployeeGatewayService(AppConfig appConfig) : base(appConfig)
         {
         }

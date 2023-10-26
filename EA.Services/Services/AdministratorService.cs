@@ -51,6 +51,20 @@ public class AdministratorService : IAdministratorService
         }
     }
 
+    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, string pass, CancellationToken token)
+    {
+        try
+        {
+            var administrator = await _administratorRepository.GetByCredentialsAsync(login, pass, token);
+            return _mapper.Map<AdministratorDto>(administrator);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
+        }
+    }
+
     public async Task<AdministratorDto?> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
         try
