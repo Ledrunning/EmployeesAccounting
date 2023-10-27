@@ -5,6 +5,7 @@ using EA.Repository.Entities;
 using EA.Services.Contracts;
 using EA.Services.Dto;
 using Microsoft.Extensions.Logging;
+using BCrypt.Net;
 
 namespace EA.Services.Services;
 
@@ -23,11 +24,14 @@ public class AdministratorService : IAdministratorService
         _administratorRepository = administratorRepository;
     }
 
-    public async Task AddAsync(AdministratorDto employee, CancellationToken cancellationToken)
+    public async Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken)
     {
         try
         {
-            var entity = _mapper.Map<Administrator>(employee);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(admin.Password);
+            var currentAdmin = admin.Password = hashedPassword;
+
+            var entity = _mapper.Map<Administrator>(currentAdmin);
             await _administratorRepository.AddAsync(entity, cancellationToken);
         }
         catch (Exception e)
@@ -51,11 +55,11 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, string pass, CancellationToken token)
+    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
     {
         try
         {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(login, pass, token);
+            var administrator = await _administratorRepository.GetByCredentialsAsync(login, token);
             return _mapper.Map<AdministratorDto>(administrator);
         }
         catch (Exception e)
@@ -104,5 +108,11 @@ public class AdministratorService : IAdministratorService
             _logger.LogError("Failed to delete an administrator in the database!: {e}", e);
             throw new EmployeeAccountingException("Failed to delete an administrator in database!", e);
         }
+    }
+
+    public async Task<bool> Login(string username, string password, CancellationToken token)
+    {
+        var administrator = await _administratorRepository.GetByCredentialsAsync(username, token);
+        return administrator != null && BCrypt.Net.BCrypt.Verify(password, administrator.Password);
     }
 }

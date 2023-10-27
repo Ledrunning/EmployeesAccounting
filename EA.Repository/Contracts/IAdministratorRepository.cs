@@ -4,5 +4,5 @@ namespace EA.Repository.Contracts;
 
 public interface IAdministratorRepository : IAsyncRepository<Administrator>
 {
-    Task<Administrator?> GetByCredentialsAsync(string login, string pass, CancellationToken token)
+    Task<Administrator?> GetByCredentialsAsync(string login, CancellationToken token);
 }

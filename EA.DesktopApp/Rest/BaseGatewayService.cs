@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EA.DesktopApp.Exceptions;
+using EA.DesktopApp.Models;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -13,8 +14,8 @@ namespace EA.DesktopApp.Rest
     {
         private readonly int _timeout;
         protected readonly string BaseUrl;
-        protected readonly string PingUrl;
         protected readonly int MaxPingAttempts;
+        protected readonly string PingUrl;
         protected readonly int ServerPingTimeout;
 
         public BaseGatewayService(AppConfig appConfig)
@@ -75,17 +76,23 @@ namespace EA.DesktopApp.Rest
                 $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
 
-        protected async Task<RestResponse> SendRequestAsync<T>(T entity, Uri url, Method method,
-            CancellationToken cancellationToken)
+        protected async Task<RestResponse> SendRequestAsync<T>(
+            T entity,
+            Uri url,
+            Method method,
+            CancellationToken cancellationToken,
+            Credentials credentials = null)
         {
             var client = new RestClient(SetOptions(url));
             var json = JsonConvert.SerializeObject(entity);
             var request = new RestRequest(url, method);
-            // Basic Authorization
-            const string username = "Modern";
-            const string password = "Warfare";
-            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-            request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+
+            if (credentials != null)
+            {
+                var basicAuthValue =
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes($"{credentials.UserName}:{credentials.Password}"));
+                request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+            }
 
             request.AddParameter("text/json", json, ParameterType.RequestBody);
 
@@ -98,6 +105,7 @@ namespace EA.DesktopApp.Rest
             throw new ApiException(
                 $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
+
 
         protected RestClientOptions SetOptions(Uri url)
         {

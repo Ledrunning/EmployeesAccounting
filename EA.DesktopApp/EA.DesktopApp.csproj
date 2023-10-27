@@ -201,6 +201,7 @@
     <Compile Include="Exceptions\ApiException .cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
     <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\Credentials.cs" />
     <Compile Include="Resources\Messages\ProgramResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

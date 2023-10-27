@@ -12,12 +12,15 @@ namespace EA.DesktopApp.Rest
         {
         }
 
-        public async Task<EmployeeModel> GetByCredentialsAsync(long id, CancellationToken token)
+        public async Task<EmployeeModel> SendCredentials(Credentials credentials, CancellationToken token)
         {
-            var url = new Uri($"{BaseUrl}/api/Administrator/GetByCredentialsAsync?id={id}");
-            var response = await SendRequestAsync(url, Method.Get, token);
+            var url = new Uri($"{BaseUrl}/api/Administrator/Login");
+            var response = await SendRequestAsync(credentials, url, Method.Get, token);
 
-            return GetContent<EmployeeModel>(response);
+            var serverToken = response.Content;
+            var employee = GetContent<EmployeeModel>(response);
+            employee.Token = serverToken;
+            return employee;
         }
     }
 }
