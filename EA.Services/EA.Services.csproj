@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -16,6 +16,12 @@
   <ItemGroup>
     <ProjectReference Include="..\EA.Common\EA.Common.csproj" />
     <ProjectReference Include="..\EA.Repository\EA.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

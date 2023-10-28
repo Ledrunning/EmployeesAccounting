@@ -1,11 +1,14 @@
-﻿using AutoMapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AutoMapper;
 using EA.Common.Exceptions;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
 using EA.Services.Contracts;
 using EA.Services.Dto;
 using Microsoft.Extensions.Logging;
-using BCrypt.Net;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EA.Services.Services;
 
@@ -55,20 +58,6 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
-    {
-        try
-        {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(login, token);
-            return _mapper.Map<AdministratorDto>(administrator);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
-            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
-        }
-    }
-
     public async Task<AdministratorDto?> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
         try
@@ -110,9 +99,50 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task<bool> Login(string username, string password, CancellationToken token)
+    public async Task<bool> LoginAsync(string username, string password, CancellationToken token)
     {
         var administrator = await _administratorRepository.GetByCredentialsAsync(username, token);
         return administrator != null && BCrypt.Net.BCrypt.Verify(password, administrator.Password);
+    }
+
+    public Task<AdministratorDto?> GetByCredentialsAsync(string login, string pass, CancellationToken token)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
+    {
+        try
+        {
+            var administrator = await _administratorRepository.GetByCredentialsAsync(login, token);
+            return _mapper.Map<AdministratorDto>(administrator);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
+        }
+    }
+
+    public string GenerateJwtToken(string username)
+    {
+        //TODO External config file without GIT Tracking
+        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YOUR_SECRET_KEY"));
+        var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, username)
+        };
+
+        var tokenOptions = new JwtSecurityToken(
+            "https://yourdomain.com",
+            "https://yourdomain.com",
+            claims,
+            expires: DateTime.Now.AddHours(1),
+            signingCredentials: signingCredentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 }
