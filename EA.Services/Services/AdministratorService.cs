@@ -5,6 +5,7 @@ using AutoMapper;
 using EA.Common.Exceptions;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
+using EA.Services.Configuration;
 using EA.Services.Contracts;
 using EA.Services.Dto;
 using Microsoft.Extensions.Logging;
@@ -15,16 +16,21 @@ namespace EA.Services.Services;
 public class AdministratorService : IAdministratorService
 {
     private readonly IAdministratorRepository _administratorRepository;
+    private readonly ConfigurationService _config;
     private readonly ILogger<EmployeeService> _logger;
     private readonly IMapper _mapper;
+    private readonly ServiceKeys? _serviceKeys;
 
     public AdministratorService(IMapper mapper,
         ILogger<EmployeeService> logger,
-        IAdministratorRepository administratorRepository)
+        IAdministratorRepository administratorRepository,
+        ConfigurationService config)
     {
         _mapper = mapper;
         _logger = logger;
         _administratorRepository = administratorRepository;
+        _config = config;
+        _serviceKeys = _config.LoadConfiguration();
     }
 
     public async Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken)
@@ -126,8 +132,13 @@ public class AdministratorService : IAdministratorService
 
     public string GenerateJwtToken(string username)
     {
-        //TODO External config file without GIT Tracking
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YOUR_SECRET_KEY"));
+        var secret = _serviceKeys?.Keys?.JwtSecretKey;
+        if (secret == null)
+        {
+            return string.Empty;
+        }
+
+        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
@@ -144,5 +155,25 @@ public class AdministratorService : IAdministratorService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+    }
+
+    public async Task InitializeAdmin(CancellationToken token)
+    {
+        var admins = await _administratorRepository.ListAsync(token);
+        if (!admins.Any())
+        {
+            var admin = new AdministratorDto()
+            {
+                Name = "admin",
+                LastName = "admin",
+                Login = "admin",
+                Password = _serviceKeys?.Keys?.FirstAdminPass,
+                OldPassword = _serviceKeys?.Keys?.FirstAdminPass
+            };
+
+            var entity = _mapper.Map<Administrator>(admin);
+            await _administratorRepository.AddAsync(entity, token);
+        }
     }
 }

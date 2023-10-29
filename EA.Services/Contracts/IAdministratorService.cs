@@ -4,6 +4,7 @@ namespace EA.Services.Contracts;
 
 public interface IAdministratorService
 {
+    Task InitializeAdmin(CancellationToken token);
     Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken);
     Task<IReadOnlyList<AdministratorDto?>> GetAllAsync(CancellationToken cancellationToken);
     Task<AdministratorDto?> GetByIdAsync(long id, CancellationToken cancellationToken);

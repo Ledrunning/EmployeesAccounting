@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace EA.ServerGateway.Extension;
+namespace EA.ServerGateway.Extensions;
 
 public static class ServiceOptions
 {
