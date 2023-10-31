@@ -19,7 +19,7 @@ public class AdministratorService : IAdministratorService
     private readonly ConfigurationService _config;
     private readonly ILogger<EmployeeService> _logger;
     private readonly IMapper _mapper;
-    private readonly ServiceKeys? _serviceKeys;
+    private readonly ServiceKeysConfig? _serviceKeys;
 
     public AdministratorService(IMapper mapper,
         ILogger<EmployeeService> logger,
@@ -132,7 +132,7 @@ public class AdministratorService : IAdministratorService
 
     public string GenerateJwtToken(string username)
     {
-        var secret = _serviceKeys?.Keys?.JwtSecretKey;
+        var secret = _serviceKeys?.ServiceKeys?.JwtSecretKey;
         if (secret == null)
         {
             return string.Empty;
@@ -168,8 +168,8 @@ public class AdministratorService : IAdministratorService
                 Name = "admin",
                 LastName = "admin",
                 Login = "admin",
-                Password = _serviceKeys?.Keys?.FirstAdminPass,
-                OldPassword = _serviceKeys?.Keys?.FirstAdminPass
+                Password = _serviceKeys?.ServiceKeys?.FirstAdminPass,
+                OldPassword = _serviceKeys?.ServiceKeys?.FirstAdminPass
             };
 
             var entity = _mapper.Map<Administrator>(admin);
