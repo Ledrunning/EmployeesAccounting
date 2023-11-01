@@ -12,7 +12,7 @@ public class AdministratorConfiguration : IEntityTypeConfiguration<Administrator
         builder.Property(administrator => administrator.LastName).HasMaxLength(150).IsRequired();
         builder.Property(administrator => administrator.RegistrationTime);
         builder.Property(administrator => administrator.Login).HasMaxLength(50).IsRequired();
-        builder.Property(administrator => administrator.Password).HasMaxLength(50).IsRequired();
-        builder.Property(administrator => administrator.OldPassword).HasMaxLength(50).IsRequired();
+        builder.Property(administrator => administrator.Password).HasMaxLength(255).IsRequired();
+        builder.Property(administrator => administrator.OldPassword).HasMaxLength(255).IsRequired();
     }
 }

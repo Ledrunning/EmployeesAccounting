@@ -111,11 +111,6 @@ public class AdministratorService : IAdministratorService
         return administrator != null && BCrypt.Net.BCrypt.Verify(password, administrator.Password);
     }
 
-    public Task<AdministratorDto?> GetByCredentialsAsync(string login, string pass, CancellationToken token)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
     {
         try
@@ -169,7 +164,8 @@ public class AdministratorService : IAdministratorService
                 LastName = "admin",
                 Login = "admin",
                 Password = _serviceKeys?.ServiceKeys?.FirstAdminPass,
-                OldPassword = _serviceKeys?.ServiceKeys?.FirstAdminPass
+                OldPassword = _serviceKeys?.ServiceKeys?.FirstAdminPass,
+                RegistrationTime = DateTimeOffset.UtcNow
             };
 
             var entity = _mapper.Map<Administrator>(admin);

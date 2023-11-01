@@ -11,12 +11,8 @@ public record Administrator : BaseEntity
 
     public string? Login { get; set; }
 
-    [MaxLength(255)]
-    [Column(TypeName = "nvarchar")]
     public string? Password { get; set; }
 
-    [MaxLength(255)]
-    [Column(TypeName = "nvarchar")]
     public string? OldPassword { get; set; }
 
     public DateTimeOffset RegistrationTime { get; set; }
