@@ -11,9 +11,11 @@ using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Converters;
+using EA.DesktopApp.Enum;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using EA.RecognizerEngine.Contracts;
@@ -36,6 +38,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
+        public event Action<OpenWindowBroker> RequestOpenWindow;
 
         private string _currentTimeDate;
         private string _detectionHint;

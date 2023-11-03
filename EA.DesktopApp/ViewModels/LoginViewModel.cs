@@ -2,8 +2,10 @@
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
+using EA.DesktopApp.Enum;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
@@ -13,7 +15,6 @@ namespace EA.DesktopApp.ViewModels
     {
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly IWindowManager _windowManager;
-
         public LoginViewModel(ISoundPlayerService soundPlayerHelper, IWindowManager windowManager)
         {
             _soundPlayerHelper = soundPlayerHelper;
@@ -75,6 +76,8 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleLoginExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+
+
             _windowManager.CloseWindow<LoginWindow>();
             _windowManager.ShowWindow<RegistrationForm>();
         }
