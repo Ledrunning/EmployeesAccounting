@@ -76,10 +76,20 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleLoginExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-
-
+            //TODO If login success 
             _windowManager.CloseWindow<LoginWindow>();
-            _windowManager.ShowWindow<RegistrationForm>();
+
+            switch (MainViewModel.WindowType)
+            {
+                case WindowType.RegistrationForm:
+                    _windowManager.ShowWindow<RegistrationForm>();
+                    break;
+                case WindowType.EditForm:
+                    _windowManager.ShowWindow<RedactorForm>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void ToggleCancelExecute()
