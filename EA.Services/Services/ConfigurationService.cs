@@ -5,13 +5,12 @@ namespace EA.Services.Services;
 
 public class ConfigurationService
 {
-    public ServiceKeys? LoadConfiguration()
+    public ServiceKeysConfig? LoadConfiguration()
     {
-        //var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.js");
-        var configPath = Path.Combine($"D:\\Programming\\OpenSourceDevelopment\\EmployeesAccounting\\EA.ServerGateway\\bin\\Debug\\net6.0", "config.js");
+        var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
         var jsonContent = File.ReadAllText(configPath);
 
-        var model = JsonConvert.DeserializeObject<ServiceKeys>(jsonContent);
+        var model = JsonConvert.DeserializeObject<ServiceKeysConfig>(jsonContent);
         return model;
     }
 }

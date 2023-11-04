@@ -33,7 +33,7 @@ try
     builder.Services.AddDbContext<DatabaseContext>(options => { options.UseSqlServer(connectionString); });
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-    builder.Services.AddTransient<ServiceKeys>();
+    builder.Services.AddTransient<ServiceKeysConfig>();
     builder.Services.AddTransient<ConfigurationService>();
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddTransient<IAdministratorRepository, AdministratorRepository>();

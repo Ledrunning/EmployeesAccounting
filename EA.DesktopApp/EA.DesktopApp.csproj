@@ -197,8 +197,10 @@
     <Compile Include="Converters\EmguFormatImageConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
+    <Compile Include="Enum\WindowType.cs" />
     <Compile Include="Event\ImageEvent.cs" />
     <Compile Include="Exceptions\ApiException .cs" />
+    <Compile Include="Helpers\PasswordBoxHelper.cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Credentials.cs" />
@@ -215,6 +217,7 @@
     <Compile Include="Contracts\IDialogService.cs" />
     <Compile Include="Contracts\ISoundPlayerService.cs" />
     <Compile Include="Services\ViewServices\ModalViewModelFactory.cs" />
+    <Compile Include="Services\ViewServices\OpenWindowBroker.cs" />
     <Compile Include="Services\ViewServices\WindowFactory.cs" />
     <Compile Include="Services\ViewServices\WindowManager.cs" />
     <Compile Include="Resources\Messages\UiErrorResource.Designer.cs">

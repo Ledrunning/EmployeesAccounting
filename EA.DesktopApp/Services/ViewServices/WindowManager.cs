@@ -17,7 +17,7 @@ namespace EA.DesktopApp.Services.ViewServices
 
         private readonly IWindowFactory _windowFactory;
 
-        private ModalWindow currentModalWindow;
+        private ModalWindow _currentModalWindow;
 
         public WindowManager(IWindowFactory windowFactory)
         {
@@ -48,16 +48,16 @@ namespace EA.DesktopApp.Services.ViewServices
 
         public void ShowModalWindow(string message)
         {
-            currentModalWindow = _windowFactory.GetWindow<ModalWindow>(message);
-            currentModalWindow.Owner = Application.Current.MainWindow;
-            currentModalWindow.Height = SystemParameters.PrimaryScreenHeight * ResizeScale;
-            currentModalWindow.Width = SystemParameters.PrimaryScreenWidth * ResizeScale;
-            currentModalWindow.Show();
+            _currentModalWindow = _windowFactory.GetWindow<ModalWindow>(message);
+            _currentModalWindow.Owner = Application.Current.MainWindow;
+            _currentModalWindow.Height = SystemParameters.PrimaryScreenHeight * ResizeScale;
+            _currentModalWindow.Width = SystemParameters.PrimaryScreenWidth * ResizeScale;
+            _currentModalWindow.Show();
         }
 
         public void CloseModalWindow()
         {
-            currentModalWindow?.Close();
+            _currentModalWindow?.Close();
         }
 
         private T WindowMemorize<T>() where T : Window, new()

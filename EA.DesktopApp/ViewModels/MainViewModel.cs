@@ -11,9 +11,11 @@ using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Converters;
+using EA.DesktopApp.Enum;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using EA.RecognizerEngine.Contracts;
@@ -36,6 +38,8 @@ namespace EA.DesktopApp.ViewModels
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
+        
+        public static WindowType WindowType { get; set; }
 
         private string _currentTimeDate;
         private string _detectionHint;
@@ -283,6 +287,7 @@ namespace EA.DesktopApp.ViewModels
             IsRunning = false;
             IsStreaming = false;
             StopFaceDetectionService();
+            WindowType = WindowType.RegistrationForm;
             _windowManager.ShowWindow<LoginWindow>();
         }
 
@@ -304,7 +309,8 @@ namespace EA.DesktopApp.ViewModels
 
         public void ToggleOpenEditExecute()
         {
-            _windowManager.ShowWindow<RedactorForm>();
+            WindowType = WindowType.EditForm;
+            _windowManager.ShowWindow<LoginWindow>();
         }
 
         /// <summary>
