@@ -52,7 +52,7 @@ namespace EA.DesktopApp.ViewModels
 
         private string _selectedCamera;
 
-        private IReadOnlyList<EmployeeModel> employees;
+        private IReadOnlyList<EmployeeModel> _employees;
 
         /// <summary>
         ///     Timer
@@ -219,9 +219,9 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
-                _faceDetectionService.Employees = employees;
-                foreach (var employee in employees)
+                _employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
+                _faceDetectionService.Employees = _employees;
+                foreach (var employee in _employees)
                 {
                     var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
 

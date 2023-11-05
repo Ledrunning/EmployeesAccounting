@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using EA.DesktopApp.Constants;
@@ -26,7 +27,7 @@ namespace EA.DesktopApp.Services
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEigenFaceRecognition _eigenRecognizer;
-
+        private string _employeeName;
         /// <summary>
         ///     Capture stream from camera
         ///     And init background workers
@@ -59,14 +60,19 @@ namespace EA.DesktopApp.Services
                 // Recognize the face right after detection
                 var resizedImage = grayFrame.Resize(ImageProcessingConstants.GrayPhotoWidth,
                     ImageProcessingConstants.GrayPhotoHeight, Inter.Cubic);
+                
+                if (_eigenRecognizer.IsImageTrained)
+                {
+                    var idPredict = _eigenRecognizer.Predict(resizedImage);
+                    var employee = Employees.First(s => s.Id == idPredict); // Ensure employees list is accessible
+                    _employeeName = $"{employee.Name} {employee.LastName}";
+                }
 
-                var idPredict = _eigenRecognizer.Predict(resizedImage);
-                var employee = Employees.First(s => s.Id == idPredict); // Ensure employees list is accessible
-                var detectedEmployeeName = $"{employee.Name} {employee.LastName}";
+                _employeeName = ImageProcessingConstants.NotFound;
 
                 image.Draw(face, ImageProcessingConstants.RectanglesColor,
                     ImageProcessingConstants.RectangleThickness);
-                SetBackgroundText(image, detectedEmployeeName,
+                SetBackgroundText(image, _employeeName,
                     face.Location,
                     ImageProcessingConstants.TextColor);
 

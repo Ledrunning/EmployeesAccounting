@@ -13,6 +13,7 @@ namespace EA.RecognizerEngine.Engines
         private readonly List<int> _labels;
         private readonly EigenFaceRecognizer _recognizer;
         private readonly List<Image<Gray, byte>> _trainingImages;
+        public bool IsImageTrained { get; set; }
 
         public EigenFaceRecognition()
         {
@@ -31,6 +32,7 @@ namespace EA.RecognizerEngine.Engines
         {
             if (_trainingImages.Count == 0)
             {
+                IsImageTrained = false;
                 throw new Exception("No training images provided.");
             }
 
@@ -43,6 +45,7 @@ namespace EA.RecognizerEngine.Engines
                 }
 
                 _recognizer.Train(vectorOfImages, vectorOfLabels);
+                IsImageTrained = true;
             }
         }
 
