@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using EA.RecognizerEngine.Contracts;
+﻿using EA.RecognizerEngine.Contracts;
+using EA.RecognizerEngine.Exceptions;
 using Emgu.CV;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
@@ -8,44 +7,37 @@ using Emgu.CV.Util;
 
 namespace EA.RecognizerEngine.Engines
 {
-    public class EigenFaceRecognition : IEigenFaceRecognition
+    public class EigenFaceRecognition : FaceRecognitionBase, IEigenFaceRecognition
     {
-        private readonly List<int> _labels;
         private readonly EigenFaceRecognizer _recognizer;
-        private readonly List<Image<Gray, byte>> _trainingImages;
 
-        public EigenFaceRecognition()
+        public EigenFaceRecognition(EigenFaceRecognizer recognizer)
         {
-            _recognizer = new EigenFaceRecognizer();
-            _trainingImages = new List<Image<Gray, byte>>();
-            _labels = new List<int>();
+            _recognizer = recognizer;
         }
 
-        public void AddTrainingImage(Image<Gray, byte> image, int label)
-        {
-            _trainingImages.Add(image);
-            _labels.Add(label);
-        }
+        public bool IsImageTrained { get; set; }
 
-        public void Train()
+        public override void Train()
         {
-            if (_trainingImages.Count == 0)
+            if (TrainingImages.Count == 0)
             {
-                throw new Exception("No training images provided.");
+                IsImageTrained = false;
+                throw new RecognizerEngineException("No training images provided.");
             }
 
             using (var vectorOfImages = new VectorOfMat())
-            using (var vectorOfLabels = new VectorOfInt(_labels.ToArray()))
+            using (var vectorOfLabels = new VectorOfInt(Labels.ToArray()))
             {
-                foreach (var image in _trainingImages)
+                foreach (var image in TrainingImages)
                 {
                     vectorOfImages.Push(image.Mat);
                 }
 
                 _recognizer.Train(vectorOfImages, vectorOfLabels);
+                IsImageTrained = true;
             }
         }
-
 
         public int Predict(Image<Gray, byte> queryImage)
         {
