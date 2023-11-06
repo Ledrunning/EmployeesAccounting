@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using EA.RecognizerEngine.Contracts;
 using EA.RecognizerEngine.Exceptions;
 using Emgu.CV;
@@ -12,37 +11,34 @@ namespace EA.RecognizerEngine.Engines
     /// <summary>
     ///     Load data -> 2. Add to training set -> 3. Train -> 4. Predict.
     /// </summary>
-    public class LbphFaceRecognition : ILbphFaceRecognition
+    public class LbphFaceRecognition : FaceRecognitionBase, ILbphFaceRecognition
     {
-        private readonly List<int> _labels = new List<int>();
         private readonly LBPHFaceRecognizer _recognizer;
-        private readonly List<Image<Gray, byte>> _trainingImages;
 
         public LbphFaceRecognition()
         {
             _recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 400.00);
-            _trainingImages = new List<Image<Gray, byte>>();
         }
 
         //TODO I need some suggestion for change long into int;
         public void AddTrainingImage(Image<Gray, byte> image, long label)
         {
-            _trainingImages.Add(image);
-            _labels.Add(Convert.ToInt32(label));
+            TrainingImages.Add(image);
+            Labels.Add(Convert.ToInt32(label));
         }
 
-        public void Train()
+        public override void Train()
         {
-            if (_trainingImages.Count == 0)
+            if (TrainingImages.Count == 0)
             {
                 throw new RecognizerEngineException("No training images provided.");
             }
 
-            var faces = _trainingImages.ToArray();
+            var faces = TrainingImages.ToArray();
             using (var vectorOfMat = new VectorOfMat())
             {
                 vectorOfMat.Push(faces);
-                var labels = _labels.ToArray();
+                var labels = Labels.ToArray();
                 using (var vectorOfInt = new VectorOfInt())
                 {
                     vectorOfInt.Push(labels);

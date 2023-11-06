@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using EA.RecognizerEngine.Contracts;
+﻿using EA.RecognizerEngine.Contracts;
+using EA.RecognizerEngine.Exceptions;
 using Emgu.CV;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
@@ -8,38 +7,29 @@ using Emgu.CV.Util;
 
 namespace EA.RecognizerEngine.Engines
 {
-    public class EigenFaceRecognition : IEigenFaceRecognition
+    public class EigenFaceRecognition : FaceRecognitionBase, IEigenFaceRecognition
     {
-        private readonly List<int> _labels;
         private readonly EigenFaceRecognizer _recognizer;
-        private readonly List<Image<Gray, byte>> _trainingImages;
+
+        public EigenFaceRecognition(EigenFaceRecognizer recognizer)
+        {
+            _recognizer = recognizer;
+        }
+
         public bool IsImageTrained { get; set; }
 
-        public EigenFaceRecognition()
+        public override void Train()
         {
-            _recognizer = new EigenFaceRecognizer();
-            _trainingImages = new List<Image<Gray, byte>>();
-            _labels = new List<int>();
-        }
-
-        public void AddTrainingImage(Image<Gray, byte> image, int label)
-        {
-            _trainingImages.Add(image);
-            _labels.Add(label);
-        }
-
-        public void Train()
-        {
-            if (_trainingImages.Count == 0)
+            if (TrainingImages.Count == 0)
             {
                 IsImageTrained = false;
-                throw new Exception("No training images provided.");
+                throw new RecognizerEngineException("No training images provided.");
             }
 
             using (var vectorOfImages = new VectorOfMat())
-            using (var vectorOfLabels = new VectorOfInt(_labels.ToArray()))
+            using (var vectorOfLabels = new VectorOfInt(Labels.ToArray()))
             {
-                foreach (var image in _trainingImages)
+                foreach (var image in TrainingImages)
                 {
                     vectorOfImages.Push(image.Mat);
                 }
@@ -48,7 +38,6 @@ namespace EA.RecognizerEngine.Engines
                 IsImageTrained = true;
             }
         }
-
 
         public int Predict(Image<Gray, byte> queryImage)
         {

@@ -15,7 +15,6 @@ using EA.DesktopApp.Enum;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using EA.RecognizerEngine.Contracts;
@@ -38,11 +37,11 @@ namespace EA.DesktopApp.ViewModels
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
-        
-        public static WindowType WindowType { get; set; }
 
         private string _currentTimeDate;
         private string _detectionHint;
+
+        private IReadOnlyList<EmployeeModel> _employees;
 
         private Bitmap _frame;
 
@@ -51,8 +50,6 @@ namespace EA.DesktopApp.ViewModels
         private bool _isStreaming;
 
         private string _selectedCamera;
-
-        private IReadOnlyList<EmployeeModel> _employees;
 
         /// <summary>
         ///     Timer
@@ -82,6 +79,8 @@ namespace EA.DesktopApp.ViewModels
             _token = token;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
+
+        public static WindowType WindowType { get; set; }
 
         public ObservableCollection<string> AvailableCameras { get; } = new ObservableCollection<string>();
 
