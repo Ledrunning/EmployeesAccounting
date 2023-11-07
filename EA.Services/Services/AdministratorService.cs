@@ -16,7 +16,6 @@ namespace EA.Services.Services;
 public class AdministratorService : IAdministratorService
 {
     private readonly IAdministratorRepository _administratorRepository;
-    private readonly ConfigurationService _config;
     private readonly ILogger<EmployeeService> _logger;
     private readonly IMapper _mapper;
     private readonly ServiceKeysConfig? _serviceKeys;
@@ -29,8 +28,7 @@ public class AdministratorService : IAdministratorService
         _mapper = mapper;
         _logger = logger;
         _administratorRepository = administratorRepository;
-        _config = config;
-        _serviceKeys = _config.LoadConfiguration();
+        _serviceKeys = config.LoadConfiguration();
     }
 
     public async Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken)
@@ -105,10 +103,15 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task<bool> LoginAsync(string username, string password, CancellationToken token)
+    public async Task<bool> LoginAsync(Credentials credentials, CancellationToken token)
     {
-        var administrator = await _administratorRepository.GetByCredentialsAsync(username, token);
-        return administrator != null && BCrypt.Net.BCrypt.Verify(password, administrator.Password);
+        if (credentials.UserName == null)
+        {
+            return false;
+        }
+
+        var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.UserName, token);
+        return administrator != null && BCrypt.Net.BCrypt.Verify(credentials.Password, administrator.Password);
     }
 
     public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
@@ -125,6 +128,7 @@ public class AdministratorService : IAdministratorService
         }
     }
 
+    //Todo need to think
     public string GenerateJwtToken(string username)
     {
         var secret = _serviceKeys?.ServiceKeys?.JwtSecretKey;

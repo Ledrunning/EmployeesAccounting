@@ -9,7 +9,6 @@ using RestSharp;
 
 namespace EA.DesktopApp.Rest
 {
-    // TODO add main login - password into basic auth here
     public class BaseGatewayService
     {
         private readonly int _timeout;
@@ -56,17 +55,18 @@ namespace EA.DesktopApp.Rest
             }
         }
 
-        protected async Task<RestResponse> SendRequestAsync(Uri url, Method method, CancellationToken cancellationToken)
+        protected async Task<RestResponse> SendRequestAsync(Uri url, Method method, 
+            CancellationToken token,
+            Credentials credentials = null)
         {
             var client = new RestClient(SetOptions(url));
             var request = new RestRequest(url, method);
+
             // Basic Authorization
-            const string username = "Modern";
-            const string password = "Warfare";
-            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{credentials.UserName}:{credentials.Password}"));
             request.AddHeader("Authorization", $"Basic {basicAuthValue}");
 
-            var response = await client.ExecuteAsync(request, cancellationToken);
+            var response = await client.ExecuteAsync(request, token);
             if (response.IsSuccessful)
             {
                 return response;
@@ -80,7 +80,7 @@ namespace EA.DesktopApp.Rest
             T entity,
             Uri url,
             Method method,
-            CancellationToken cancellationToken,
+            CancellationToken token,
             Credentials credentials = null)
         {
             var client = new RestClient(SetOptions(url));
@@ -96,7 +96,7 @@ namespace EA.DesktopApp.Rest
 
             request.AddParameter("text/json", json, ParameterType.RequestBody);
 
-            var response = await client.ExecuteAsync(request, cancellationToken);
+            var response = await client.ExecuteAsync(request, token);
             if (response.IsSuccessful)
             {
                 return response;

@@ -44,9 +44,9 @@ public class AdministratorController : Controller
     //TODO MOCK
     [HttpGet]
     [Route(nameof(Login))]
-    public async Task<AdministratorDto?> Login(string login, string pass, CancellationToken cancellationToken)
+    public async Task<AdministratorDto?> Login(Credentials credentials, CancellationToken cancellationToken)
     {
-        await _administratorService.LoginAsync(login, pass, cancellationToken);
+        await _administratorService.LoginAsync(credentials, cancellationToken);
         return new AdministratorDto();
     }
 
