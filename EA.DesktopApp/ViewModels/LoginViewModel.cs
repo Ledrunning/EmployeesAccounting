@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Enum;
+using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
-using EA.DesktopApp.Services.ViewServices;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 
@@ -13,12 +14,20 @@ namespace EA.DesktopApp.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        private readonly IAdminGatewayService _adminGatewayService;
         private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
-        public LoginViewModel(ISoundPlayerService soundPlayerHelper, IWindowManager windowManager)
+
+        public LoginViewModel(ISoundPlayerService soundPlayerHelper,
+            IWindowManager windowManager,
+            IAdminGatewayService adminGatewayService,
+            CancellationToken token)
         {
             _soundPlayerHelper = soundPlayerHelper;
             _windowManager = windowManager;
+            _adminGatewayService = adminGatewayService;
+            _token = token;
             InitializeCommands();
         }
 
@@ -72,11 +81,24 @@ namespace EA.DesktopApp.ViewModels
             AdminModeCommand = new RelayCommand(ToggleAdminWindowShowExecute);
         }
 
-        //todo login check // And add registration form bitte!
-        private void ToggleLoginExecute()
+        private async void ToggleLoginExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            //TODO If login success 
+
+            //Set credentials
+            _adminGatewayService.SetCredentials(new Credentials
+            {
+                UserName = LoginField,
+                Password = PasswordField
+            });
+
+            var isLogin = await _adminGatewayService.Login(_token);
+
+            if (!isLogin)
+            {
+                return;
+            }
+
             _windowManager.CloseWindow<LoginWindow>();
 
             switch (MainViewModel.WindowType)

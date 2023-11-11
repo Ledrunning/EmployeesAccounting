@@ -41,13 +41,12 @@ public class AdministratorController : Controller
         return await _administratorService.GetByIdAsync(id, cancellationToken);
     }
 
-    //TODO MOCK
     [HttpGet]
     [Route(nameof(Login))]
-    public async Task<AdministratorDto?> Login(Credentials credentials, CancellationToken cancellationToken)
+    public async Task<bool?> Login(Credentials credentials, CancellationToken cancellationToken)
     {
-        await _administratorService.LoginAsync(credentials, cancellationToken);
-        return new AdministratorDto();
+        var result = await _administratorService.LoginAsync(credentials, cancellationToken);
+        return result;
     }
 
     [HttpPut]

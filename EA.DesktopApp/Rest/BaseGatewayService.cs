@@ -16,6 +16,8 @@ namespace EA.DesktopApp.Rest
         protected readonly int MaxPingAttempts;
         protected readonly string PingUrl;
         protected readonly int ServerPingTimeout;
+        // Store credentials for later use
+        protected static Credentials Credentials;
 
         public BaseGatewayService(AppConfig appConfig)
         {
@@ -24,6 +26,12 @@ namespace EA.DesktopApp.Rest
             PingUrl = appConfig.ServerPingUri;
             MaxPingAttempts = appConfig.MaxPingAttempts;
             ServerPingTimeout = appConfig.ServerPingTimeout;
+        }
+
+        // Set credentials for the service
+        public void SetCredentials(Credentials credentials)
+        {
+            Credentials = credentials;
         }
 
         protected T GetContent<T>(RestResponseBase response)
@@ -56,14 +64,13 @@ namespace EA.DesktopApp.Rest
         }
 
         protected async Task<RestResponse> SendRequestAsync(Uri url, Method method, 
-            CancellationToken token,
-            Credentials credentials = null)
+            CancellationToken token)
         {
             var client = new RestClient(SetOptions(url));
             var request = new RestRequest(url, method);
 
             // Basic Authorization
-            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{credentials.UserName}:{credentials.Password}"));
+            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Credentials.UserName}:{Credentials.Password}"));
             request.AddHeader("Authorization", $"Basic {basicAuthValue}");
 
             var response = await client.ExecuteAsync(request, token);
@@ -80,17 +87,16 @@ namespace EA.DesktopApp.Rest
             T entity,
             Uri url,
             Method method,
-            CancellationToken token,
-            Credentials credentials = null)
+            CancellationToken token)
         {
             var client = new RestClient(SetOptions(url));
             var json = JsonConvert.SerializeObject(entity);
             var request = new RestRequest(url, method);
 
-            if (credentials != null)
+            if (Credentials != null)
             {
                 var basicAuthValue =
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes($"{credentials.UserName}:{credentials.Password}"));
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Credentials.UserName}:{Credentials.Password}"));
                 request.AddHeader("Authorization", $"Basic {basicAuthValue}");
             }
 

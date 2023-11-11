@@ -20,7 +20,7 @@ namespace EA.DesktopApp.ViewModels
         private string _personLastName;
         private string _personName;
 
-        protected Dictionary<string, string> errors = new Dictionary<string, string>();
+        protected Dictionary<string, string> Errors = new Dictionary<string, string>();
 
         public Visibility IsProgressVisible
         {
@@ -179,16 +179,16 @@ namespace EA.DesktopApp.ViewModels
 
         protected void CheckFieldErrors(string columnName, string error)
         {
-            if (string.IsNullOrEmpty(error) && errors.ContainsKey(columnName))
+            if (string.IsNullOrEmpty(error) && Errors.ContainsKey(columnName))
             {
-                errors.Remove(columnName);
+                Errors.Remove(columnName);
             }
             else if (!string.IsNullOrEmpty(error))
             {
-                errors[columnName] = error;
+                Errors[columnName] = error;
             }
 
-            HasErrors = errors.Count > 0;
+            HasErrors = Errors.Count > 0;
         }
     }
 }

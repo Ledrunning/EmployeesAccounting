@@ -22,6 +22,5 @@ namespace EA.DesktopApp.Models
 
         public byte[] Photo { get; set; }
         public string PhotoName { get; set; }
-        public string Token { get; set; }
     }
 }
