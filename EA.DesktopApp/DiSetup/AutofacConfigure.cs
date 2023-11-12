@@ -31,6 +31,7 @@ namespace EA.DesktopApp.DiSetup
 
                 var loadedConfiguration = appConfig.LoadConfiguration();
 
+                var adminGatewayService = new AdminGatewayService(loadedConfiguration);
                 var employeeGatewayService = new EmployeeGatewayService(loadedConfiguration);
 
                 // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
@@ -51,7 +52,8 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
                 builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().SingleInstance();
-
+                builder.RegisterInstance(adminGatewayService).As<IAdminGatewayService>().SingleInstance();
+                
                 builder.RegisterType<MainWindow>().InstancePerDependency();
                 builder.RegisterType<MainViewModel>().InstancePerDependency();
 

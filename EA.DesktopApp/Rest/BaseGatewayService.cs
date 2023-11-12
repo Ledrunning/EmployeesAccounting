@@ -90,8 +90,7 @@ namespace EA.DesktopApp.Rest
             CancellationToken token)
         {
             var client = new RestClient(SetOptions(url));
-            var json = JsonConvert.SerializeObject(entity);
-            var request = new RestRequest(url, method);
+            var request = new RestRequest(url.PathAndQuery, method);
 
             if (Credentials != null)
             {
@@ -100,7 +99,12 @@ namespace EA.DesktopApp.Rest
                 request.AddHeader("Authorization", $"Basic {basicAuthValue}");
             }
 
-            request.AddParameter("text/json", json, ParameterType.RequestBody);
+            if (method != Method.Get)
+            {
+                var json = JsonConvert.SerializeObject(entity);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddParameter("application/json", json, ParameterType.RequestBody);
+            }
 
             var response = await client.ExecuteAsync(request, token);
             if (response.IsSuccessful)
@@ -109,7 +113,7 @@ namespace EA.DesktopApp.Rest
             }
 
             throw new ApiException(
-                $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
+                $"Can not create rest request. Status code: {response.StatusCode}, Error message: {response.ErrorMessage}, Response content: {response.Content}");
         }
 
 

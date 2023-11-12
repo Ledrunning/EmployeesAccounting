@@ -17,7 +17,7 @@ namespace EA.DesktopApp.View
             DataContext = AutofacConfigure.Container.Resolve<MainViewModel>();
         }
 
-        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        private void OnMainWindowClosing(object sender, CancelEventArgs e)
         {
             AutofacConfigure.Container.Dispose(); 
         }

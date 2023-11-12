@@ -83,34 +83,42 @@ namespace EA.DesktopApp.ViewModels
 
         private async void ToggleLoginExecute()
         {
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-
-            //Set credentials
-            _adminGatewayService.SetCredentials(new Credentials
+            try
             {
-                UserName = LoginField,
-                Password = PasswordField
-            });
+                _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
-            var isLogin = await _adminGatewayService.Login(_token);
+                //Set credentials
+                _adminGatewayService.SetCredentials(new Credentials
+                {
+                    UserName = LoginField,
+                    Password = PasswordField
+                });
 
-            if (!isLogin)
-            {
-                return;
+                var isLogin = await _adminGatewayService.Login(_token);
+
+                if (!isLogin)
+                {
+                    return;
+                }
+
+                _windowManager.CloseWindow<LoginWindow>();
+
+                switch (MainViewModel.WindowType)
+                {
+                    case WindowType.RegistrationForm:
+                        _windowManager.ShowWindow<RegistrationForm>();
+                        break;
+                    case WindowType.EditForm:
+                        _windowManager.ShowWindow<RedactorForm>();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-
-            _windowManager.CloseWindow<LoginWindow>();
-
-            switch (MainViewModel.WindowType)
+            catch (Exception e)
             {
-                case WindowType.RegistrationForm:
-                    _windowManager.ShowWindow<RegistrationForm>();
-                    break;
-                case WindowType.EditForm:
-                    _windowManager.ShowWindow<RedactorForm>();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                Console.WriteLine(e);
+                throw;
             }
         }
 

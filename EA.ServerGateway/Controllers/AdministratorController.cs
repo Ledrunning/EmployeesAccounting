@@ -41,9 +41,9 @@ public class AdministratorController : Controller
         return await _administratorService.GetByIdAsync(id, cancellationToken);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(nameof(Login))]
-    public async Task<bool?> Login(Credentials credentials, CancellationToken cancellationToken)
+    public async Task<bool?> Login([FromBody] Credentials credentials, CancellationToken cancellationToken)
     {
         var result = await _administratorService.LoginAsync(credentials, cancellationToken);
         return result;

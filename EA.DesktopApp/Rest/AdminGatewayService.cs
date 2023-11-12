@@ -17,7 +17,7 @@ namespace EA.DesktopApp.Rest
         public async Task<bool> Login(CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Administrator/Login");
-            var response = await SendRequestAsync(Credentials, url, Method.Get, token);
+            var response = await SendRequestAsync(Credentials, url, Method.Post, token);
             return GetContent<bool>(response);
         }
 
