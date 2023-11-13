@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using EA.Repository.Configurations;
 using EA.Repository.Contracts;
+using EA.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EA.Repository;
@@ -12,6 +13,8 @@ namespace EA.Repository;
 /// </summary>
 public sealed class DatabaseContext : DbContext, IUnitOfWork
 {
+    public DbSet<Administrator>? Administrators { get; set; }
+
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {

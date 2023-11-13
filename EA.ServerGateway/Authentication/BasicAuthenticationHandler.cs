@@ -2,9 +2,11 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
+using EA.Repository;
 using EA.ServerGateway.Configuration;
 using EA.ServerGateway.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace EA.ServerGateway.Authentication;
@@ -13,22 +15,27 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 {
     private readonly EaConfiguration _configuration;
     private readonly IOptionsMonitor<AuthenticationSchemeOptions> _options;
+    private IConfiguration _appConfiguration;
 
-    public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger,
-        UrlEncoder encoder, ISystemClock clock, IOptions<EaConfiguration> configuration) : base(options, logger,
-        encoder, clock)
+    public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder, 
+        ISystemClock clock, 
+        IOptions<EaConfiguration> configuration,
+        IConfiguration appConfiguration) : base(options, logger, encoder, clock)
     {
         _options = options;
         _configuration = configuration.Value;
+        _appConfiguration = appConfiguration;
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         Response.Headers.Add("WWW-Authenticate", "Basic");
 
         if (!Request.Headers.ContainsKey("Authorization"))
         {
-            return Task.FromResult(AuthenticateResult.Fail("Authorization header missing."));
+            return AuthenticateResult.Fail("Authorization header missing.");
         }
 
         var authorizationHeader = Request.Headers["Authorization"].ToString();
@@ -36,7 +43,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
         if (!authHeaderRegex.IsMatch(authorizationHeader))
         {
-            return Task.FromResult(AuthenticateResult.Fail("Authorization code not formatted properly."));
+            return AuthenticateResult.Fail("Authorization code not formatted properly.");
         }
 
         var authBase64 =
@@ -45,16 +52,28 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         var authUsername = authSplit[0];
         var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
 
-        if (authUsername != _configuration.Login ||
-            authPassword != _configuration.Password)
+        var connectionString = _appConfiguration.GetConnectionString("DbConnection");
+        // Manually create an instance of DatabaseContext
+        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
+        optionsBuilder.UseSqlServer(connectionString); // Use your actual connection string
+
+        await using var dbContext = new DatabaseContext(optionsBuilder.Options);
+
+        // Retrieve the hashed password from the database based on the username
+        if (dbContext.Administrators != null)
         {
-            return Task.FromResult(AuthenticateResult.Fail("Invalid Username or Password."));
+            var administrator = await dbContext.Administrators.FirstOrDefaultAsync(u => u.Login == authUsername);
+
+            if (administrator == null || !BCrypt.Net.BCrypt.Verify(authPassword, administrator.Password))
+            {
+                return AuthenticateResult.Fail("Invalid Username or Password.");
+            }
         }
 
         var authenticatedUser =
-            new AuthenticatedUser("BasicAuthentication", true, _configuration.Login);
+            new AuthenticatedUser("BasicAuthentication", true, authUsername);
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(authenticatedUser));
 
-        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
+        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
     }
 }
