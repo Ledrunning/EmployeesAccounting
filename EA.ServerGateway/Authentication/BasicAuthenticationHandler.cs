@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using EA.Repository;
-using EA.ServerGateway.Configuration;
 using EA.ServerGateway.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ namespace EA.ServerGateway.Authentication;
 
 public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private readonly EaConfiguration _configuration;
     private readonly IOptionsMonitor<AuthenticationSchemeOptions> _options;
     private IConfiguration _appConfiguration;
 
@@ -21,11 +19,9 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         ILoggerFactory logger,
         UrlEncoder encoder, 
         ISystemClock clock, 
-        IOptions<EaConfiguration> configuration,
         IConfiguration appConfiguration) : base(options, logger, encoder, clock)
     {
         _options = options;
-        _configuration = configuration.Value;
         _appConfiguration = appConfiguration;
     }
 

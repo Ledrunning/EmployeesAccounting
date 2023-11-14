@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace EA.ServerGateway.Controllers;
 
 [Authorize]
+[ApiController]
+[Route("api/[controller]")]
 public class AdministratorController : Controller
 {
     private readonly IAdministratorService _administratorService;
@@ -15,6 +17,7 @@ public class AdministratorController : Controller
         _administratorService = administratorService;
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
         return Content("Welcome to EmployeesAccounting administrator web api page!");

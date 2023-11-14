@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace EA.DesktopApp.Helpers
@@ -27,7 +28,12 @@ namespace EA.DesktopApp.Helpers
             }
 
             passwordBox.PasswordChanged -= PasswordChanged;
-            passwordBox.Password = e.NewValue != null ? e.NewValue.ToString() : string.Empty;
+
+            // Use a dispatcher to ensure that this code runs on the UI thread
+            passwordBox.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                passwordBox.Password = e.NewValue != null ? e.NewValue.ToString() : string.Empty;
+            }));
 
             passwordBox.PasswordChanged += PasswordChanged;
         }

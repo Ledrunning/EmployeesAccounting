@@ -3,7 +3,6 @@ using EA.Repository;
 using EA.Repository.Contracts;
 using EA.Repository.Repository;
 using EA.ServerGateway.Authentication;
-using EA.ServerGateway.Configuration;
 using EA.ServerGateway.Extensions;
 using EA.Services.Configuration;
 using EA.Services.Contracts;
@@ -22,7 +21,6 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     var connectionString = builder.Configuration.GetConnectionString(ConnectionString);
-    builder.Services.Configure<EaConfiguration>(builder.Configuration.GetSection("Authorization"));
 
     builder.Services.AddControllers();
 
