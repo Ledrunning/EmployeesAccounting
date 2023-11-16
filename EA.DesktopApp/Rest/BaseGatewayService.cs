@@ -90,8 +90,8 @@ namespace EA.DesktopApp.Rest
             CancellationToken token)
         {
             var client = new RestClient(SetOptions(url));
-            var request = new RestRequest(url.PathAndQuery, method);
-
+            var request = new RestRequest(url, method);
+           
             if (Credentials != null)
             {
                 var basicAuthValue =
