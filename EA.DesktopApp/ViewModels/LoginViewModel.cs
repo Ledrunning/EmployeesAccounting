@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
@@ -88,10 +89,11 @@ namespace EA.DesktopApp.ViewModels
                 _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
                 //Set credentials
+                var reversedPass = new string(PasswordField.Reverse().ToArray());
                 _adminGatewayService.SetCredentials(new Credentials
                 {
                     UserName = LoginField,
-                    Password = PasswordField
+                    Password = reversedPass
                 });
 
                 var isLogin = await _adminGatewayService.Login(_token);
@@ -112,7 +114,8 @@ namespace EA.DesktopApp.ViewModels
                         _windowManager.ShowWindow<RedactorForm>();
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        _windowManager.ShowWindow<MainWindow>();
+                        break;
                 }
             }
             catch (Exception e)
