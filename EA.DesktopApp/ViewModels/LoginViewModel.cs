@@ -10,6 +10,7 @@ using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
+using NLog;
 
 namespace EA.DesktopApp.ViewModels
 {
@@ -19,6 +20,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public LoginViewModel(ISoundPlayerService soundPlayerHelper,
             IWindowManager windowManager,
@@ -69,12 +71,6 @@ namespace EA.DesktopApp.ViewModels
             CheckFieldErrors(columnName, error);
             return error;
         }
-
-        private bool IsPasswordChecked(string password)
-        {
-            return string.Equals(PasswordField, password, StringComparison.CurrentCulture);
-        }
-
         private void InitializeCommands()
         {
             LoginCommand = new RelayCommand(ToggleLoginExecute);
@@ -114,14 +110,12 @@ namespace EA.DesktopApp.ViewModels
                         _windowManager.ShowWindow<RedactorForm>();
                         break;
                     default:
-                        _windowManager.ShowWindow<MainWindow>();
-                        break;
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Logger.Error("Login to app failed! {E}", e);
             }
         }
 
@@ -136,11 +130,6 @@ namespace EA.DesktopApp.ViewModels
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             _windowManager.ShowWindow<AdminForm>();
-        }
-
-        public void ShowLoginWindow()
-        {
-            _windowManager.ShowWindow<LoginWindow>();
         }
     }
 }

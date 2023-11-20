@@ -40,6 +40,8 @@ public class EmployeeController : Controller
 
     [HttpGet]
     [Route(nameof(GetAllWithPhoto))]
+    [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IReadOnlyList<EmployeeDto?>> GetAllWithPhoto(CancellationToken cancellationToken)
     {
         return await _employee.GetAllWithPhotoAsync(cancellationToken);

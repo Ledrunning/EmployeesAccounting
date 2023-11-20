@@ -175,7 +175,7 @@ namespace EA.DesktopApp.ViewModels
             if (await _employeeGatewayService.IsServerAvailableAsync(_token))
             {
                 await FetchFacesFromDbAndTrain();
-                Logger.Info("Data has been fetched!");
+                Logger.Info("Data has been fetched and trained!");
             }
             else
             {

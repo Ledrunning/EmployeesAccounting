@@ -2,7 +2,6 @@
 {
     public enum WindowType
     {
-        MainForm,
         RegistrationForm,
         EditForm,
     }

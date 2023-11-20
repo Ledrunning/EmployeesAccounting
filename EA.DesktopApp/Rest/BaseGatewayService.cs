@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,14 +65,17 @@ namespace EA.DesktopApp.Rest
         }
 
         protected async Task<RestResponse> SendRequestAsync(Uri url, Method method, 
-            CancellationToken token)
+            CancellationToken token, bool auth = true)
         {
             var client = new RestClient(SetOptions(url));
             var request = new RestRequest(url, method);
 
-            // Basic Authorization
-            var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Credentials.UserName}:{Credentials.Password}"));
-            request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+            if (auth)
+            {
+                // Basic Authorization
+                var basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Credentials.UserName}:{Credentials.Password}"));
+                request.AddHeader("Authorization", $"Basic {basicAuthValue}");
+            }
 
             var response = await client.ExecuteAsync(request, token);
             if (response.IsSuccessful)

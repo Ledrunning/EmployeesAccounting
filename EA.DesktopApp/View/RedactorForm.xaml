@@ -73,7 +73,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding TakePicture}" />
+                <ToolTip HasDropShadow="True" Content="{Binding UpdateHint}" />
             </Button.ToolTip>
         </Button>
         <!--DB buttons-->
@@ -89,7 +89,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding AddPerson}" />
+                <ToolTip HasDropShadow="True" Content="{Binding DeleteHint}" />
             </Button.ToolTip>
         </Button>
 
@@ -103,7 +103,7 @@
                 </Style>
             </Button.Style>
             <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding DeletePerson}" />
+                <ToolTip HasDropShadow="True" Content="{Binding ClearHint}" />
             </Button.ToolTip>
         </Button>
 
