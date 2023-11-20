@@ -48,6 +48,10 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
+        public string UpdateHint => ProgramResources.UpdateEmployee;
+        public string DeleteHint => ProgramResources.DeleteEmployee;
+        public string ClearHint => ProgramResources.ClearFields;
+
         public ICommand ToggleDeleteCommand { get; private set; }
 
         public ICommand ToggleUpdateToDbCommand { get; private set; }

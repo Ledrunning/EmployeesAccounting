@@ -185,7 +185,9 @@
     </ApplicationDefinition>
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Constants\ImageProcessingConstants.cs" />
+    <Compile Include="Contracts\IAdminGatewayService.cs" />
     <Compile Include="Contracts\IAsyncInitializer.cs" />
+    <Compile Include="Contracts\ICredentialService.cs" />
     <Compile Include="Contracts\IEmployeeGatewayService.cs" />
     <Compile Include="Contracts\IFaceDetectionService.cs" />
     <Compile Include="Contracts\IPhotoShootService.cs" />
@@ -196,15 +198,19 @@
     <Compile Include="Converters\EmguFormatImageConverter.cs" />
     <Compile Include="Converters\IconToImageSourceConverter.cs" />
     <Compile Include="DiSetup\AutofacConfigure.cs" />
+    <Compile Include="Enum\WindowType.cs" />
     <Compile Include="Event\ImageEvent.cs" />
     <Compile Include="Exceptions\ApiException .cs" />
+    <Compile Include="Helpers\PasswordBoxHelper.cs" />
     <Compile Include="Helpers\WindowClosingBehavior.cs" />
     <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\Credentials.cs" />
     <Compile Include="Resources\Messages\ProgramResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ProgramResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Rest\AdminGatewayService.cs" />
     <Compile Include="Rest\BaseGatewayService.cs" />
     <Compile Include="Rest\EmployeeGatewayService.cs" />
     <Compile Include="Services\BaseCameraService.cs" />

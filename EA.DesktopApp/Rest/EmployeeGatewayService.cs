@@ -4,15 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
-using NLog;
 using RestSharp;
 
 namespace EA.DesktopApp.Rest
 {
     public class EmployeeGatewayService : BaseGatewayService, IEmployeeGatewayService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public EmployeeGatewayService(AppConfig appConfig) : base(appConfig)
         {
         }
@@ -28,7 +25,7 @@ namespace EA.DesktopApp.Rest
         public async Task<IReadOnlyList<EmployeeModel>> GetAllWithPhotoAsync(CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Employee/GetAllWithPhoto");
-            var response = await SendRequestAsync(url, Method.Get, token);
+            var response = await SendRequestAsync(url, Method.Get, token, false);
 
             return GetContent<IReadOnlyList<EmployeeModel>>(response);
         }

@@ -14,6 +14,7 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
         var builder = new DbContextOptionsBuilder<DatabaseContext>();
         var connectionString = config.GetConnectionString(ConnectionString);
         builder.UseSqlServer(connectionString);
+
         return new DatabaseContext(builder.Options);
     }
 }

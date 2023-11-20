@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Converters;
+using EA.DesktopApp.Enum;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
@@ -40,6 +41,8 @@ namespace EA.DesktopApp.ViewModels
         private string _currentTimeDate;
         private string _detectionHint;
 
+        private IReadOnlyList<EmployeeModel> _employees;
+
         private Bitmap _frame;
 
         private bool _isRunning;
@@ -47,8 +50,6 @@ namespace EA.DesktopApp.ViewModels
         private bool _isStreaming;
 
         private string _selectedCamera;
-
-        private IReadOnlyList<EmployeeModel> employees;
 
         /// <summary>
         ///     Timer
@@ -78,6 +79,8 @@ namespace EA.DesktopApp.ViewModels
             _token = token;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
+
+        public static WindowType WindowType { get; set; }
 
         public ObservableCollection<string> AvailableCameras { get; } = new ObservableCollection<string>();
 
@@ -172,7 +175,7 @@ namespace EA.DesktopApp.ViewModels
             if (await _employeeGatewayService.IsServerAvailableAsync(_token))
             {
                 await FetchFacesFromDbAndTrain();
-                Logger.Info("Data has been fetched!");
+                Logger.Info("Data has been fetched and trained!");
             }
             else
             {
@@ -215,9 +218,9 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
-                employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
-                _faceDetectionService.Employees = employees;
-                foreach (var employee in employees)
+                _employees = await _employeeGatewayService.GetAllWithPhotoAsync(_token);
+                _faceDetectionService.Employees = _employees;
+                foreach (var employee in _employees)
                 {
                     var depthImage = EmguFormatImageConverter.ByteArrayToGrayImage(employee.Photo);
 
@@ -283,6 +286,7 @@ namespace EA.DesktopApp.ViewModels
             IsRunning = false;
             IsStreaming = false;
             StopFaceDetectionService();
+            WindowType = WindowType.RegistrationForm;
             _windowManager.ShowWindow<LoginWindow>();
         }
 
@@ -304,7 +308,8 @@ namespace EA.DesktopApp.ViewModels
 
         public void ToggleOpenEditExecute()
         {
-            _windowManager.ShowWindow<RedactorForm>();
+            WindowType = WindowType.EditForm;
+            _windowManager.ShowWindow<LoginWindow>();
         }
 
         /// <summary>
