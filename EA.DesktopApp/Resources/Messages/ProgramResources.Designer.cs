@@ -70,6 +70,24 @@ namespace EA.DesktopApp.Resources.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear fields.
+        /// </summary>
+        internal static string ClearFields {
+            get {
+                return ResourceManager.GetString("ClearFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to delete employee info.
+        /// </summary>
+        internal static string DeleteEmployee {
+            get {
+                return ResourceManager.GetString("DeleteEmployee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Employee_{0}_{1}_{2:MMddyyyy_HHmmss}.jpg.
         /// </summary>
         internal static string FileName {
@@ -129,6 +147,15 @@ namespace EA.DesktopApp.Resources.Messages {
         internal static string StopDetectorTooltipMessage {
             get {
                 return ResourceManager.GetString("StopDetectorTooltipMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to update employee info.
+        /// </summary>
+        internal static string UpdateEmployee {
+            get {
+                return ResourceManager.GetString("UpdateEmployee", resourceCulture);
             }
         }
     }

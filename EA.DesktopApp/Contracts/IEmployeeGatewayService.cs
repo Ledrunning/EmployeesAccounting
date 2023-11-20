@@ -5,7 +5,7 @@ using EA.DesktopApp.Models;
 
 namespace EA.DesktopApp.Contracts
 {
-    public interface IEmployeeGatewayService
+    public interface IEmployeeGatewayService : ICredentialService
     {
         Task<IReadOnlyList<EmployeeModel>> GetAllEmployeeAsync(CancellationToken token);
         Task<IReadOnlyList<EmployeeModel>> GetAllWithPhotoAsync(CancellationToken token);

@@ -3,9 +3,8 @@ using EA.Repository;
 using EA.Repository.Contracts;
 using EA.Repository.Repository;
 using EA.ServerGateway.Authentication;
-using EA.ServerGateway.Configuration;
-using EA.ServerGateway.Extension;
 using EA.ServerGateway.Extensions;
+using EA.Services.Configuration;
 using EA.Services.Contracts;
 using EA.Services.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -22,7 +21,6 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     var connectionString = builder.Configuration.GetConnectionString(ConnectionString);
-    builder.Services.Configure<EaConfiguration>(builder.Configuration.GetSection("Authorization"));
 
     builder.Services.AddControllers();
 
@@ -33,13 +31,21 @@ try
     builder.Services.AddDbContext<DatabaseContext>(options => { options.UseSqlServer(connectionString); });
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+    builder.Services.AddTransient<ServiceKeysConfig>();
+    builder.Services.AddTransient<ConfigurationService>();
     builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+    builder.Services.AddTransient<IAdministratorRepository, AdministratorRepository>();
     builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+    builder.Services.AddTransient<IAdministratorService, AdministratorService>();
 
     builder.Services.AddAuthentication("BasicAuthentication")
         .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
     var app = builder.Build();
+
+    // Get the service and call the initialization method
+    var cts = new CancellationTokenSource();
+    await app.InitializeAdmin(cts.Token);
 
     app.UseHttpsRedirection();
     app.UseRouting();

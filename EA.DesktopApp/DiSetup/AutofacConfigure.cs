@@ -11,6 +11,7 @@ using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels;
 using EA.RecognizerEngine.Contracts;
 using EA.RecognizerEngine.Engines;
+using Emgu.CV.Face;
 using NLog;
 
 namespace EA.DesktopApp.DiSetup
@@ -30,6 +31,7 @@ namespace EA.DesktopApp.DiSetup
 
                 var loadedConfiguration = appConfig.LoadConfiguration();
 
+                var adminGatewayService = new AdminGatewayService(loadedConfiguration);
                 var employeeGatewayService = new EmployeeGatewayService(loadedConfiguration);
 
                 // Register the CancellationTokenSource as a single instance so the same source is used everywhere.
@@ -41,12 +43,17 @@ namespace EA.DesktopApp.DiSetup
                 builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
                 builder.RegisterType<ModalViewModelFactory>().As<IModalViewModelFactory>().SingleInstance();
+
+                //InitializeLpbhRecognizer(builder);
+
+                builder.RegisterType<EigenFaceRecognizer>().SingleInstance();
                 builder.RegisterType<EigenFaceRecognition>().As<IEigenFaceRecognition>().SingleInstance();
                 builder.RegisterType<FaceDetectionService>().As<IFaceDetectionService>().InstancePerLifetimeScope();
                 builder.RegisterType<PhotoShootService>().As<IPhotoShootService>().InstancePerLifetimeScope();
                 builder.RegisterType<SoundPlayerService>().As<ISoundPlayerService>().InstancePerLifetimeScope();
                 builder.RegisterInstance(employeeGatewayService).As<IEmployeeGatewayService>().SingleInstance();
-
+                builder.RegisterInstance(adminGatewayService).As<IAdminGatewayService>().SingleInstance();
+                
                 builder.RegisterType<MainWindow>().InstancePerDependency();
                 builder.RegisterType<MainViewModel>().InstancePerDependency();
 
@@ -73,6 +80,21 @@ namespace EA.DesktopApp.DiSetup
                 Logger.Error("Application run error! {e}", e);
                 throw new ApplicationException($"{e.Message}. Application run error!");
             }
+        }
+
+        private static void InitializeLpbhRecognizer(ContainerBuilder builder)
+        {
+            // Register the LBPHFaceRecognizer type with appropriate parameters
+            builder.Register(c => new LBPHFaceRecognizer(1, 8, 8, 8, 400.00))
+                .As<LBPHFaceRecognizer>()
+                .SingleInstance(); // You can choose the appropriate lifetime scope
+
+            // Register the LbphFaceRecognition class and specify its dependencies
+            builder.RegisterType<LbphFaceRecognition>()
+                .As<ILbphFaceRecognition>()
+                .WithParameter(
+                    (pi, c) => pi.ParameterType == typeof(LBPHFaceRecognizer),
+                    (pi, c) => c.Resolve<LBPHFaceRecognizer>());
         }
     }
 }
