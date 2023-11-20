@@ -25,7 +25,7 @@ namespace EA.DesktopApp.Rest
         public async Task<IReadOnlyList<EmployeeModel>> GetAllWithPhotoAsync(CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Employee/GetAllWithPhoto");
-            var response = await SendRequestAsync(url, Method.Get, token);
+            var response = await SendRequestAsync(url, Method.Get, token, false);
 
             return GetContent<IReadOnlyList<EmployeeModel>>(response);
         }

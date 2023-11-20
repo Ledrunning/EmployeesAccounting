@@ -15,12 +15,6 @@ namespace EA.DesktopApp.View
         {
             InitializeComponent();
             DataContext = AutofacConfigure.Container.Resolve<LoginViewModel>();
-            LoginViewModel.CloseThaDoor += OnCloseThaDoor;
-        }
-
-        private void OnCloseThaDoor(object sender, EventArgs e)
-        {
-            Close();
         }
 
         public bool IsClosed { get; private set; }

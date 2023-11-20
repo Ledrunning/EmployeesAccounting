@@ -22,7 +22,6 @@ namespace EA.DesktopApp.ViewModels
         private readonly IWindowManager _windowManager;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static event EventHandler CloseThaDoor;
         public LoginViewModel(ISoundPlayerService soundPlayerHelper,
             IWindowManager windowManager,
             IAdminGatewayService adminGatewayService,
@@ -100,7 +99,6 @@ namespace EA.DesktopApp.ViewModels
                     return;
                 }
 
-                CloseThaDoor?.Invoke(this, EventArgs.Empty);
                 _windowManager.CloseWindow<LoginWindow>();
 
                 switch (MainViewModel.WindowType)
@@ -111,10 +109,8 @@ namespace EA.DesktopApp.ViewModels
                     case WindowType.EditForm:
                         _windowManager.ShowWindow<RedactorForm>();
                         break;
-                    case WindowType.MainWindow:
                     default:
-                        _windowManager.ShowWindow<MainWindow>();
-                        break;
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (Exception e)
