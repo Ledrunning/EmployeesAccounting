@@ -22,14 +22,8 @@
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="#FF00AADE" />
+                    <Setter Property="Foreground" Value="White" />
                     <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Registration" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </Button.Style>
             <Button.ToolTip>
@@ -90,15 +84,8 @@
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Foreground" Value="#FF00AADE" />
+                        <Setter Property="Foreground" Value="White" />
                         <Setter Property="BorderThickness" Value="1" />
-
-                        <!-- Triggered values -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsReady}" Value="False">
-                                <Setter Property="Content" Value="Clear" />
-                            </DataTrigger>
-                        </Style.Triggers>
                     </Style>
                 </Button.Style>
                 <Button.ToolTip>

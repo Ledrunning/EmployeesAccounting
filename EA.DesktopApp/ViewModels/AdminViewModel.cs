@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
@@ -10,14 +12,17 @@ namespace EA.DesktopApp.ViewModels
     internal class AdminViewModel : BaseViewModel
     {
         private readonly ISoundPlayerService _soundPlayer;
-        private bool _isReady;
-        private bool _isRunning;
+        private readonly IAdminGatewayService _adminGatewayService;
+        private readonly CancellationToken _token;
         private string _oldPasswordValue;
-        private string _userMessage;
 
-        public AdminViewModel(ISoundPlayerService soundPlayer)
+        public AdminViewModel(ISoundPlayerService soundPlayer, 
+            IAdminGatewayService adminGatewayService,
+            CancellationToken token)
         {
             _soundPlayer = soundPlayer;
+            _adminGatewayService = adminGatewayService;
+            _token = token;
             InitializeCommands();
         }
 
@@ -26,42 +31,6 @@ namespace EA.DesktopApp.ViewModels
 
         public ICommand ClearFieldsCommand { get; set; }
         public ICommand RegistrationCommand { get; set; }
-
-        /// <summary>
-        ///     Start webCam service button toogle
-        /// </summary>
-        public bool IsRunning
-        {
-            get => _isRunning;
-            set
-            {
-                _isRunning = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Button state
-        /// </summary>
-        public bool IsReady
-        {
-            get => _isReady;
-            set
-            {
-                _isReady = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string UserMessage
-        {
-            get => _userMessage;
-            set
-            {
-                _userMessage = value;
-                OnPropertyChanged();
-            }
-        }
 
         [Required(AllowEmptyStrings = false)]
         public string OldPasswordField
@@ -132,8 +101,17 @@ namespace EA.DesktopApp.ViewModels
             RegistrationCommand = new RelayCommand(ToggleRegistrationExecute);
         }
 
-        private void ToggleRegistrationExecute()
+        private async void ToggleRegistrationExecute()
         {
+            var isLogin = await _adminGatewayService.Login(_token);
+
+            if (isLogin)
+            {
+                await _adminGatewayService.CreateAsync(new AdministratorModel()
+                {
+
+                }, _token);
+            }
         }
 
         private void ToggleClearFieldsExecute()
