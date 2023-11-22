@@ -42,12 +42,12 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Height="72" HorizontalAlignment="Center"
                    Margin="24,20,0,0" x:Name="textBlockHeading" VerticalAlignment="Top" FontSize="12" Padding="5"
                    Width="386">
-            <Run Text="Attention: If you are using edit form for the first time" /><LineBreak />
-            <Run Text="Please register first!" /><LineBreak /><LineBreak />
+            <Run Text="Attention: If you want to change password" /><LineBreak />
+            <Run Text="please click link below!" /><LineBreak /><LineBreak />
             <InlineUIContainer>
                 <TextBlock>
                     <Hyperlink Command="{Binding AdminModeCommand}" FontSize="14" FontStyle="Normal">
-                        <Run Text="REGISTRATION" />
+                        <Run Text="CHANGE PASSWORD" />
                     </Hyperlink>
                 </TextBlock>
             </InlineUIContainer>

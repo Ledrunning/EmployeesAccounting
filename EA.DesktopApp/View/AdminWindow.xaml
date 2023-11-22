@@ -22,8 +22,7 @@
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Foreground" Value="#FF00AADE" />
                 </Style>
             </Button.Style>
             <Button.ToolTip>
@@ -84,8 +83,7 @@
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Foreground" Value="White" />
-                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Foreground" Value="#FF00AADE" />
                     </Style>
                 </Button.Style>
                 <Button.ToolTip>

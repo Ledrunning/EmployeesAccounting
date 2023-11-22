@@ -4,6 +4,7 @@ using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
+using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 
@@ -103,13 +104,16 @@ namespace EA.DesktopApp.ViewModels
 
         private async void ToggleRegistrationExecute()
         {
-            var isLogin = await _adminGatewayService.Login(_token);
+            var isLogin = await _adminGatewayService.Login(new Credentials()
+            {
+                UserName = LoginField,
+                Password = OldPasswordField
+            }, _token);
 
             if (isLogin)
             {
-                await _adminGatewayService.CreateAsync(new AdministratorModel()
+                await _adminGatewayService.UpdateAsync(new AdministratorModel()
                 {
-
                 }, _token);
             }
         }

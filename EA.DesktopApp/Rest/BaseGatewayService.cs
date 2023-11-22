@@ -18,7 +18,7 @@ namespace EA.DesktopApp.Rest
         protected readonly string PingUrl;
         protected readonly int ServerPingTimeout;
         // Store credentials for later use
-        protected static Credentials Credentials;
+        public static Credentials Credentials;
 
         public BaseGatewayService(AppConfig appConfig)
         {

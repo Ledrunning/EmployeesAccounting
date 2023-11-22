@@ -21,6 +21,13 @@ namespace EA.DesktopApp.Rest
             return GetContent<bool>(response);
         }
 
+        public async Task<bool> Login(Credentials credentials, CancellationToken token)
+        {
+            var url = new Uri($"{BaseUrl}/api/Administrator/Login");
+            var response = await SendRequestAsync(credentials, url, Method.Post, token);
+            return GetContent<bool>(response);
+        }
+
         public Task<IReadOnlyList<AdministratorModel>> GetAllAsync(CancellationToken token)
         {
             throw new NotImplementedException();
