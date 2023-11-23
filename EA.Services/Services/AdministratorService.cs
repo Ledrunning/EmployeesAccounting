@@ -8,6 +8,7 @@ using EA.Repository.Entities;
 using EA.Services.Configuration;
 using EA.Services.Contracts;
 using EA.Services.Dto;
+using EA.Services.Extension;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -114,11 +115,13 @@ public class AdministratorService : IAdministratorService
         return administrator != null && BCrypt.Net.BCrypt.Verify(credentials.Password, administrator.Password);
     }
 
-    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
+    public async Task<AdministratorDto?> GetByLoginAsync(Credentials credentials, CancellationToken token)
     {
         try
         {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(login, token);
+            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.Password, token);
+            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.Password, administrator?.Password);
+            administrator?.ToAdminDto(isLogged);
             return _mapper.Map<AdministratorDto>(administrator);
         }
         catch (Exception e)
@@ -126,35 +129,6 @@ public class AdministratorService : IAdministratorService
             _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
             throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
         }
-    }
-
-    //Todo need to think
-    public string GenerateJwtToken(string username)
-    {
-        var secret = _serviceKeys?.ServiceKeys?.JwtSecretKey;
-        if (secret == null)
-        {
-            return string.Empty;
-        }
-
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-        var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, username)
-        };
-
-        var tokenOptions = new JwtSecurityToken(
-            "https://yourdomain.com",
-            "https://yourdomain.com",
-            claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: signingCredentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
     }
 
     public async Task InitializeAdmin(CancellationToken token)
