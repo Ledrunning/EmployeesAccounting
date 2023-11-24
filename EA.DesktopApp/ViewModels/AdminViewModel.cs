@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ServiceModel.Channels;
 using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
@@ -37,11 +38,14 @@ namespace EA.DesktopApp.ViewModels
         public string OldPasswordField
         {
             get => _oldPasswordValue;
-            set
-            {
-                _oldPasswordValue = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _oldPasswordValue, value);
+        }
+
+        private string _userMessage;
+        public string UserMessage
+        {
+            get => _userMessage;
+            set => SetField(ref _userMessage, value);
         }
 
         /// <summary>
@@ -104,23 +108,35 @@ namespace EA.DesktopApp.ViewModels
 
         private async void ToggleRegistrationExecute()
         {
-            var isLogin = await _adminGatewayService.Login(new Credentials()
+            var administratorModel = await _adminGatewayService.GetByLoginAsync(new Credentials()
             {
                 UserName = LoginField,
                 Password = OldPasswordField
             }, _token);
 
-            if (isLogin)
+            if (!administratorModel.IsLogin)
             {
-                await _adminGatewayService.UpdateAsync(new AdministratorModel()
-                {
-                }, _token);
+                UserMessage = UiErrorResource.IncorrectPassword;
+                ClearFields();
+                return;
             }
+
+            UserMessage = string.Empty;
+            administratorModel.OldPassword = OldPasswordField;
+            administratorModel.Password = PasswordField;
+            await _adminGatewayService.UpdateAsync(administratorModel, _token);
         }
 
         private void ToggleClearFieldsExecute()
         {
             _soundPlayer.PlaySound(SoundPlayerService.ButtonSound);
+            LoginField = string.Empty;
+            PasswordField = string.Empty;
+            OldPasswordField = string.Empty;
+        }
+
+        protected override void ClearFields()
+        {
             LoginField = string.Empty;
             PasswordField = string.Empty;
             OldPasswordField = string.Empty;

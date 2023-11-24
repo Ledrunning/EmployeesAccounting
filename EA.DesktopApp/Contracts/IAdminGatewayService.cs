@@ -11,6 +11,7 @@ namespace EA.DesktopApp.Contracts
         Task<bool> Login(Credentials credentials, CancellationToken token);
         Task<IReadOnlyList<AdministratorModel>> GetAllAsync(CancellationToken token);
         Task<AdministratorModel> GetByIdAsync(long id, CancellationToken token);
+        Task<AdministratorModel> GetByLoginAsync(Credentials credentials, CancellationToken token);
         Task CreateAsync(AdministratorModel admin, CancellationToken token);
         Task UpdateAsync(AdministratorModel admin, CancellationToken token);
         Task DeleteAsync(long id, CancellationToken token);

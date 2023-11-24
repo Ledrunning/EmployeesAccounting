@@ -38,6 +38,13 @@ namespace EA.DesktopApp.Rest
             throw new NotImplementedException();
         }
 
+        public async Task<AdministratorModel> GetByLoginAsync(Credentials credentials, CancellationToken token)
+        {
+            var url = new Uri($"{BaseUrl}/api/Administrator/GetByLogin");
+            var response = await SendRequestAsync(credentials, url, Method.Get, token);
+            return GetContent<AdministratorModel>(response);
+        }
+
         public Task CreateAsync(AdministratorModel admin, CancellationToken token)
         {
             throw new NotImplementedException();

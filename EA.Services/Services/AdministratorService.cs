@@ -49,6 +49,22 @@ public class AdministratorService : IAdministratorService
         }
     }
 
+    public async Task<AdministratorDto?> GetByLoginAsync(Credentials credentials, CancellationToken token)
+    {
+        try
+        {
+            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.Password, token);
+            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.Password, administrator?.Password);
+            administrator?.ToAdminDto(isLogged);
+            return _mapper.Map<AdministratorDto>(administrator);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
+        }
+    }
+
     public async Task<IReadOnlyList<AdministratorDto?>> GetAllAsync(CancellationToken cancellationToken)
     {
         try
@@ -113,22 +129,6 @@ public class AdministratorService : IAdministratorService
 
         var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.UserName, token);
         return administrator != null && BCrypt.Net.BCrypt.Verify(credentials.Password, administrator.Password);
-    }
-
-    public async Task<AdministratorDto?> GetByLoginAsync(Credentials credentials, CancellationToken token)
-    {
-        try
-        {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.Password, token);
-            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.Password, administrator?.Password);
-            administrator?.ToAdminDto(isLogged);
-            return _mapper.Map<AdministratorDto>(administrator);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
-            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
-        }
     }
 
     public async Task InitializeAdmin(CancellationToken token)

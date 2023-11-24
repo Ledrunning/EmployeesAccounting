@@ -141,6 +141,9 @@
   <data name="EnterPersonName" xml:space="preserve">
     <value>Enter an employee name</value>
   </data>
+  <data name="IncorrectPassword" xml:space="preserve">
+    <value>Incorrect Login or Password</value>
+  </data>
   <data name="OldPassword" xml:space="preserve">
     <value>Enter old password</value>
   </data>

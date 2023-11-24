@@ -8,6 +8,7 @@ public interface IAdministratorService
     Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken);
     Task<IReadOnlyList<AdministratorDto?>> GetAllAsync(CancellationToken cancellationToken);
     Task<AdministratorDto?> GetByIdAsync(long id, CancellationToken cancellationToken);
+    Task<AdministratorDto?> GetByLoginAsync(Credentials credentials, CancellationToken token);
     Task<bool> LoginAsync(Credentials credentials, CancellationToken token);
     Task UpdateAsync(AdministratorDto employee, CancellationToken cancellationToken);
     Task DeleteAsync(long id, CancellationToken cancellationToken);
