@@ -5,7 +5,6 @@ using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
-using EA.DesktopApp.Rest;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 

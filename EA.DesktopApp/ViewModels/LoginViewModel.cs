@@ -45,7 +45,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Error exception throwing
         /// </summary>
-        public string Error => UiErrorResource.DataError;
+        public override string Error => UiErrorResource.DataError;
 
         protected override string ValidateProperty(string columnName)
         {

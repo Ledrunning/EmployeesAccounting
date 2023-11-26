@@ -91,7 +91,7 @@ namespace EA.DesktopApp.ViewModels
 
         public bool IsButtonEnable => !HasErrors;
 
-        public string Error => "Enter the data!";
+        public virtual string Error => "Enter the data!";
 
         public string this[string columnName] => ValidateProperty(columnName);
         public event PropertyChangedEventHandler PropertyChanged;

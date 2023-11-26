@@ -22,13 +22,14 @@
         <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
                  Text="{Binding Path=LoginField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                  Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
-                 TextWrapping="Wrap" Margin="140,120,30,62">
+                 TextWrapping="Wrap" VerticalContentAlignment="Center"
+                 Margin="140,120,30,62">
         </TextBox>
 
         <PasswordBox Grid.Row="0" Grid.Column="0" Foreground="White"
-                     helpers:PasswordBoxHelper.BoundPassword="{Binding Path=PasswordField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     helpers:PasswordBoxHelper.BoundPassword="{Binding Path=PasswordField, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                      Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
-                     Margin="140,174,30,10">
+                     VerticalContentAlignment="Center" Margin="140,174,30,10">
         </PasswordBox>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
