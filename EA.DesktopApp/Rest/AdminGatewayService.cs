@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using EA.DesktopApp.Contracts;
 using RestSharp;
 
@@ -13,6 +14,8 @@ namespace EA.DesktopApp.Rest
         public AdminGatewayService(AppConfig appConfig) : base(appConfig)
         {
         }
+
+        public new HttpStatusCode StatusCode { get; set; }
 
         public async Task<bool> Login(CancellationToken token)
         {
@@ -42,6 +45,7 @@ namespace EA.DesktopApp.Rest
         {
             var url = new Uri($"{BaseUrl}/api/Administrator/GetByLogin");
             var response = await SendRequestAsync(credentials, url, Method.Get, token);
+            StatusCode = response.StatusCode;
             return GetContent<AdministratorModel>(response);
         }
 

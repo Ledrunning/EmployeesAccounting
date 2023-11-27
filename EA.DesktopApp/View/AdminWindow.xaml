@@ -15,8 +15,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="12"
-                   HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding UserMessage}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Foreground="Red" 
+                   FontSize="14" HorizontalAlignment="Stretch" 
+                   TextAlignment="Center" TextWrapping="Wrap" 
+                   Text="{Binding UserMessage}" />
 
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>

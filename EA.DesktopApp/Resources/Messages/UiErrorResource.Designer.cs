@@ -133,7 +133,7 @@ namespace EA.DesktopApp.Resources.Messages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Incorrect Login or Password.
+        ///   Looks up a localized string similar to Incorrect Login or Password!.
         /// </summary>
         internal static string IncorrectPassword {
             get {
@@ -147,6 +147,15 @@ namespace EA.DesktopApp.Resources.Messages {
         internal static string OldPassword {
             get {
                 return ResourceManager.GetString("OldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred when changing the password!.
+        /// </summary>
+        internal static string PasswordChangeError {
+            get {
+                return ResourceManager.GetString("PasswordChangeError", resourceCulture);
             }
         }
         

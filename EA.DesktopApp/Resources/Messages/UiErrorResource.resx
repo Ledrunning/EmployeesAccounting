@@ -142,10 +142,13 @@
     <value>Enter an employee name</value>
   </data>
   <data name="IncorrectPassword" xml:space="preserve">
-    <value>Incorrect Login or Password</value>
+    <value>Incorrect Login or Password!</value>
   </data>
   <data name="OldPassword" xml:space="preserve">
     <value>Enter old password</value>
+  </data>
+  <data name="PasswordChangeError" xml:space="preserve">
+    <value>An error occurred when changing the password!</value>
   </data>
   <data name="RegisterButtonHint" xml:space="preserve">
     <value>Click to register</value>

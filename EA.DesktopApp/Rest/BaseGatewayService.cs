@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net.Security;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +19,7 @@ namespace EA.DesktopApp.Rest
         protected readonly int ServerPingTimeout;
         // Store credentials for later use
         public static Credentials Credentials;
+        protected HttpStatusCode StatusCode;
 
         public BaseGatewayService(AppConfig appConfig)
         {
@@ -78,6 +79,8 @@ namespace EA.DesktopApp.Rest
             }
 
             var response = await client.ExecuteAsync(request, token);
+            StatusCode = response.StatusCode;
+           
             if (response.IsSuccessful)
             {
                 return response;
@@ -111,6 +114,8 @@ namespace EA.DesktopApp.Rest
             }
 
             var response = await client.ExecuteAsync(request, token);
+            StatusCode = response.StatusCode;
+
             if (response.IsSuccessful)
             {
                 return response;
