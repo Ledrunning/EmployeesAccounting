@@ -139,6 +139,7 @@ namespace EA.DesktopApp.ViewModels
                 }
 
                 UserMessage = UiErrorResource.PasswordChangeError;
+                ClearFields();
             }
 
             UserMessage = string.Empty;
