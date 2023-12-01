@@ -15,8 +15,6 @@ namespace EA.DesktopApp.Rest
         {
         }
 
-        public new HttpStatusCode StatusCode { get; set; }
-
         public async Task<bool> Login(CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Administrator/Login");
@@ -45,7 +43,6 @@ namespace EA.DesktopApp.Rest
         {
             var url = new Uri($"{BaseUrl}/api/Administrator/GetByLogin");
             var response = await SendRequestAsync(credentials, url, Method.Get, token);
-            StatusCode = response.StatusCode;
             return GetContent<AdministratorModel>(response);
         }
 

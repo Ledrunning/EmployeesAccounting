@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
@@ -14,11 +13,11 @@ namespace EA.DesktopApp.ViewModels
 {
     internal class AdminViewModel : BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IAdminGatewayService _adminGatewayService;
         private readonly ISoundPlayerService _soundPlayer;
         private readonly CancellationToken _token;
         private string _oldPasswordValue;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private string _userMessage;
 
@@ -87,7 +86,7 @@ namespace EA.DesktopApp.ViewModels
 
                         break;
                     case nameof(OldPasswordField):
-                        if (string.IsNullOrEmpty(PasswordField))
+                        if (string.IsNullOrEmpty(OldPasswordField))
                         {
                             error = UiErrorResource.OldPassword;
                         }
@@ -119,27 +118,13 @@ namespace EA.DesktopApp.ViewModels
                     UserName = LoginField,
                     Password = OldPasswordField
                 }, _token);
-
-                if (_adminGatewayService.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    UserMessage = UiErrorResource.IncorrectPassword;
-                    ClearFields();
-                    return;
-                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error("An error occurred when changing the password! {E}", e);
-
-                if (_adminGatewayService.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    UserMessage = UiErrorResource.IncorrectPassword;
-                    ClearFields();
-                    return;
-                }
-
-                UserMessage = UiErrorResource.PasswordChangeError;
+                UserMessage = $"{UiErrorResource.PasswordChangeError}\n {e.Message}!";
                 ClearFields();
+                return;
             }
 
             UserMessage = string.Empty;
