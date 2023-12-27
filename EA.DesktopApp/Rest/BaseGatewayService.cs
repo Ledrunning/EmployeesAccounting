@@ -94,7 +94,7 @@ namespace EA.DesktopApp.Rest
                 $"Can not create rest request. Status code: {response.StatusCode}, {response.ErrorMessage}");
         }
 
-        protected async Task<RestResponse> SendRequestAsync<T>(
+        protected virtual async Task<RestResponse> SendRequestAsync<T>(
             T entity,
             Uri url,
             Method method,

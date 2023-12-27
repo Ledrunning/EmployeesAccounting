@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using AutoMapper;
 using EA.Common.Exceptions;
 using EA.Repository.Contracts;
@@ -32,14 +33,15 @@ public class AdministratorService : IAdministratorService
         _serviceKeys = config.LoadConfiguration();
     }
 
+    //TODO: Smell!
     public async Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken)
     {
         try
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(admin.Password);
-            var currentAdmin = admin.Password = hashedPassword;
+            admin.Password = hashedPassword;
 
-            var entity = _mapper.Map<Administrator>(currentAdmin);
+            var entity = _mapper.Map<Administrator>(admin);
             await _administratorRepository.AddAsync(entity, cancellationToken);
         }
         catch (Exception e)
@@ -49,14 +51,16 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task<AdministratorDto?> GetByLoginAsync(Credentials credentials, CancellationToken token)
+    public async Task ChangeLoginAsync(Credentials credentials, CancellationToken token)
     {
         try
         {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.Password, token);
-            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.Password, administrator?.Password);
-            administrator?.ToAdminDto(isLogged);
-            return _mapper.Map<AdministratorDto>(administrator);
+            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.OldPassword, token);
+            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.OldPassword, administrator?.Password);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(credentials.Password);
+
+            administrator?.ToAdminDto(isLogged, hashedPassword!);
+            await _administratorRepository.UpdateAsync(administrator!, token);
         }
         catch (Exception e)
         {

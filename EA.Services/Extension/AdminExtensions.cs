@@ -5,7 +5,7 @@ namespace EA.Services.Extension;
 
 public static class AdminExtensions
 {
-    public static AdministratorDto ToAdminDto(this Administrator admin, bool isLogged)
+    public static AdministratorDto ToAdminDto(this Administrator admin, bool isLogged, string encodedPassword)
     {
         var dto = new AdministratorDto
         {
@@ -13,8 +13,8 @@ public static class AdminExtensions
             Name = admin.Name,
             LastName = admin.LastName,
             Login = admin.Login,
-            Password = admin.Password,
-            OldPassword = admin.Password,
+            Password = encodedPassword,
+            OldPassword = encodedPassword,
             RegistrationTime = admin.RegistrationTime,
             IsLogged = isLogged
         };

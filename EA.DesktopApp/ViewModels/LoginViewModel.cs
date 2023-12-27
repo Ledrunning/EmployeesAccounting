@@ -84,14 +84,11 @@ namespace EA.DesktopApp.ViewModels
             {
                 _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
-                //Set credentials
+                //NOTICE! It depends on passwordBox
                 var reversedPass = new string(PasswordField.Reverse().ToArray());
-                _adminGatewayService.SetCredentials(new Credentials
-                {
-                    UserName = LoginField,
-                    Password = reversedPass
-                });
-
+                var credentials = SetCredentials(reversedPass);
+                _adminGatewayService.SetCredentials(credentials);
+                
                 var isLogin = await _adminGatewayService.Login(_token);
 
                 if (!isLogin)

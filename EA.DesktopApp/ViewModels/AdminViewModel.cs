@@ -110,14 +110,16 @@ namespace EA.DesktopApp.ViewModels
 
         private async void ToggleRegistrationExecute()
         {
-            AdministratorModel administratorModel = null;
             try
             {
-                administratorModel = await _adminGatewayService.GetByLoginAsync(new Credentials
+                var credentials = SetCredentials(OldPasswordField);
+                _adminGatewayService.SetCredentials(credentials);
+                await _adminGatewayService.ChangeLoginAsync(new Credentials
                 {
                     UserName = LoginField,
-                    Password = OldPasswordField
-                }, _token);
+                    Password = PasswordField,
+                    OldPassword = OldPasswordField
+                }, _token).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -128,14 +130,6 @@ namespace EA.DesktopApp.ViewModels
             }
 
             UserMessage = string.Empty;
-            if (administratorModel == null)
-            {
-                return;
-            }
-
-            administratorModel.OldPassword = OldPasswordField;
-            administratorModel.Password = PasswordField;
-            await _adminGatewayService.UpdateAsync(administratorModel, _token);
         }
 
         private void ToggleClearFieldsExecute()

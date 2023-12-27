@@ -1,10 +1,12 @@
-﻿using EA.DesktopApp.Models;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Exceptions;
+using EA.DesktopApp.Models;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace EA.DesktopApp.Rest
@@ -39,10 +41,10 @@ namespace EA.DesktopApp.Rest
             throw new NotImplementedException();
         }
 
-        public async Task<AdministratorModel> GetByLoginAsync(Credentials credentials, CancellationToken token)
+        public async Task<AdministratorModel> ChangeLoginAsync(Credentials credentials, CancellationToken token)
         {
-            var url = new Uri($"{BaseUrl}/api/Administrator/GetByLogin");
-            var response = await SendRequestAsync(credentials, url, Method.Get, token);
+            var url = new Uri($"{BaseUrl}/api/Administrator/ChangeLogin");
+            var response = await SendRequestAsync(credentials, url, Method.Post, token);
             return GetContent<AdministratorModel>(response);
         }
 
