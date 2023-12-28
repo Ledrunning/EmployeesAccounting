@@ -1,17 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading;
-using AutoMapper;
+﻿using AutoMapper;
 using EA.Common.Exceptions;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
 using EA.Services.Configuration;
 using EA.Services.Contracts;
 using EA.Services.Dto;
-using EA.Services.Extension;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EA.Services.Services;
 
@@ -51,16 +45,27 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public async Task ChangeLoginAsync(Credentials credentials, CancellationToken token)
+    public async Task<bool> ChangeLoginAsync(Credentials credentials, CancellationToken token)
     {
         try
         {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.OldPassword, token);
+            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.UserName, token);
             var isLogged = BCrypt.Net.BCrypt.Verify(credentials.OldPassword, administrator?.Password);
+
+            if (!isLogged)
+            {
+                return false;
+            }
+
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(credentials.Password);
 
-            administrator?.ToAdminDto(isLogged, hashedPassword!);
-            await _administratorRepository.UpdateAsync(administrator!, token);
+            if (administrator == null)
+            {
+                return false;
+            }
+
+            administrator.Password = hashedPassword;
+            return await _administratorRepository.UpdateAsync(administrator, token);
         }
         catch (Exception e)
         {
@@ -140,7 +145,7 @@ public class AdministratorService : IAdministratorService
         var admins = await _administratorRepository.ListAsync(token);
         if (!admins.Any())
         {
-            var admin = new AdministratorDto()
+            var admin = new AdministratorDto
             {
                 Name = "admin",
                 LastName = "admin",

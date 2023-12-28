@@ -46,9 +46,9 @@ public class AdministratorController : Controller
 
     [HttpPost]
     [Route(nameof(ChangeLogin))]
-    public async Task ChangeLogin(Credentials credentials, CancellationToken token)
+    public async Task<bool> ChangeLogin(Credentials credentials, CancellationToken token)
     {
-        await _administratorService.ChangeLoginAsync(credentials, token);
+        return await _administratorService.ChangeLoginAsync(credentials, token);
     }
 
     [HttpPost]

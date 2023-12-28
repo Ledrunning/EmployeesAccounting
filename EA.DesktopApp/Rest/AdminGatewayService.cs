@@ -41,11 +41,11 @@ namespace EA.DesktopApp.Rest
             throw new NotImplementedException();
         }
 
-        public async Task<AdministratorModel> ChangeLoginAsync(Credentials credentials, CancellationToken token)
+        public async Task<bool> ChangeLoginAsync(Credentials credentials, CancellationToken token)
         {
             var url = new Uri($"{BaseUrl}/api/Administrator/ChangeLogin");
             var response = await SendRequestAsync(credentials, url, Method.Post, token);
-            return GetContent<AdministratorModel>(response);
+            return GetContent<bool>(response);
         }
 
         public Task CreateAsync(AdministratorModel admin, CancellationToken token)
