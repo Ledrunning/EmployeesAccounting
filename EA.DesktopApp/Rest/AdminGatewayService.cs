@@ -1,9 +1,9 @@
-﻿using EA.DesktopApp.Models;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Models;
 using RestSharp;
 
 namespace EA.DesktopApp.Rest
@@ -21,29 +21,55 @@ namespace EA.DesktopApp.Rest
             return GetContent<bool>(response);
         }
 
-        public Task<IReadOnlyList<AdministratorModel>> GetAllAsync(CancellationToken token)
+        public async Task<bool> Login(Credentials credentials, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var url = new Uri($"{BaseUrl}/api/Administrator/Login");
+            var response = await SendRequestAsync(credentials, url, Method.Post, token);
+            return GetContent<bool>(response);
         }
 
-        public Task<AdministratorModel> GetByIdAsync(long id, CancellationToken token)
+        public async Task<IReadOnlyList<AdministratorModel>> GetAllAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
+            var url = new Uri($"{BaseUrl}/api/Administrator/GetAllAdministrators");
+            var response = await SendRequestAsync(url, Method.Get, token);
+
+            return GetContent<IReadOnlyList<AdministratorModel>>(response);
         }
 
-        public Task CreateAsync(AdministratorModel admin, CancellationToken token)
+        public async Task<AdministratorModel> GetByIdAsync(long id, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var url = new Uri($"{BaseUrl}/api/Administrator/GetAdministratorById?id={id}");
+            var response = await SendRequestAsync(url, Method.Get, token);
+
+            return GetContent<AdministratorModel>(response);
         }
 
-        public Task UpdateAsync(AdministratorModel admin, CancellationToken token)
+        public async Task<bool> ChangeLoginAsync(Credentials credentials, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var url = new Uri($"{BaseUrl}/api/Administrator/ChangeLogin");
+            var response = await SendRequestAsync(credentials, url, Method.Post, token);
+            return GetContent<bool>(response);
         }
 
-        public Task DeleteAsync(long id, CancellationToken token)
+        public async Task CreateAsync(AdministratorModel admin, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var url = new Uri($"{BaseUrl}/api/Administrator/Create");
+            var response = await SendRequestAsync(admin, url, Method.Post, token);
+            CheckResponse(response);
+        }
+
+        public async Task UpdateAsync(AdministratorModel admin, CancellationToken token)
+        {
+            var url = new Uri($"{BaseUrl}/api/Administrator/Update");
+            var response = await SendRequestAsync(admin, url, Method.Put, token);
+            CheckResponse(response);
+        }
+
+        public async Task DeleteAsync(long id, CancellationToken token)
+        {
+            var url = new Uri($"{BaseUrl}/api/Administrator/Delete?id={id}");
+            var response = await SendRequestAsync(url, Method.Delete, token);
+            CheckResponse(response);
         }
     }
 }

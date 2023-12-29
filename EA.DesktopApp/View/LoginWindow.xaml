@@ -22,13 +22,14 @@
         <TextBox Grid.Row="0" Grid.Column="0" Foreground="White"
                  Text="{Binding Path=LoginField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                  Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
-                 TextWrapping="Wrap" Margin="140,120,30,62">
+                 TextWrapping="Wrap" VerticalContentAlignment="Center"
+                 Margin="140,120,30,62">
         </TextBox>
 
         <PasswordBox Grid.Row="0" Grid.Column="0" Foreground="White"
-                     helpers:PasswordBoxHelper.BoundPassword="{Binding Path=PasswordField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     helpers:PasswordBoxHelper.BoundPassword="{Binding Path=PasswordField, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                      Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}"
-                     Margin="140,174,30,10">
+                     VerticalContentAlignment="Center" Margin="140,174,30,10">
         </PasswordBox>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
@@ -42,12 +43,12 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Height="72" HorizontalAlignment="Center"
                    Margin="24,20,0,0" x:Name="textBlockHeading" VerticalAlignment="Top" FontSize="12" Padding="5"
                    Width="386">
-            <Run Text="Attention: If you are using edit form for the first time" /><LineBreak />
-            <Run Text="Please register first!" /><LineBreak /><LineBreak />
+            <Run Text="Attention: If you want to change password" /><LineBreak />
+            <Run Text="please click link below!" /><LineBreak /><LineBreak />
             <InlineUIContainer>
                 <TextBlock>
                     <Hyperlink Command="{Binding AdminModeCommand}" FontSize="14" FontStyle="Normal">
-                        <Run Text="REGISTRATION" />
+                        <Run Text="CHANGE PASSWORD" />
                     </Hyperlink>
                 </TextBlock>
             </InlineUIContainer>

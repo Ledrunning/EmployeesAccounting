@@ -4,7 +4,6 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using EA.DesktopApp.Constants;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Helpers;
@@ -13,7 +12,6 @@ using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using NLog;
 
@@ -29,7 +27,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly IEmployeeGatewayService _employeeGatewayService;
 
         private readonly IPhotoShootService _photoShootService;
-        private readonly ISoundPlayerService _soundPlayerService;
+        private readonly ISoundPlayerService _soundPlayerHelper;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
 
@@ -40,14 +38,14 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     .ctor
         /// </summary>
-        public RegistrationViewModel(IPhotoShootService photoShootService, 
-            ISoundPlayerService soundPlayerService,
-            IEmployeeGatewayService employeeGatewayService, 
-            IWindowManager windowManager, 
+        public RegistrationViewModel(IPhotoShootService photoShootService,
+            ISoundPlayerService soundPlayerHelper,
+            IEmployeeGatewayService employeeGatewayService,
+            IWindowManager windowManager,
             CancellationToken token)
         {
             _photoShootService = photoShootService;
-            _soundPlayerService = soundPlayerService;
+            _soundPlayerHelper = soundPlayerHelper;
             _employeeGatewayService = employeeGatewayService;
             _windowManager = windowManager;
             _token = token;
@@ -126,6 +124,8 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         public ICommand ToggleClearFormCommand { get; private set; }
 
+        private Image<Bgr, byte> CapturedImage { get; set; }
+
         private void OnWindowClosingBehavior(object sender, EventArgs e)
         {
             _photoShootService?.CancelServiceAsync();
@@ -167,6 +167,8 @@ namespace EA.DesktopApp.ViewModels
 
         protected override void ClearFields()
         {
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+
             PersonName = string.Empty;
             PersonLastName = string.Empty;
             PersonDepartment = string.Empty;
@@ -178,7 +180,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private async Task ToggleAddImageToDataBase()
         {
-            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
             var converter = new ImageConverter();
             var imageArray = (byte[])converter.ConvertTo(GrayScaleImage, typeof(byte[]));
@@ -219,14 +221,12 @@ namespace EA.DesktopApp.ViewModels
             }
         }
 
-        private Image<Bgr, byte> CapturedImage { get; set; }
-
         /// <summary>
         ///     Get grayscale image method
         /// </summary>
         private void ToggleGetImageExecute()
         {
-            _soundPlayerService.PlaySound(SoundPlayerService.CameraSound);
+            _soundPlayerHelper.PlaySound(SoundPlayerService.CameraSound);
             GrayScaleImage = _photoShootService.CropFaceFromImage(CapturedImage).ToBitmap();
         }
     }
