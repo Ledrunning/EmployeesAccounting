@@ -3,9 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
+using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
+using EA.DesktopApp.View;
 using EA.DesktopApp.ViewModels.Commands;
 using NLog;
 
@@ -17,17 +19,19 @@ namespace EA.DesktopApp.ViewModels
         private readonly IAdminGatewayService _adminGatewayService;
         private readonly ISoundPlayerService _soundPlayer;
         private readonly CancellationToken _token;
+        private readonly IWindowManager _windowManager;
         private string _oldPasswordValue;
 
         private string _userMessage;
 
         public AdminViewModel(ISoundPlayerService soundPlayer,
             IAdminGatewayService adminGatewayService,
-            CancellationToken token)
+            CancellationToken token, IWindowManager windowManager)
         {
             _soundPlayer = soundPlayer;
             _adminGatewayService = adminGatewayService;
             _token = token;
+            _windowManager = windowManager;
             InitializeCommands();
         }
 
@@ -112,14 +116,22 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
+                _soundPlayer.PlaySound(SoundPlayerService.ButtonSound);
+
                 var credentials = SetCredentials(OldPasswordField);
                 _adminGatewayService.SetCredentials(credentials);
-                await _adminGatewayService.ChangeLoginAsync(new Credentials
+                var result = await _adminGatewayService.ChangeLoginAsync(new Credentials
                 {
                     UserName = LoginField,
                     Password = PasswordField,
                     OldPassword = OldPasswordField
-                }, _token).ConfigureAwait(false);
+                }, _token);
+
+                if (result)
+                {
+                    _windowManager.CloseWindow<AdminForm>();
+                    _windowManager.ShowModalWindow("Password has been changed");
+                }
             }
             catch (Exception e)
             {

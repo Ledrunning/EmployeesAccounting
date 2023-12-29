@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
+using EA.DesktopApp.Services;
 using EA.DesktopApp.ViewModels.Commands;
 using NLog;
 
@@ -22,12 +22,15 @@ namespace EA.DesktopApp.ViewModels
         private readonly IWindowManager _windowManager;
         private ObservableCollection<EmployeeModel> _employees;
         private EmployeeModel _selectedEmployee;
+        private readonly ISoundPlayerService _soundPlayerHelper;
 
-        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService, CancellationToken token)
+        public RedactorViewModel(IWindowManager windowManager, IEmployeeGatewayService employeeService,
+            CancellationToken token, ISoundPlayerService soundPlayerHelper)
         {
             _windowManager = windowManager;
             _employeeService = employeeService;
             _token = token;
+            _soundPlayerHelper = soundPlayerHelper;
             InitializeCommands();
         }
 
@@ -100,6 +103,7 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
+                _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
                 await ExecuteAsync(() => _employeeService.DeleteAsync(SelectedEmployee.Id, _token));
                 await LoadData();
             }
@@ -114,6 +118,8 @@ namespace EA.DesktopApp.ViewModels
         {
             try
             {
+                _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+
                 var updatedEmployeeData = new EmployeeModel
                 {
                     Id = SelectedEmployee.Id,
@@ -121,7 +127,7 @@ namespace EA.DesktopApp.ViewModels
                     Name = PersonName,
                     LastName = PersonLastName,
                     Department = PersonDepartment,
-                    PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow),
+                    PhotoName = string.Format(ProgramResources.FileName, PersonName, PersonLastName, DateTime.UtcNow)
                 };
 
                 await ExecuteAsync(() => _employeeService.UpdateAsync(updatedEmployeeData, _token));
@@ -134,9 +140,10 @@ namespace EA.DesktopApp.ViewModels
                 _windowManager.ShowModalWindow("Failed to update employee data");
             }
         }
-        
+
         private void ToggleClearFields()
         {
+            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             ClearFields();
         }
     }
