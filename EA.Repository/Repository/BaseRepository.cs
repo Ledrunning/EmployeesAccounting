@@ -34,10 +34,11 @@ public class BaseRepository<T> : IAsyncRepository<T>
         return entity;
     }
 
-    public async Task UpdateAsync(T entity, CancellationToken token)
+    public async Task<bool> UpdateAsync(T entity, CancellationToken token)
     {
         DbContext.Entry(entity).State = EntityState.Modified;
-        await SaveChangesAsync(token);
+        var affectedRows = await SaveChangesAsync(token);
+        return affectedRows > 0;
     }
 
     public async Task DeleteAsync(T entity, CancellationToken token)
@@ -58,8 +59,8 @@ public class BaseRepository<T> : IAsyncRepository<T>
         await SaveChangesAsync(token);
     }
 
-    protected Task SaveChangesAsync(CancellationToken token)
+    protected async Task<int> SaveChangesAsync(CancellationToken token)
     {
-        return DbContext.SaveChangesAsync(token);
+        return await DbContext.SaveChangesAsync(token);
     }
 }

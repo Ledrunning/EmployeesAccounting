@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 
 namespace EA.DesktopApp.ViewModels
@@ -91,7 +93,7 @@ namespace EA.DesktopApp.ViewModels
 
         public bool IsButtonEnable => !HasErrors;
 
-        public string Error => "Enter the data!";
+        public virtual string Error => "Enter the data!";
 
         public string this[string columnName] => ValidateProperty(columnName);
         public event PropertyChangedEventHandler PropertyChanged;
@@ -189,6 +191,15 @@ namespace EA.DesktopApp.ViewModels
             }
 
             HasErrors = Errors.Count > 0;
+        }
+
+        protected Credentials SetCredentials(string password)
+        {
+            return new Credentials
+            {
+                UserName = LoginField,
+                Password = password
+            };
         }
     }
 }

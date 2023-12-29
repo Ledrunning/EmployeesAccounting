@@ -5,7 +5,6 @@ using System.Windows.Input;
 using EA.DesktopApp.Contracts;
 using EA.DesktopApp.Contracts.ViewContracts;
 using EA.DesktopApp.Enum;
-using EA.DesktopApp.Models;
 using EA.DesktopApp.Resources.Messages;
 using EA.DesktopApp.Services;
 using EA.DesktopApp.View;
@@ -45,7 +44,7 @@ namespace EA.DesktopApp.ViewModels
         /// <summary>
         ///     Error exception throwing
         /// </summary>
-        public string Error => UiErrorResource.DataError;
+        public override string Error => UiErrorResource.DataError;
 
         protected override string ValidateProperty(string columnName)
         {
@@ -84,18 +83,17 @@ namespace EA.DesktopApp.ViewModels
             {
                 _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
 
-                //Set credentials
+                //NOTICE! It depends on passwordBox
                 var reversedPass = new string(PasswordField.Reverse().ToArray());
-                _adminGatewayService.SetCredentials(new Credentials
-                {
-                    UserName = LoginField,
-                    Password = reversedPass
-                });
-
+                var credentials = SetCredentials(reversedPass);
+                _adminGatewayService.SetCredentials(credentials);
+                
                 var isLogin = await _adminGatewayService.Login(_token);
 
                 if (!isLogin)
                 {
+
+                    ClearFields();
                     return;
                 }
 
@@ -115,6 +113,7 @@ namespace EA.DesktopApp.ViewModels
             }
             catch (Exception e)
             {
+                ClearFields();
                 Logger.Error("Login to app failed! {E}", e);
             }
         }
@@ -122,14 +121,19 @@ namespace EA.DesktopApp.ViewModels
         private void ToggleCancelExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
-            LoginField = string.Empty;
-            PasswordField = string.Empty;
+            ClearFields();
         }
 
         private void ToggleAdminWindowShowExecute()
         {
             _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
             _windowManager.ShowWindow<AdminForm>();
+        }
+
+        protected override void ClearFields()
+        {
+            LoginField = string.Empty;
+            PasswordField = string.Empty;
         }
     }
 }

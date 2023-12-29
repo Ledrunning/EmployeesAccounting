@@ -7,107 +7,94 @@
         MaxWidth="535" ResizeMode="NoResize">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="421*" />
-            <ColumnDefinition Width="107*" />
-        </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="45" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Button Height="24" Width="90" Command="{Binding RegistrationCommand}"
-                VerticalAlignment="Center" HorizontalAlignment="Left" Margin="138,0,0,21" Grid.Row="1">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="#FF00AADE" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <!-- Triggered values -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReady}" Value="False">
-                            <Setter Property="Content" Value="Registration" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.ToolTip>
-                <ToolTip HasDropShadow="True" Content="{Binding RegistrationHint}" />
-            </Button.ToolTip>
-        </Button>
-        <!--DB buttons-->
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Foreground="Red" 
+                   FontSize="14" HorizontalAlignment="Stretch" 
+                   TextAlignment="Center" TextWrapping="Wrap" 
+                   Text="{Binding UserMessage}" />
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,51,30,131">
-            <TextBox.Text>
-                <Binding Path="LoginField" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <ExceptionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,105,30,79">
-            <TextBox.Text>
-                <Binding Path="OldPasswordField" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <ExceptionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-
-        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
-                   HorizontalAlignment="Left"
-                   Margin="36,58,0,0" TextWrapping="Wrap" Text="Login" VerticalAlignment="Top" Height="30" Width="77" />
-        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
-                   HorizontalAlignment="Left"
-                   Margin="36,105,0,0" TextWrapping="Wrap" Text="Old password" VerticalAlignment="Top" Height="40"
-                   Width="77" />
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="140,162,30,22">
-            <TextBox.Text>
-                <Binding Path="PasswordField" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <ExceptionValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
-                   HorizontalAlignment="Left"
-                   Margin="36,162,0,0" TextWrapping="Wrap" Text="New password" VerticalAlignment="Top" Height="40"
-                   Width="77" />
-        <StackPanel HorizontalAlignment="Left" Height="45" Margin="138,0,0,0" Grid.Row="1" Grid.Column="0"
-                    VerticalAlignment="Top" Width="100" />
-        <StackPanel HorizontalAlignment="Left" Height="45" Margin="138,0,0,0" Grid.Row="1" Grid.Column="0"
-                    VerticalAlignment="Top" Width="100" />
-        <StackPanel HorizontalAlignment="Left" Height="45" Margin="286,0,0,0" Grid.Row="1" Grid.Column="0"
-                    VerticalAlignment="Top" Width="124">
-            <Button Height="24" Width="90" Command="{Binding ClearFieldsCommand}"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center" Margin="0,0,34,0" RenderTransformOrigin="1.183,0.604">
+            <Button Grid.Row="0" Grid.Column="1" Width="90" Height="24" Command="{Binding ClearFieldsCommand}"
+                    VerticalAlignment="Center" Foreground="#FF00AADE" Content="Clear">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Foreground" Value="#FF00AADE" />
-                        <Setter Property="BorderThickness" Value="1" />
-
-                        <!-- Triggered values -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsReady}" Value="False">
-                                <Setter Property="Content" Value="Clear" />
-                            </DataTrigger>
-                        </Style.Triggers>
                     </Style>
                 </Button.Style>
                 <Button.ToolTip>
                     <ToolTip HasDropShadow="True" Content="{Binding ClearFieldsHint}" />
                 </Button.ToolTip>
             </Button>
-        </StackPanel>
-        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="12"
-                   HorizontalAlignment="Left" Margin="36,0,0,0" TextWrapping="Wrap" Text="{Binding UserMessage}"
-                   VerticalAlignment="Top" Width="355" Height="36" />
+            <Button Grid.Row="0" Grid.Column="0" Width="90" Height="24"
+                    Command="{Binding RegistrationCommand}"
+                    Foreground="#FF00AADE" Content="Change"
+                    VerticalAlignment="Center">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="#FF00AADE" />
+                    </Style>
+                </Button.Style>
+                <Button.ToolTip>
+                    <ToolTip HasDropShadow="True" Content="{Binding RegistrationHint}" />
+                </Button.ToolTip>
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
+                       HorizontalAlignment="Left" TextWrapping="Wrap" Text="Login"
+                       Height="30" Width="77" Margin="5,0,0,0" />
+            <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap"
+                     Foreground="White" VerticalContentAlignment="Center"
+                     Text="{Binding Path=LoginField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Margin="0,0,20,0" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
+                       HorizontalAlignment="Left"
+                       TextWrapping="Wrap" Text="Old password"
+                       VerticalAlignment="Center" Margin="5,0,0,0" />
+            <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap"
+                     Foreground="White" VerticalContentAlignment="Center"
+                     Text="{Binding Path=OldPasswordField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Margin="0,0,20,0" />
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HeaderTextBlockStyle}" FontSize="14"
+                       HorizontalAlignment="Left" 
+                       TextWrapping="Wrap" Text="New password" Margin="5,0,0,0" />
+            <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap"
+                     Foreground="White" VerticalContentAlignment="Center"
+                     Text="{Binding Path=PasswordField, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                     Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Margin="0,0,20,0" />
+        </Grid>
     </Grid>
 </Window>
