@@ -77,8 +77,8 @@ namespace EA.DesktopApp.DiSetup
             }
             catch (Exception e)
             {
-                Logger.Error("Application run error! {e}", e);
-                throw new ApplicationException($"{e.Message}. Application run error!");
+                Logger.Error("Application startup error! {e}", e);
+                throw new ApplicationException($"{e.Message}. Application startup error!");
             }
         }
 
