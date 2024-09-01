@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using EA.Common.Exceptions;
 using EA.Repository.Contracts;
 using EA.Repository.Entities;
@@ -9,7 +6,6 @@ using EA.Services.Configuration;
 using EA.Services.Contracts;
 using EA.Services.Dto;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EA.Services.Services;
 
@@ -31,20 +27,50 @@ public class AdministratorService : IAdministratorService
         _serviceKeys = config.LoadConfiguration();
     }
 
+    //TODO: Smell!
     public async Task AddAsync(AdministratorDto admin, CancellationToken cancellationToken)
     {
         try
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(admin.Password);
-            var currentAdmin = admin.Password = hashedPassword;
+            admin.Password = hashedPassword;
 
-            var entity = _mapper.Map<Administrator>(currentAdmin);
+            var entity = _mapper.Map<Administrator>(admin);
             await _administratorRepository.AddAsync(entity, cancellationToken);
         }
         catch (Exception e)
         {
             _logger.LogError("Failed to add an admin into the database!: {e}", e);
             throw new EmployeeAccountingException("Failed to add an admin into the database!", e);
+        }
+    }
+
+    public async Task<bool> ChangeLoginAsync(Credentials credentials, CancellationToken token)
+    {
+        try
+        {
+            var administrator = await _administratorRepository.GetByCredentialsAsync(credentials.UserName, token);
+            var isLogged = BCrypt.Net.BCrypt.Verify(credentials.OldPassword, administrator?.Password);
+
+            if (!isLogged)
+            {
+                return false;
+            }
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(credentials.Password);
+
+            if (administrator == null)
+            {
+                return false;
+            }
+
+            administrator.Password = hashedPassword;
+            return await _administratorRepository.UpdateAsync(administrator, token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
+            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
         }
     }
 
@@ -114,55 +140,12 @@ public class AdministratorService : IAdministratorService
         return administrator != null && BCrypt.Net.BCrypt.Verify(credentials.Password, administrator.Password);
     }
 
-    public async Task<AdministratorDto?> GetByCredentialsAsync(string login, CancellationToken token)
-    {
-        try
-        {
-            var administrator = await _administratorRepository.GetByCredentialsAsync(login, token);
-            return _mapper.Map<AdministratorDto>(administrator);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when trying to get an administrator by credentials: {e}", e);
-            throw new EmployeeAccountingException("Error when trying to get an administrator by credentials", e);
-        }
-    }
-
-    //Todo need to think
-    public string GenerateJwtToken(string username)
-    {
-        var secret = _serviceKeys?.ServiceKeys?.JwtSecretKey;
-        if (secret == null)
-        {
-            return string.Empty;
-        }
-
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-        var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, username)
-        };
-
-        var tokenOptions = new JwtSecurityToken(
-            "https://yourdomain.com",
-            "https://yourdomain.com",
-            claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: signingCredentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
-    }
-
     public async Task InitializeAdmin(CancellationToken token)
     {
         var admins = await _administratorRepository.ListAsync(token);
         if (!admins.Any())
         {
-            var admin = new AdministratorDto()
+            var admin = new AdministratorDto
             {
                 Name = "admin",
                 LastName = "admin",

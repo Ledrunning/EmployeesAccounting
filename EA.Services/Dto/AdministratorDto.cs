@@ -20,4 +20,5 @@ public class AdministratorDto : BaseModelDto
     public string? OldPassword { get; set; }
 
     public DateTimeOffset RegistrationTime { get; set; }
+    public bool IsLogged { get; set; }
 }

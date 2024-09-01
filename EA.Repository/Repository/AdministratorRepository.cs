@@ -10,7 +10,7 @@ public class AdministratorRepository : BaseRepository<Administrator>, IAdministr
     {
     }
 
-    public async Task<Administrator?> GetByCredentialsAsync(string login, CancellationToken token)
+    public async Task<Administrator?> GetByCredentialsAsync(string? login, CancellationToken token)
     {
         return await DbContext.Set<Administrator>().AsNoTracking()
             .FirstOrDefaultAsync(i => i.Login == login, token);

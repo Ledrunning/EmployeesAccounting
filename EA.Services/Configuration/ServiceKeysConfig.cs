@@ -8,5 +8,4 @@ public class ServiceKeysConfig
 public class ServiceKeys
 {
     public string? FirstAdminPass { get; set; }
-    public string? JwtSecretKey { get; set; }
 }

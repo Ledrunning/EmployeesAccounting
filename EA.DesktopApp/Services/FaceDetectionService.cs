@@ -25,7 +25,6 @@ namespace EA.DesktopApp.Services
     /// </summary>
     public class FaceDetectionService : BaseCameraService, IFaceDetectionService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEigenFaceRecognition _eigenRecognizer;
         private string _employeeName;
         /// <summary>

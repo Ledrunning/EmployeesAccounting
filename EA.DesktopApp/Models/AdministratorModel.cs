@@ -19,6 +19,7 @@ namespace EA.DesktopApp.Models
 
         [Required(ErrorMessage = "Enter your old password")]
         public string OldPassword { get; set; }
+        public bool IsLogin { get; set; }
 
         public DateTimeOffset RegistrationTime { get; set; }
     }

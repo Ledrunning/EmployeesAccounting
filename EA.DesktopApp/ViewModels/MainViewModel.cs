@@ -34,7 +34,7 @@ namespace EA.DesktopApp.ViewModels
         private readonly IEigenFaceRecognition _eigenRecognizer;
         private readonly IEmployeeGatewayService _employeeGatewayService;
         private readonly IFaceDetectionService _faceDetectionService;
-        private readonly ISoundPlayerService _soundPlayerHelper;
+        private readonly ISoundPlayerService _soundPlayerService;
         private readonly CancellationToken _token;
         private readonly IWindowManager _windowManager;
 
@@ -64,7 +64,7 @@ namespace EA.DesktopApp.ViewModels
             IEigenFaceRecognition eigenRecognizer,
             IEmployeeGatewayService employeeGatewayService,
             IWindowManager windowManager,
-            ISoundPlayerService soundPlayerHelper,
+            ISoundPlayerService soundPlayerService,
             CancellationToken token)
         {
             _faceDetectionService = faceDetectionService;
@@ -75,7 +75,7 @@ namespace EA.DesktopApp.ViewModels
             LoadAvailableCameras();
             InitializeCommands();
             TimeTicker();
-            _soundPlayerHelper = soundPlayerHelper;
+            _soundPlayerService = soundPlayerService;
             _token = token;
             DetectionHint = ProgramResources.StartDetectorTooltipMessage;
         }
@@ -249,7 +249,7 @@ namespace EA.DesktopApp.ViewModels
                 ? ProgramResources.StartDetectorTooltipMessage
                 : ProgramResources.StopDetectorTooltipMessage;
 
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             if (_faceDetectionService != null && !_faceDetectionService.IsRunning)
             {
@@ -280,7 +280,7 @@ namespace EA.DesktopApp.ViewModels
         /// </summary>
         private void TogglePhotoShootServiceExecute()
         {
-            _soundPlayerHelper.PlaySound(SoundPlayerService.ButtonSound);
+            _soundPlayerService.PlaySound(SoundPlayerService.ButtonSound);
 
             // True - button is pushed - Working!
             IsRunning = false;
